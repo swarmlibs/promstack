@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+x-exporter-resources-constraints: &x-exporter-resources-constraints
+  limits:
+    memory: 128M
+  reservations:
+    memory: 64M
+
+volumes:
+  alertmanager-data:
+  alertmanager-configs:
+
+  prometheus-data:
+  prometheus-configs:
+
+networks:
+  dockerswarm_ingress:
+    name: dockerswarm_ingress
+    external: true
+  dockerswarm_metrics:
+    name: dockerswarm_metrics
+    external: true
+  prometheus_exporters:
+    name: prometheus_exporters
+    external: true
+
+configs:
+  dockerswarm-nodes-alertmanager:
+    file: ./configs/dockerswarm-nodes-alertmanager.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+
+services:
+
+  # ====================================================
+  # Alertmanager
+  # https://github.com/prometheus/alertmanager
+  # ====================================================
+
+  alertmanager:
+    image: swarmlibs/alertmanager:main
+    deploy:
+      mode: global
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+      labels:
+        io.prometheus.role: "alertmanager"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+    logging: *x-default-logging
+    environment:
+      - DOCKERSWARM_SERVICE_ID={{.Service.ID}}
+      - DOCKERSWARM_SERVICE_NAME={{.Service.Name}}
+      - DOCKERSWARM_NODE_ID={{.Node.ID}}
+      - DOCKERSWARM_NODE_HOSTNAME={{.Node.Hostname}}
+      - DOCKERSWARM_TASK_ID={{.Task.ID}}
+      - DOCKERSWARM_TASK_NAME={{.Task.Name}}
+      - DOCKERSWARM_TASK_SLOT={{.Task.Slot}}
+      - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
+    ports:
+      - published: 9093
+        target: 9093
+        mode: host
+    hostname: alertmanager.{{.Node.ID}}.cluster.local
+    networks:
+      dockerswarm_metrics:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - type: volume
+        source: alertmanager-data
+        target: /alertmanager
+
+  alertmanager-config-reloader:
+    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    command:
+      - --listen-address=:8080
+      - --watched-dir=/alertmanager-configs.d
+      - --reload-url=http://host.docker.internal:9093/-/reload
+    deploy:
+      mode: global
+      resources: *x-exporter-resources-constraints
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+      labels:
+        io.prometheus.role: "alertmanager-config-reloader"
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: "alertmanager-config-reloader"
+        io.prometheus.scrape_port: "8080"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+    logging: *x-default-logging
+    networks:
+      dockerswarm_metrics:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - type: volume
+        source: alertmanager-configs
+        target: /alertmanager-configs.d

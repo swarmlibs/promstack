@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+x-exporter-resources-constraints: &x-exporter-resources-constraints
+  limits:
+    memory: 128M
+  reservations:
+    memory: 64M
+
+volumes:
+  alertmanager-data:
+  alertmanager-configs:
+
+  prometheus-data:
+  prometheus-configs:
+
+networks:
+  dockerswarm_ingress:
+    name: dockerswarm_ingress
+    external: true
+  dockerswarm_metrics:
+    name: dockerswarm_metrics
+    external: true
+  prometheus_exporters:
+    name: prometheus_exporters
+    external: true
+
+configs:
+  dockerswarm-nodes-node-exporter:
+    file: ./configs/dockerswarm-nodes-node-exporter.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+
+services:
+
+  # ====================================================
+  # Node exporter
+  # https://github.com/prometheus/node_exporter
+  # ====================================================
+
+  node-exporter:
+    image: swarmlibs/node-exporter:main
+    deploy:
+      mode: global
+      resources: *x-exporter-resources-constraints
+      labels:
+        io.prometheus.role: "node-exporter"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+    logging: *x-default-logging
+    ports:
+      - published: 9100
+        target: 9100
+        mode: host
+    networks:
+      prometheus_exporters:
+    hostname: node-exporter.{{.Node.ID}}.cluster.local
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
