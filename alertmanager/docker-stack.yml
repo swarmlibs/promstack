@@ -12,24 +12,6 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
-volumes:
-  alertmanager-data:
-  alertmanager-configs:
-
-  prometheus-data:
-  prometheus-configs:
-
-networks:
-  dockerswarm_ingress:
-    name: dockerswarm_ingress
-    external: true
-  dockerswarm_metrics:
-    name: dockerswarm_metrics
-    external: true
-  prometheus_exporters:
-    name: prometheus_exporters
-    external: true
-
 configs:
   dockerswarm-nodes-alertmanager:
     file: ./configs/dockerswarm-nodes-alertmanager.yml
@@ -71,7 +53,8 @@ services:
         mode: host
     hostname: alertmanager.{{.Node.ID}}.cluster.local
     networks:
-      dockerswarm_metrics:
+      alertmanager_internal:
+      prometheus_gwnetwork:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -84,7 +67,7 @@ services:
     command:
       - --listen-address=:8080
       - --watched-dir=/alertmanager-configs.d
-      - --reload-url=http://host.docker.internal:9093/-/reload
+      - --reload-url=http://alertmanager:9093/-/reload
     deploy:
       mode: global
       resources: *x-exporter-resources-constraints
@@ -94,16 +77,27 @@ services:
           - node.role == manager
       labels:
         io.prometheus.role: "alertmanager-config-reloader"
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: "alertmanager-config-reloader"
-        io.prometheus.scrape_port: "8080"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
     logging: *x-default-logging
     networks:
-      dockerswarm_metrics:
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      alertmanager_internal:
     volumes:
       - type: volume
         source: alertmanager-configs
         target: /alertmanager-configs.d
+
+volumes:
+  alertmanager-data:
+  alertmanager-configs:
+
+networks:
+  alertmanager_internal:
+    internal: true
+
+  prometheus:
+    name: prometheus
+    external: true
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true

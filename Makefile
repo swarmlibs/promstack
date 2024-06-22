@@ -5,8 +5,8 @@ it:
 
 networks:
 	@docker network create --scope=swarm --driver=overlay --attachable dockerswarm_ingress > /dev/null 2>&1 || true
-	@docker network create --scope=swarm --driver=overlay --attachable dockerswarm_metrics > /dev/null 2>&1 || true
-	@docker network create --scope=swarm --driver=overlay --attachable prometheus_exporters > /dev/null 2>&1 || true
+	@docker network create --scope=swarm --driver=overlay --attachable prometheus > /dev/null 2>&1 || true
+	@docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork > /dev/null 2>&1 || true
 
 deploy: networks
 	$(MAKE) -C prometheus deploy

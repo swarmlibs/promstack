@@ -12,24 +12,6 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
-volumes:
-  alertmanager-data:
-  alertmanager-configs:
-
-  prometheus-data:
-  prometheus-configs:
-
-networks:
-  dockerswarm_ingress:
-    name: dockerswarm_ingress
-    external: true
-  dockerswarm_metrics:
-    name: dockerswarm_metrics
-    external: true
-  prometheus_exporters:
-    name: prometheus_exporters
-    external: true
-
 configs:
   dockerswarm-nodes-cadvisor:
     file: ./configs/dockerswarm-nodes-cadvisor.yml
@@ -59,7 +41,7 @@ services:
         target: 8080
         mode: host
     networks:
-      prometheus_exporters:
+      prometheus_gwnetwork:
     hostname: cadvisor.{{.Node.ID}}.cluster.local
     volumes:
       - type: bind
@@ -92,3 +74,8 @@ services:
       #   source: /dev/kmsg
       #   target: /dev/kmsg
       #   read_only: true
+
+networks:
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
