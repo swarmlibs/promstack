@@ -12,12 +12,6 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
-configs:
-  dockerswarm-nodes-cadvisor:
-    file: ./configs/dockerswarm-nodes-cadvisor.yml
-    labels:
-      - "io.prometheus.scrape_config=true"
-
 services:
 
   # ====================================================
@@ -74,6 +68,12 @@ services:
       #   source: /dev/kmsg
       #   target: /dev/kmsg
       #   read_only: true
+
+configs:
+  prometheus-scrape-config-v1:
+    file: ./configs/dockerswarm-nodes-cadvisor.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
 
 networks:
   prometheus_gwnetwork:

@@ -155,15 +155,12 @@ volumes:
 networks:
   prometheus_internal:
     internal: true
-
-  prometheus:
-    name: prometheus
-    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
-
-  # Custom ingress network
+  prometheus:
+    name: prometheus
+    external: true
   dockerswarm_ingress:
     name: dockerswarm_ingress
     external: true

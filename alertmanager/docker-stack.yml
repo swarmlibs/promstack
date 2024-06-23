@@ -12,12 +12,6 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
-configs:
-  dockerswarm-nodes-alertmanager:
-    file: ./configs/dockerswarm-nodes-alertmanager.yml
-    labels:
-      - "io.prometheus.scrape_config=true"
-
 services:
 
   # ====================================================
@@ -87,6 +81,12 @@ services:
         source: alertmanager-configs
         target: /alertmanager-configs.d
 
+configs:
+  prometheus-scrape-config-v1:
+    file: ./configs/dockerswarm-nodes-alertmanager.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+
 volumes:
   alertmanager-data:
   alertmanager-configs:
@@ -94,10 +94,6 @@ volumes:
 networks:
   alertmanager_internal:
     internal: true
-
-  prometheus:
-    name: prometheus
-    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true

@@ -12,12 +12,6 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
-configs:
-  dockerswarm-nodes-node-exporter:
-    file: ./configs/dockerswarm-nodes-node-exporter.yml
-    labels:
-      - "io.prometheus.scrape_config=true"
-
 services:
 
   # ====================================================
@@ -47,6 +41,12 @@ services:
         source: /
         target: /rootfs
         read_only: true
+
+configs:
+  prometheus-scrape-config-v1:
+    file: ./configs/dockerswarm-nodes-node-exporter.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
 
 networks:
   prometheus_gwnetwork:
