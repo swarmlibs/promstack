@@ -13,17 +13,20 @@ deploy: networks
 	$(MAKE) -C alertmanager deploy
 	$(MAKE) -C cadvisor deploy
 	$(MAKE) -C node-exporter deploy
+	$(MAKE) -C grafana deploy
 
 remove:
 	$(MAKE) -C prometheus remove
 	$(MAKE) -C alertmanager remove
 	$(MAKE) -C cadvisor remove
 	$(MAKE) -C node-exporter remove
+	$(MAKE) -C grafana remove
 
 clean:
 	$(MAKE) -C prometheus clean
 	$(MAKE) -C alertmanager clean
 	$(MAKE) -C cadvisor clean
 	$(MAKE) -C node-exporter clean
+	$(MAKE) -C grafana clean
 
 reset: remove clean deploy

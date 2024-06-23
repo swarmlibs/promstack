@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+services:
+
+  # ====================================================
+  # Grafana Dashboard
+  # https://github.com/grafana/grafana
+  # ====================================================
+
+  grafana:
+    image: swarmlibs/grafana:main
+    deploy:
+      replicas: 1
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: "grafana"
+        io.prometheus.scrape_port: "3000"
+    logging: *x-default-logging
+    ports:
+      - published: 3000
+        target: 3000
+    hostname: grafana-{{.Task.Slot}}.svc.cluster.local
+    networks:
+      grafana_unified_alerting:
+      prometheus:
+      dockerswarm_ingress:
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
+
+networks:
+  grafana_unified_alerting:
+    # Attach the network to the Grafana service
+  prometheus:
+    name: prometheus
+    external: true
+  dockerswarm_ingress:
+    name: dockerswarm_ingress
+    external: true
