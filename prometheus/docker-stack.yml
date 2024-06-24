@@ -48,7 +48,7 @@ services:
       - published: 9090
         target: 9090
         mode: host
-    hostname: prometheus.svc.cluster.local
+    hostname: prometheus.{{.Node.ID}}.cluster.local
     networks:
       prometheus_internal:
       prometheus:
