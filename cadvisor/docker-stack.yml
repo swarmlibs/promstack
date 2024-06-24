@@ -36,7 +36,7 @@ services:
         mode: host
     networks:
       prometheus_gwnetwork:
-    hostname: cadvisor.{{.Node.ID}}.cluster.local
+    hostname: cadvisor.{{.Task.Slot}}.cluster.local
     volumes:
       - type: bind
         source: /

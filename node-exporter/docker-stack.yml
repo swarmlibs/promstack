@@ -35,7 +35,7 @@ services:
         mode: host
     networks:
       prometheus_gwnetwork:
-    hostname: node-exporter.{{.Node.ID}}.cluster.local
+    hostname: node-exporter.{{.Task.Slot}}.cluster.local
     volumes:
       - type: bind
         source: /

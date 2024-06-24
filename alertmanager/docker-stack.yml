@@ -45,7 +45,7 @@ services:
       - published: 9093
         target: 9093
         mode: host
-    hostname: alertmanager.{{.Node.ID}}.cluster.local
+    hostname: alertmanager.{{.Task.Slot}}.cluster.local
     networks:
       alertmanager_internal:
       prometheus_gwnetwork:
