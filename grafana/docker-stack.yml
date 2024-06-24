@@ -27,7 +27,7 @@ services:
         target: 3000
     hostname: grafana-{{.Task.Slot}}.svc.cluster.local
     networks:
-      grafana_unified_alerting:
+      grafana:
       prometheus:
       dockerswarm_ingress:
     volumes:
@@ -37,8 +37,8 @@ volumes:
   grafana-data:
 
 networks:
-  grafana_unified_alerting:
-    # Attach the network to the Grafana service
+  grafana:
+    # Internal network for Grafana services
   prometheus:
     name: prometheus
     external: true
