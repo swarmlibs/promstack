@@ -12,6 +12,14 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
+x-deploy: &x-deploy
+  mode: global
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.role == worker
+      - node.labels.io.swarmlibs.promstack == true
+
 services:
 
   # ====================================================
@@ -22,11 +30,7 @@ services:
   prometheus:
     image: swarmlibs/prometheus:main
     deploy:
-      mode: global
-      placement:
-        max_replicas_per_node: 1
-        constraints:
-          - node.role == manager
+      <<: *x-deploy
       labels:
         io.prometheus.role: "prometheus"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -72,12 +76,8 @@ services:
     command:
       - --output-dir=/prometheus-configs.d
     deploy:
-      mode: global
+      <<: *x-deploy
       resources: *x-exporter-resources-constraints
-      placement:
-        max_replicas_per_node: 1
-        constraints:
-          - node.role == manager
       labels:
         io.prometheus.role: "prometheus-configs-provider"
     logging: *x-default-logging
@@ -104,12 +104,8 @@ services:
       - --watch-interval=15s
       - --reload-timeout=10s
     deploy:
-      mode: global
+      <<: *x-deploy
       resources: *x-exporter-resources-constraints
-      placement:
-        max_replicas_per_node: 1
-        constraints:
-          - node.role == manager
       labels:
         io.prometheus.role: "prometheus-config-reloader"
         io.prometheus.enabled: "true"
