@@ -5,7 +5,7 @@
 # The Docker Engine metrics are required to be configured in the daemon.json file for Prometheus to scrape them.
 # This configuration also includes a job to scrape the Node Exporter metrics that run on each node.
 scrape_configs:
-  - job_name: 'promstack/nodes/node-exporter'
+  - job_name: 'dockerswarm/nodes/node-exporter'
 
     dockerswarm_sd_configs:
       - host: unix:///var/run/docker.sock
