@@ -10,8 +10,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
-  - [Deploy `promstack`](#deploy-promstack)
-  - [Remove `promstack`](#remove-promstack)
+  - [Deploy using `promstack`](#deploy-using-promstack)
+  - [Remove using `promstack`](#remove-using-promstack)
 - [Configure the Docker daemon](#configure-the-docker-daemon)
 
 ## Stacks
@@ -53,16 +53,16 @@ docker network create --scope=swarm --driver=overlay --attachable prometheus_gwn
 * The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
 * The `prometheus_gwnetwork` network is used for the internal communication between the Prometheus Server, exporters and other agents.
 
-### Deploy `promstack`
+### Deploy using `promstack`
 
 ```sh
-# TBD
+./promstack deploy
 ```
 
-### Remove `promstack`
+### Remove using `promstack`
 
 ```sh
-# TBD
+./promstack remove
 ```
 
 ## Configure the Docker daemon
