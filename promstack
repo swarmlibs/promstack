@@ -3,7 +3,7 @@
 PROMSTACK_NAMESPACE="promstack"
 PROMSTACK_STACKS=(node-exporter cadvisor prometheus grafana)
 
-function promstack_deploy() {
+function promstack_stack_deploy() {
     if [ ! -d $1 ]; then
         echo "==> Directory $1 does not exist. skipping..."
         return 1
@@ -23,7 +23,7 @@ function promstack_deploy() {
     cd - > /dev/null
 }
 
-function promstack_remove() {
+function promstack_stack_remove() {
     if ! docker stack ls | grep "${PROMSTACK_NAMESPACE}_$1" > /dev/null; then
         echo "==> Stack $1 does not exist. skipping..."
         return 1
@@ -33,6 +33,104 @@ function promstack_remove() {
     docker stack rm --detach=false "${PROMSTACK_NAMESPACE}_$1"
     echo "==> Done Removing $1 stack."
     echo ""
+}
+
+function promstack_purge() {
+    echo "==> Purging all stacks..."
+    echo ""
+
+    for stack in ${PROMSTACK_STACKS[@]}; do
+        promstack_stack_remove $stack
+    done
+    echo ""
+
+    {
+        echo "==> Purging volumes for $PROMSTACK_NAMESPACE..."
+        docker volume ls -q -f name="${PROMSTACK_NAMESPACE}" | xargs -r docker volume rm
+    }
+
+    echo ""
+    echo "==> Done purging all stacks."
+}
+
+function promstack_network_create() {
+    if ! docker network ls | grep "$1" > /dev/null; then
+        echo "==> Creating network $1..."
+        docker network create --driver=overlay --scope=swarm --attachable "$1"
+        echo "==> Done creating network $1."
+        echo ""
+    else
+        echo "==> Network $1 already exists. skipping..."
+    fi
+}
+
+function promstack_network_remove() {
+    if docker network ls | grep "$1" > /dev/null; then
+        echo "==> Removing network $1..."
+        docker network rm "$1" || {
+            echo "==> Failed to remove network $1."
+            return 1
+        }
+        echo "==> Done removing network $1."
+        echo ""
+    else
+        echo "==> Network $1 does not exist. skipping..."
+    fi
+}
+
+function promstack_usage() {
+    echo "Usage: $0 {deploy|remove|purge}"
+    echo "Error: at least one argument is required."
+    exit 1
+}
+
+function promstack_deploy() {
+    echo "==> Starting deployment task..."
+    echo ""
+
+    promstack_network_create prometheus
+    promstack_network_create prometheus_gwnetwork
+
+    echo ""
+    echo "==> Waiting for 15s before creating networks..."; sleep 30
+    echo ""
+
+    for stack in ${PROMSTACK_STACKS[@]}; do
+        promstack_stack_deploy $stack
+    done
+
+    echo "-----------------------------------------------------------------"
+    echo "The following services are now available:"
+    echo "  - Grafana: http://localhost:3000"
+    echo "  - Prometheus: http://localhost:9090"
+    echo ""
+    echo "The default username and password for Grafana is grafana/grafana."
+    echo "-----------------------------------------------------------------"
+    echo ""
+    echo "==> Done deploying all stacks."
+}
+
+function promstack_remove() {
+    echo "==> Starting removal task..."
+    echo ""
+
+    for stack in ${PROMSTACK_STACKS[@]}; do
+        promstack_stack_remove $stack
+    done
+
+    echo ""
+    local __sleep=60
+    echo "==> Waiting for ${__sleep}s before removing networks..."; sleep $__sleep
+    echo ""
+    promstack_network_remove prometheus_gwnetwork
+    promstack_network_remove prometheus
+    
+    echo "-----------------------------------------------"
+    echo "You can monitor the removal process by running:"
+    echo "  watch docker service ls"
+    echo "-----------------------------------------------"
+    echo ""
+    echo "==> Done removing all stacks."
 }
 
 # main
@@ -48,12 +146,8 @@ echo 'A Docker Stack deployment for the Docker Swarm monitoring'
 echo 'Includes Grafana, Prometheus, cAdvisor, Node exporter'
 echo 'and Blackbox prober exporter.'
 echo ''
-for stack in ${PROMSTACK_STACKS[@]}; do
-    echo "- $stack"
-done
-echo ''
 
-echo -n "==> Checking Docker..."
+echo -n "Checking Docker..."
 if ! command -v docker > /dev/null; then
     echo "Error: docker is not installed."
     exit 1
@@ -61,7 +155,7 @@ else
     echo " OK"
 fi
 
-echo -n "==> Checking Docker Swarm mode..."
+echo -n "Checking Docker Swarm mode..."
 if ! docker node ls > /dev/null 2>&1; then
     echo "Error: Docker is not in Swarm mode."
     exit 1
@@ -71,22 +165,8 @@ fi
 
 echo ""
 case $1 in
-    deploy)
-        for stack in ${PROMSTACK_STACKS[@]}; do
-            promstack_deploy $stack
-        done
-        echo ""
-        echo "==> Done deploying all stacks."
-        ;;
-    remove)
-        for stack in ${PROMSTACK_STACKS[@]}; do
-            promstack_remove $stack
-        done
-        echo ""
-        echo "==> Done removing all stacks."
-        ;;
-    *)
-        echo "Usage: $0 {deploy|remove}"
-        echo "Error: at least one argument is required."
-        exit 1
+    deploy) promstack_deploy ;;
+    remove) promstack_remove ;;
+    purge) promstack_purge ;;
+    *) promstack_usage
 esac
