@@ -49,7 +49,7 @@ services:
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
 
-  grafana-provisioning-dashboard:
+  grafana-dashboard-provider:
     image: swarmlibs/prometheus-config-provider:main
     command:
       - --output-ext=json
@@ -66,7 +66,7 @@ services:
         target: /var/run/docker.sock
         read_only: true
 
-  grafana-provisioning-datasources:
+  grafana-datasource-provider:
     image: swarmlibs/prometheus-config-provider:main
     command:
       - --output-dir=/grafana-provisioning-datasources.d
