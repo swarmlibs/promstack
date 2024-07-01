@@ -1,0 +1,891 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "datasource",
+                    "uid": "grafana"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "description": "Docker Swarm Services Endpoints prober with Blackbox exporter",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "gnetId": 13659,
+    "graphTooltip": 0,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "left",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "filterable": true,
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "SSL Cert Expiry (days)"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 0
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "rgba(0, 0, 0, 0)",
+                                            "value": null
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "orange",
+                                            "value": 1
+                                        },
+                                        {
+                                            "color": "yellow",
+                                            "value": 7
+                                        },
+                                        {
+                                            "color": "green",
+                                            "value": 24
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "basic",
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "min",
+                                "value": 0
+                            },
+                            {
+                                "id": "max",
+                                "value": 365
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": false
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Status"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "0": {
+                                                "text": "DOWN"
+                                            },
+                                            "1": {
+                                                "text": "UP"
+                                            }
+                                        },
+                                        "type": "value"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "red",
+                                            "value": null
+                                        },
+                                        {
+                                            "color": "green",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "gradient",
+                                    "type": "color-background"
+                                }
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 76
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Code"
+                        },
+                        "properties": [
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "rgba(0, 0, 0, 0)",
+                                            "value": null
+                                        },
+                                        {
+                                            "color": "green",
+                                            "value": 200
+                                        },
+                                        {
+                                            "color": "yellow",
+                                            "value": 300
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 500
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "gradient",
+                                    "type": "color-background"
+                                }
+                            },
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "0": {
+                                                "text": ""
+                                            }
+                                        },
+                                        "type": "value"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 78
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "SSL"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "0": {
+                                                "text": "NO"
+                                            },
+                                            "1": {
+                                                "text": "OK"
+                                            }
+                                        },
+                                        "type": "value"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "rgba(3, 3, 3, 0)",
+                                            "value": null
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "green",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "gradient",
+                                    "type": "color-background"
+                                }
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 77
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Probe Duration (s)"
+                        },
+                        "properties": [
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": null
+                                        },
+                                        {
+                                            "color": "yellow",
+                                            "value": 0.8
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 2
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "basic",
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": false
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "max",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "DNS Lookup Duration (s)"
+                        },
+                        "properties": [
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": null
+                                        },
+                                        {
+                                            "color": "yellow",
+                                            "value": 0.1
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 0.2
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "max",
+                                "value": 0.3
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "basic",
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": false
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Instance"
+                        },
+                        "properties": [
+                            {
+                                "id": "links",
+                                "value": [
+                                    {
+                                        "targetBlank": true,
+                                        "title": "${__data.fields.Instance}",
+                                        "url": "${__data.fields.Instance}"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 276
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "TLS Version"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 117
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": false,
+                        "displayName": "SSL Cert Expiry (days)"
+                    }
+                ]
+            },
+            "pluginVersion": "11.0.0",
+            "repeatDirection": "h",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "editorMode": "code",
+                    "expr": "probe_success{job=~\"$job\", instance=~\"$instance\", module=~\"tcp_connect\"}",
+                    "format": "table",
+                    "instant": true,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "expr": "avg_over_time(probe_duration_seconds{job=~\"$job\", instance=~\"$instance\", module=~\"tcp_connect\"}[1m])",
+                    "format": "table",
+                    "hide": false,
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "legendFormat": "",
+                    "refId": "E"
+                }
+            ],
+            "title": "TCP Probe Overview",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {}
+                },
+                {
+                    "id": "groupBy",
+                    "options": {
+                        "fields": {
+                            "Value #A": {
+                                "aggregations": [
+                                    "lastNotNull"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "Value #E": {
+                                "aggregations": [
+                                    "max"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "id": {
+                                "aggregations": [],
+                                "operation": "groupby"
+                            },
+                            "instance": {
+                                "aggregations": [
+                                    "lastNotNull"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "job": {
+                                "aggregations": [
+                                    "lastNotNull"
+                                ]
+                            },
+                            "module": {
+                                "aggregations": [
+                                    "last"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "namespace": {
+                                "aggregations": [
+                                    "last"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "service": {
+                                "aggregations": [
+                                    "last"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "task": {
+                                "aggregations": [
+                                    "last"
+                                ],
+                                "operation": "aggregate"
+                            }
+                        }
+                    }
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {
+                            "id": true,
+                            "module (last)": true,
+                            "module (lastNotNull)": true,
+                            "task (lastNotNull)": false
+                        },
+                        "includeByName": {},
+                        "indexByName": {
+                            "Value #A (lastNotNull)": 7,
+                            "Value #E (max)": 6,
+                            "id": 0,
+                            "instance (lastNotNull)": 5,
+                            "module (last)": 1,
+                            "namespace (last)": 2,
+                            "service (last)": 3,
+                            "task (last)": 4
+                        },
+                        "renameByName": {
+                            "Value #A (last)": "Status",
+                            "Value #A (lastNotNull)": "Status",
+                            "Value #E (max)": "Probe Duration (s)",
+                            "Value #E (range)": "Probe Duration (s)",
+                            "instance (lastNotNull)": "Instance",
+                            "module (lastNotNull)": "",
+                            "namespace (last)": "Namespace",
+                            "namespace (lastNotNull)": "Namespace",
+                            "service (last)": "Service",
+                            "service (lastNotNull)": "Service",
+                            "task (last)": "Task",
+                            "task (lastNotNull)": ""
+                        }
+                    }
+                }
+            ],
+            "transparent": true,
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "description": "Returns how long the probe took to complete in seconds",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 9
+            },
+            "id": 4,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "min"
+                    ],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "maxHeight": 600,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "7.3.5",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(probe_duration_seconds{job=~\"$job\", instance=~\"$instance\", module=~\"tcp_connect\"}) by (instance)",
+                    "instant": false,
+                    "interval": "",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{ instance }}",
+                    "refId": "A"
+                }
+            ],
+            "title": "TCP Probe Duration",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": true,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 18
+            },
+            "id": 8,
+            "panels": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "description": "Duration of tcp request by phase, summed over all redirects",
+                    "fieldConfig": {
+                        "defaults": {
+                            "color": {
+                                "mode": "palette-classic"
+                            },
+                            "custom": {
+                                "axisBorderShow": false,
+                                "axisCenteredZero": false,
+                                "axisColorMode": "text",
+                                "axisLabel": "",
+                                "axisPlacement": "auto",
+                                "barAlignment": 0,
+                                "drawStyle": "line",
+                                "fillOpacity": 100,
+                                "gradientMode": "none",
+                                "hideFrom": {
+                                    "legend": false,
+                                    "tooltip": false,
+                                    "viz": false
+                                },
+                                "insertNulls": false,
+                                "lineInterpolation": "linear",
+                                "lineWidth": 0,
+                                "pointSize": 5,
+                                "scaleDistribution": {
+                                    "type": "linear"
+                                },
+                                "showPoints": "never",
+                                "spanNulls": false,
+                                "stacking": {
+                                    "group": "A",
+                                    "mode": "normal"
+                                },
+                                "thresholdsStyle": {
+                                    "mode": "off"
+                                }
+                            },
+                            "mappings": [],
+                            "thresholds": {
+                                "mode": "absolute",
+                                "steps": [
+                                    {
+                                        "color": "green"
+                                    },
+                                    {
+                                        "color": "red",
+                                        "value": 80
+                                    }
+                                ]
+                            },
+                            "unit": "s"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 7,
+                        "w": 24,
+                        "x": 0,
+                        "y": 19
+                    },
+                    "id": 6,
+                    "options": {
+                        "legend": {
+                            "calcs": [],
+                            "displayMode": "list",
+                            "placement": "right",
+                            "showLegend": true
+                        },
+                        "tooltip": {
+                            "maxHeight": 600,
+                            "mode": "multi",
+                            "sort": "desc"
+                        }
+                    },
+                    "pluginVersion": "7.3.5",
+                    "targets": [
+                        {
+                            "datasource": {
+                                "type": "prometheus",
+                                "uid": "${datasource}"
+                            },
+                            "editorMode": "code",
+                            "expr": "probe_duration_seconds{job=~\"$job\", instance=~\"$instance\", module=~\"tcp_connect\"}",
+                            "interval": "",
+                            "intervalFactor": 2,
+                            "legendFormat": "{{instance}}",
+                            "range": true,
+                            "refId": "A"
+                        }
+                    ],
+                    "title": "TCP Probe Phases Duration",
+                    "type": "timeseries"
+                }
+            ],
+            "repeat": "instance",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "refId": "A"
+                }
+            ],
+            "title": "$instance",
+            "type": "row"
+        }
+    ],
+    "refresh": "1m",
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "selected": false,
+                    "text": "default",
+                    "value": "default"
+                },
+                "hide": 0,
+                "includeAll": false,
+                "multi": false,
+                "name": "datasource",
+                "options": [],
+                "query": "prometheus",
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "type": "datasource"
+            },
+            {
+                "allValue": ".+",
+                "current": {
+                    "selected": false,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${datasource}"
+                },
+                "definition": "label_values(probe_success, job)",
+                "hide": 0,
+                "includeAll": true,
+                "label": "Job",
+                "multi": false,
+                "name": "job",
+                "options": [],
+                "query": "label_values(probe_success, job)",
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 2,
+                "tagValuesQuery": "",
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": false
+            },
+            {
+                "allValue": ".+",
+                "current": {
+                    "selected": false,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "${datasource}"
+                },
+                "definition": "label_values(probe_success{job=~\"$job\"}, instance)",
+                "hide": 0,
+                "includeAll": true,
+                "label": "Instance",
+                "multi": false,
+                "name": "instance",
+                "options": [],
+                "query": "label_values(probe_success{job=~\"$job\"}, instance)",
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 2,
+                "tagValuesQuery": "",
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": false
+            }
+        ]
+    },
+    "time": {
+        "from": "now-30m",
+        "to": "now"
+    },
+    "timeRangeUpdatedDuringEditOrView": false,
+    "timepicker": {},
+    "timezone": "",
+    "title": "Docker Swarm Services Endpoints",
+    "uid": "swarmlibs-dockerswarm-services-endpoints",
+    "version": 1,
+    "weekStart": ""
+}

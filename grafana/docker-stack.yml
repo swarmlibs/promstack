@@ -43,10 +43,30 @@ services:
         source: grafana-data
         target: /var/lib/grafana
       - type: volume
+        source: grafana-provisioning-dashboard
+        target: /grafana/dashboards
+      - type: volume
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
 
-  grafana-config-provider:
+  grafana-provisioning-dashboard:
+    image: swarmlibs/prometheus-config-provider:main
+    command:
+      - --output-ext=json
+      - --output-dir=/grafana-provisioning-dashboard.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
+    deploy: *x-deploy
+    logging: *x-default-logging
+    volumes:
+      - type: volume
+        source: grafana-provisioning-dashboard
+        target: /grafana-provisioning-dashboard.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+
+  grafana-provisioning-datasources:
     image: swarmlibs/prometheus-config-provider:main
     command:
       - --output-dir=/grafana-provisioning-datasources.d
@@ -64,6 +84,7 @@ services:
 
 volumes:
   grafana-data:
+  grafana-provisioning-dashboard:
   grafana-provisioning-datasources:
 
 networks:
@@ -75,3 +96,17 @@ networks:
   dockerswarm_ingress:
     name: dockerswarm_ingress
     external: true
+
+configs:
+  dockerswarm-nodes-dashboard-v1:
+    file: ./dashboards/dockerswarm-nodes.json
+    labels:
+      - io.grafana.provisioning.dashboard=true
+  dockerswarm-services-endpoints-v1:
+    file: ./dashboards/dockerswarm-services-endpoints.json
+    labels:
+      - io.grafana.provisioning.dashboard=true
+  dockerswarm-services-v1:
+    file: ./dashboards/dockerswarm-services.json
+    labels:
+      - io.grafana.provisioning.dashboard=true
