@@ -6,6 +6,14 @@ x-default-logging: &x-default-logging
     max-file: "5"
   driver: json-file
 
+x-deploy: &x-deploy
+  replicas: 1
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.role == manager
+      - node.labels.io.swarmlibs.promstack == true
+
 services:
 
   # ====================================================
@@ -14,9 +22,9 @@ services:
   # ====================================================
 
   grafana:
-    image: swarmlibs/grafana:main
+    image: swarmlibs/grafana:local
     deploy:
-      replicas: 1
+      <<: *x-deploy
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "grafana"
@@ -31,10 +39,32 @@ services:
       prometheus:
       dockerswarm_ingress:
     volumes:
-      - grafana-data:/var/lib/grafana
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+      - type: volume
+        source: grafana-provisioning-datasources
+        target: /etc/grafana/provisioning/datasources
+
+  grafana-config-provider:
+    image: swarmlibs/prometheus-config-provider:main
+    command:
+      - --output-dir=/grafana-provisioning-datasources.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
+    deploy: *x-deploy
+    logging: *x-default-logging
+    volumes:
+      - type: volume
+        source: grafana-provisioning-datasources
+        target: /grafana-provisioning-datasources.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
 
 volumes:
   grafana-data:
+  grafana-provisioning-datasources:
 
 networks:
   grafana:
@@ -45,3 +75,9 @@ networks:
   dockerswarm_ingress:
     name: dockerswarm_ingress
     external: true
+
+configs:
+  prometheus-datasource-v1:
+    file: ./configs/prometheus.yml
+    labels:
+      - "io.grafana.provisioning.datasource=true"
