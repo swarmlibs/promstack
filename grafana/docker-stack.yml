@@ -75,9 +75,3 @@ networks:
   dockerswarm_ingress:
     name: dockerswarm_ingress
     external: true
-
-configs:
-  prometheus-datasource-v1:
-    file: ./configs/prometheus.yml
-    labels:
-      - "io.grafana.provisioning.datasource=true"
