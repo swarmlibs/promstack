@@ -53,9 +53,9 @@ services:
     networks:
       prometheus_internal:
       prometheus:
+      prometheus_gwnetwork:
         aliases:
           - prometheus.svc.cluster.local
-      prometheus_gwnetwork:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
