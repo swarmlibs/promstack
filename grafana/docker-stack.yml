@@ -7,7 +7,7 @@ x-default-logging: &x-default-logging
   driver: json-file
 
 x-deploy: &x-deploy
-  replicas: 1
+  mode: global
   placement:
     max_replicas_per_node: 1
     constraints:
@@ -22,7 +22,7 @@ services:
   # ====================================================
 
   grafana:
-    image: swarmlibs/grafana:main
+    image: swarmlibs/grafana:local
     deploy:
       <<: *x-deploy
       labels:
@@ -33,9 +33,11 @@ services:
     ports:
       - published: 3000
         target: 3000
-    hostname: grafana-{{.Task.Slot}}.svc.cluster.local
+    hostname: replica-{{.Task.Slot}}.grafana.svc.cluster.local
     networks:
       grafana:
+        aliases:
+          - grafana.svc.cluster.local
       prometheus:
       dockerswarm_ingress:
     volumes:
@@ -51,6 +53,27 @@ services:
     depends_on:
       - grafana-dashboard-provider
       - grafana-datasource-provider
+
+  grafana-provisioning-config-reloader:
+    image: swarmlibs/grafana-provisioning-config-reloader:main
+    environment:
+      - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.svc.cluster.local
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GRAFANA_PROVISIONING_CONFIG_RELOADER_NODE_ID={{.Task.Slot}}
+    deploy: *x-deploy
+    logging: *x-default-logging
+    networks:
+      grafana:
+    volumes:
+      - type: volume
+        source: grafana-provisioning-config-reloader
+        target: /data
+      - type: volume
+        source: grafana-provisioning-datasources
+        target: /etc/grafana/provisioning/datasources
+        read_only: true
+    depends_on:
+      - grafana
 
   grafana-dashboard-provider:
     image: swarmlibs/prometheus-config-provider:main
@@ -89,6 +112,7 @@ volumes:
   grafana-data:
   grafana-provisioning-dashboard:
   grafana-provisioning-datasources:
+  grafana-provisioning-config-reloader:
 
 networks:
   grafana:
