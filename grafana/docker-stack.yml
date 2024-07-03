@@ -38,7 +38,7 @@ services:
       grafana:
         aliases:
           - grafana.svc.cluster.local
-      prometheus:
+      prometheus_gwnetwork:
     volumes:
       - type: volume
         source: grafana-data
@@ -142,8 +142,8 @@ volumes:
 networks:
   grafana:
     # Internal network for Grafana services
-  prometheus:
-    name: prometheus
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
     external: true
 
 configs:
