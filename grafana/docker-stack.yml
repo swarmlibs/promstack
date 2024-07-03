@@ -22,7 +22,7 @@ services:
   # ====================================================
 
   grafana:
-    image: swarmlibs/grafana:local
+    image: swarmlibs/grafana:main
     deploy:
       <<: *x-deploy
       labels:
