@@ -73,6 +73,9 @@ services:
         source: grafana-provisioning-config-reloader
         target: /data
       - type: volume
+        source: grafana-provisioning-dashboards
+        target: /etc/grafana/provisioning/dashboards
+      - type: volume
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
         read_only: true
