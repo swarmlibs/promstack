@@ -54,8 +54,10 @@ cd promstack
 Create user-defined networks:
 
 ```sh
-docker network create --scope=swarm --driver=overlay --attachable prometheus
 docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork
+docker network create --scope=swarm --driver=overlay --attachable prometheus
+
+# This network is used by Blackbox exporter to perform HTTP and HTTPS probes
 docker network create --scope=swarm --driver=overlay --attachable dockerswarm_ingress
 ```
 
