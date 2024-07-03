@@ -45,7 +45,7 @@ services:
         source: grafana-data
         target: /var/lib/grafana
       - type: volume
-        source: grafana-provisioning-dashboard
+        source: grafana-dashboards
         target: /grafana/dashboards
       - type: volume
         source: grafana-provisioning-datasources
@@ -54,6 +54,7 @@ services:
       - grafana-dashboard-provider
       - grafana-datasource-provider
 
+  # Grafana provisioning config reloader
   grafana-provisioning-config-reloader:
     image: swarmlibs/grafana-provisioning-config-reloader:main
     environment:
@@ -75,23 +76,25 @@ services:
     depends_on:
       - grafana
 
+  # Grafana dashboards provider
   grafana-dashboard-provider:
     image: swarmlibs/prometheus-config-provider:main
     command:
       - --output-ext=json
-      - --output-dir=/grafana-dashboard.d
+      - --output-dir=/grafana-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.dashboard
     deploy: *x-deploy
     logging: *x-default-logging
     volumes:
       - type: volume
-        source: grafana-dashboard
-        target: /grafana-dashboard.d
+        source: grafana-dashboards
+        target: /grafana-dashboards.d
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
 
+  # Grafana provisioning config for datasources and dashboards
   grafana-provisioning-datasource-provider:
     image: swarmlibs/prometheus-config-provider:main
     command:
@@ -107,10 +110,26 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
+  grafana-provisioning-dashboard-provider:
+    image: swarmlibs/prometheus-config-provider:main
+    command:
+      - --output-dir=/grafana-provisioning-dashboards.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
+    deploy: *x-deploy
+    logging: *x-default-logging
+    volumes:
+      - type: volume
+        source: grafana-provisioning-dashboards
+        target: /grafana-provisioning-dashboards.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
 
 volumes:
   grafana-data:
-  grafana-dashboard:
+  grafana-dashboards:
+  grafana-provisioning-dashboards:
   grafana-provisioning-datasources:
   grafana-provisioning-config-reloader:
 
