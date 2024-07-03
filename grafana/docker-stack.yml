@@ -55,8 +55,8 @@ services:
         target: /etc/grafana/provisioning/datasources
     depends_on:
       - grafana-dashboard-provider
-      - grafana-provisioning-datasource-provider
       - grafana-provisioning-dashboard-provider
+      - grafana-provisioning-datasource-provider
 
   # Grafana provisioning config reloader
   grafana-provisioning-config-reloader:
@@ -102,21 +102,6 @@ services:
         read_only: true
 
   # Grafana provisioning config for datasources and dashboards
-  grafana-provisioning-datasource-provider:
-    image: swarmlibs/prometheus-config-provider:main
-    command:
-      - --output-dir=/grafana-provisioning-datasources.d
-      - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
-    deploy: *x-deploy
-    logging: *x-default-logging
-    volumes:
-      - type: volume
-        source: grafana-provisioning-datasources
-        target: /grafana-provisioning-datasources.d
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
   grafana-provisioning-dashboard-provider:
     image: swarmlibs/prometheus-config-provider:main
     command:
@@ -128,6 +113,21 @@ services:
       - type: volume
         source: grafana-provisioning-dashboards
         target: /grafana-provisioning-dashboards.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+  grafana-provisioning-datasource-provider:
+    image: swarmlibs/prometheus-config-provider:main
+    command:
+      - --output-dir=/grafana-provisioning-datasources.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
+    deploy: *x-deploy
+    logging: *x-default-logging
+    volumes:
+      - type: volume
+        source: grafana-provisioning-datasources
+        target: /grafana-provisioning-datasources.d
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
