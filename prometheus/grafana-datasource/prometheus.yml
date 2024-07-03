@@ -5,7 +5,7 @@ datasources:
     type: prometheus
     access: proxy
     orgId: 1
-    url: http://prometheus:9090
+    url: http://prometheus.svc.cluster.local:9090
     version: 1
     isDefault: true
     editable: true
