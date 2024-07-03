@@ -56,6 +56,7 @@ Create user-defined networks:
 ```sh
 docker network create --scope=swarm --driver=overlay --attachable prometheus
 docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork
+docker network create --scope=swarm --driver=overlay --attachable dockerswarm_ingress
 ```
 
 * The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
