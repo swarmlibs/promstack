@@ -55,7 +55,8 @@ services:
         target: /etc/grafana/provisioning/datasources
     depends_on:
       - grafana-dashboard-provider
-      - grafana-datasource-provider
+      - grafana-provisioning-datasource-provider
+      - grafana-provisioning-dashboard-provider
 
   # Grafana provisioning config reloader
   grafana-provisioning-config-reloader:
