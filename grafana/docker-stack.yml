@@ -48,6 +48,9 @@ services:
       - type: volume
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
+    depends_on:
+      - grafana-dashboard-provider
+      - grafana-datasource-provider
 
   grafana-dashboard-provider:
     image: swarmlibs/prometheus-config-provider:main
