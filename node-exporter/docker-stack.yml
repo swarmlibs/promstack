@@ -36,6 +36,8 @@ services:
     networks:
       prometheus_gwnetwork:
     hostname: node-exporter.{{.Task.Slot}}.cluster.local
+    configs:
+      - prometheus-scrape-config
     volumes:
       - type: bind
         source: /
@@ -44,6 +46,7 @@ services:
 
 configs:
   prometheus-scrape-config:
+    name: prometheus-scrape-config-node-exporter-v1
     file: ./prometheus/dockerswarm-nodes-node-exporter.yml
     labels:
       - "io.prometheus.scrape_config=true"

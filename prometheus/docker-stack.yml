@@ -58,6 +58,8 @@ services:
           - prometheus.svc.cluster.local
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    configs:
+      - grafana-provisioning-datasource
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -161,6 +163,7 @@ networks:
 
 configs:
   grafana-provisioning-datasource:
+    name: gf-provisioning-datasource-prometheus-v1
     file: ./grafana/prometheus.yml
     labels:
       - "io.grafana.provisioning.datasource=true"

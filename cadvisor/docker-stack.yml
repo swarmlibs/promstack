@@ -37,6 +37,8 @@ services:
     networks:
       prometheus_gwnetwork:
     hostname: cadvisor.{{.Task.Slot}}.cluster.local
+    configs:
+      - prometheus-scrape-config
     volumes:
       - type: bind
         source: /
@@ -71,6 +73,7 @@ services:
 
 configs:
   prometheus-scrape-config:
+    name: prometheus-scrape-config-cadvisor-v1
     file: ./prometheus/dockerswarm-nodes-cadvisor.yml
     labels:
       - "io.prometheus.scrape_config=true"

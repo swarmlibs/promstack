@@ -72,6 +72,14 @@ services:
     logging: *x-default-logging
     networks:
       grafana:
+    configs:
+      - provisioning-dashboards
+      - dashboard-grafana-metrics
+      - dashboard-prometheus-stats
+      - dashboard-prometheus-stats-v2
+      - dashboard-dockerswarm-nodes-dashboard
+      - dashboard-dockerswarm-services-endpoints
+      - dashboard-dockerswarm-services
     volumes:
       - type: volume
         source: grafana-provisioning-config-reloader
@@ -153,6 +161,7 @@ networks:
 configs:
   # Grafana dashboards provisioning config
   provisioning-dashboards:
+    name: gf-provisioning-dashboards-v1
     file: ./provisioning/dashboards/grafana-dashboards.yml
     labels: [ "io.grafana.provisioning.dashboard=true" ]
   # Grafana datasources provisioning config
@@ -160,22 +169,28 @@ configs:
 
   # Grafana and Prometheus specific dashboards
   dashboard-grafana-metrics:
+    name: gf-dashboard-grafana-metrics-v1
     file: ./dashboards/grafana-metrics.json
     labels: [ "io.grafana.dashboard=true" ]
   dashboard-prometheus-stats:
+    name: gf-dashboard-prometheus-stats-v1
     file: ./dashboards/prometheus-stats.json
     labels: [ "io.grafana.dashboard=true" ]
   dashboard-prometheus-stats-v2:
+    name: gf-dashboard-prometheus-stats-v2-v1
     file: ./dashboards/prometheus-2-0-stats.json
     labels: [ "io.grafana.dashboard=true" ]
 
   # Docker Swarm specific dashboards
   dashboard-dockerswarm-nodes-dashboard:
+    name: gf-dashboard-dockerswarm-nodes-dashboard-v1
     file: ./dashboards/dockerswarm-nodes.json
     labels: [ "io.grafana.dashboard=true" ]
   dashboard-dockerswarm-services-endpoints:
+    name: gf-dashboard-dockerswarm-services-endpoints-v1
     file: ./dashboards/dockerswarm-services-endpoints.json
     labels: [ "io.grafana.dashboard=true" ]
   dashboard-dockerswarm-services:
+    name: gf-dashboard-dockerswarm-services-v1
     file: ./dashboards/dockerswarm-services.json
     labels: [ "io.grafana.dashboard=true" ]
