@@ -14,5 +14,4 @@ datasources:
     url: http://prometheus.svc.cluster.local:9090
     version: 1
     isDefault: true
-    editable: true
-    readOnly: false
+    editable: false
