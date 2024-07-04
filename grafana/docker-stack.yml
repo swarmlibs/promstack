@@ -64,7 +64,10 @@ services:
       - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.svc.cluster.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GRAFANA_PROVISIONING_CONFIG_RELOADER_NODE_ID={{.Task.Slot}}
-    deploy: *x-deploy
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
     logging: *x-default-logging
     networks:
       grafana:
