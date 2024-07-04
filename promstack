@@ -88,6 +88,7 @@ function promstack_deploy() {
     echo "==> Starting deployment task..."
     echo ""
 
+    promstack_network_create dockerswarm_ingress
     promstack_network_create prometheus
     promstack_network_create prometheus_gwnetwork
 
@@ -124,6 +125,7 @@ function promstack_remove() {
     echo ""
     promstack_network_remove prometheus_gwnetwork
     promstack_network_remove prometheus
+    promstack_network_remove dockerswarm_ingress
     
     echo "-----------------------------------------------"
     echo "You can monitor the removal process by running:"
