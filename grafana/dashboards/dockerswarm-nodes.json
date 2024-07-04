@@ -19,6 +19,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
+    "id": 7,
     "links": [],
     "panels": [
         {
@@ -71,6 +72,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -82,7 +84,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -150,6 +152,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -161,7 +164,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -229,6 +232,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -240,7 +244,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -314,6 +318,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -325,7 +330,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -644,6 +649,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -655,7 +661,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -727,6 +733,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -738,7 +745,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -806,6 +813,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -817,7 +825,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -889,6 +897,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -900,7 +909,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -972,6 +981,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -983,7 +993,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -1051,6 +1061,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -1062,7 +1073,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -1136,6 +1147,7 @@
                 "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -1147,7 +1159,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -1952,6 +1964,7 @@
                 "graphMode": "area",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "mean"
@@ -1963,7 +1976,7 @@
                 "textMode": "auto",
                 "wideLayout": true
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -2179,7 +2192,7 @@
                     }
                 ]
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "targets": [
                 {
                     "datasource": {
@@ -2238,16 +2251,14 @@
     ],
     "refresh": "10s",
     "schemaVersion": 39,
-    "tags": [
-        "swarmprom"
-    ],
+    "tags": [],
     "templating": {
         "list": [
             {
                 "current": {
                     "selected": false,
-                    "text": "Prometheus",
-                    "value": "PBFA97CFB590B2093"
+                    "text": "default",
+                    "value": "default"
                 },
                 "hide": 0,
                 "includeAll": false,
@@ -2255,6 +2266,7 @@
                 "name": "datasource",
                 "options": [],
                 "query": "prometheus",
+                "queryValue": "",
                 "refresh": 1,
                 "regex": "",
                 "skipUrlSync": false,
@@ -2291,7 +2303,6 @@
         "from": "now-1h",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {
         "refresh_intervals": [
             "5s",
@@ -2319,7 +2330,7 @@
     },
     "timezone": "",
     "title": "Docker Swarm Nodes",
-    "uid": "swarmlibs-dockerswarm-nodes",
-    "version": 1,
+    "uid": "docker-swarm-nodes",
+    "version": 2,
     "weekStart": ""
 }

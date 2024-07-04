@@ -1,5 +1,9 @@
 apiVersion: 1
 
+deleteDatasources:
+  - name: Prometheus (Promstack)
+    orgId: 1
+
 datasources:
   - name: Prometheus (Promstack)
     type: prometheus
