@@ -4,6 +4,8 @@ deleteDatasources:
   - name: Prometheus (Promstack)
     orgId: 1
 
+prune: true
+
 datasources:
   - name: Prometheus (Promstack)
     type: prometheus
