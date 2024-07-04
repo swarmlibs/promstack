@@ -45,7 +45,7 @@ services:
         target: /var/lib/grafana
       - type: volume
         source: grafana-dashboards
-        target: /grafana/dashboards
+        target: /etc/grafana/dashboards
       - type: volume
         source: grafana-provisioning-dashboards
         target: /etc/grafana/provisioning/dashboards
