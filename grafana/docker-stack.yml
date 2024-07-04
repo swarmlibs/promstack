@@ -61,9 +61,8 @@ services:
   grafana-provisioning-config-reloader:
     image: swarmlibs/grafana-provisioning-config-reloader:main
     environment:
-      - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.svc.cluster.local
+      - GF_SERVER_DOMAIN=grafana.svc.cluster.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      - GRAFANA_PROVISIONING_CONFIG_RELOADER_NODE_ID={{.Task.Slot}}
     deploy:
       replicas: 1
       placement:
