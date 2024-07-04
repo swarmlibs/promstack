@@ -152,30 +152,30 @@ networks:
 
 configs:
   # Grafana dashboards provisioning config
-  provisioning-config-dashboards-v1:
+  provisioning-dashboards:
     file: ./provisioning/dashboards/grafana-dashboards.yml
     labels: [ "io.grafana.provisioning.dashboard=true" ]
   # Grafana datasources provisioning config
   # -
 
   # Grafana and Prometheus specific dashboards
-  grafana-metrics-v1:
+  dashboard-grafana-metrics:
     file: ./dashboards/grafana-metrics.json
     labels: [ "io.grafana.dashboard=true" ]
-  prometheus-stats-v1:
+  dashboard-prometheus-stats:
     file: ./dashboards/prometheus-stats.json
     labels: [ "io.grafana.dashboard=true" ]
-  prometheus-stats-v2:
+  dashboard-prometheus-stats-v2:
     file: ./dashboards/prometheus-2-0-stats.json
     labels: [ "io.grafana.dashboard=true" ]
 
   # Docker Swarm specific dashboards
-  dockerswarm-nodes-dashboard-v1:
+  dashboard-dockerswarm-nodes-dashboard:
     file: ./dashboards/dockerswarm-nodes.json
     labels: [ "io.grafana.dashboard=true" ]
-  dockerswarm-services-endpoints-v1:
+  dashboard-dockerswarm-services-endpoints:
     file: ./dashboards/dockerswarm-services-endpoints.json
     labels: [ "io.grafana.dashboard=true" ]
-  dockerswarm-services-v1:
+  dashboard-dockerswarm-services:
     file: ./dashboards/dockerswarm-services.json
     labels: [ "io.grafana.dashboard=true" ]

@@ -160,7 +160,7 @@ networks:
     external: true
 
 configs:
-  grafana-datasource-v1:
-    file: ./grafana-datasource/prometheus.yml
+  grafana-provisioning-datasource:
+    file: ./grafana/prometheus.yml
     labels:
       - "io.grafana.provisioning.datasource=true"

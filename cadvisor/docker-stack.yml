@@ -70,8 +70,8 @@ services:
       #   read_only: true
 
 configs:
-  prometheus-scrape-config-v1:
-    file: ./configs/dockerswarm-nodes-cadvisor.yml
+  prometheus-scrape-config:
+    file: ./prometheus/dockerswarm-nodes-cadvisor.yml
     labels:
       - "io.prometheus.scrape_config=true"
 
