@@ -41,9 +41,10 @@ services:
         target: 3000
     hostname: replica-{{.Task.Slot}}.grafana.local
     networks:
-      grafana:
+      public:
         aliases:
           - grafana.svc.cluster.local
+      grafana:
       prometheus_gwnetwork:
     volumes:
       - type: volume
@@ -169,11 +170,14 @@ volumes:
   grafana-provisioning-config-reloader:
 
 networks:
-  grafana:
-    # Internal network for Grafana services
+  public:
+    name: public
+    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
+  grafana:
+    # Internal network for Grafana services
 
 configs:
   # Grafana dashboards provisioning config
