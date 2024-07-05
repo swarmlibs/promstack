@@ -194,7 +194,7 @@ configs:
     file: ./dashboards/prometheus-stats.json
     labels: [ "io.grafana.dashboard=true" ]
   gf-dashboard-prometheus-stats-v2:
-    name: gf-dashboard-prometheus-stats-v2-v1
+    name: gf-dashboard-prometheus-stats-v2
     file: ./dashboards/prometheus-2-0-stats.json
     labels: [ "io.grafana.dashboard=true" ]
 
