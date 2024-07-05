@@ -68,6 +68,15 @@ docker network create --scope=swarm --driver=overlay --attachable prometheus_gwn
 * The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
 * The `prometheus_gwnetwork` network is used for the internal communication between the Prometheus Server, exporters and other agents.
 
+The `prometheu` and `grafana` services are deployed on nodes that match the following labels:
+
+```sh
+docker node update --label-add "io.promstack.prometheus=true" <node-id>
+docker node update --label-add "io.promstack.grafana=true" <node-id>
+```
+
+See [Control service placement](https://docs.docker.com/engine/swarm/services/#control-service-placement) for more information.
+
 ### Deploy `promstack`
 
 ```sh
