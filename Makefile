@@ -1,3 +1,10 @@
+# if darwin == true, then use the cadvisor_docker_stack_darwin.yml file
+macos := false
+cadvisor_docker_stack_file := cadvisor/docker-stack.yml
+ifeq ($(macos),true)
+	cadvisor_docker_stack_file := cadvisor/docker-stack-macos.yml
+endif
+
 make: docker-stack.yml
 	@echo "Usage: make [deploy|remove|clean]"
 	@echo "  deploy: Deploy the stack"
@@ -7,7 +14,7 @@ make: docker-stack.yml
 docker-stack.yml:
 	@mkdir -p _tmp
 	docker stack config -c blackbox-exporter/docker-stack.yml > _tmp/blackbox-exporter.yml
-	docker stack config -c cadvisor/docker-stack.yml > _tmp/cadvisor.yml
+	docker stack config -c $(cadvisor_docker_stack_file) > _tmp/cadvisor.yml
 	docker stack config -c grafana/docker-stack.yml > _tmp/grafana.yml
 	docker stack config -c node-exporter/docker-stack.yml > _tmp/node-exporter.yml
 	docker stack config -c prometheus/docker-stack.yml > _tmp/prometheus.yml
