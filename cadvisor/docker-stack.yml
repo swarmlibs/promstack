@@ -63,14 +63,14 @@ services:
         read_only: true
       # If you are running Docker Desktop on macOS,
       # You'll need to comment out the following bind mounts
-      - type: bind
-        source: /dev/disk
-        target: /dev/disk
-        read_only: true
-      - type: bind
-        source: /dev/kmsg
-        target: /dev/kmsg
-        read_only: true
+      # - type: bind
+      #   source: /dev/disk
+      #   target: /dev/disk
+      #   read_only: true
+      # - type: bind
+      #   source: /dev/kmsg
+      #   target: /dev/kmsg
+      #   read_only: true
 
 configs:
   # Prometheus scrape config
@@ -79,12 +79,6 @@ configs:
     file: ./prometheus/dockerswarm-nodes-cadvisor.yml
     labels:
       - "io.prometheus.scrape_config=true"
-
-  # Grafana datasource provisioning
-  gf-dashboard-cadvisor:
-    name: gf-dashboard-cadvisor-v1
-    file: ./grafana/grafana-dashboard-container-metrics.json
-    labels: [ "io.grafana.dashboard=true" ]
 
 networks:
   prometheus_gwnetwork:

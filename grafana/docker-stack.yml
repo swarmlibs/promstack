@@ -188,7 +188,7 @@ configs:
   # Grafana datasources provisioning config
   # -
 
-  # Grafana and Prometheus specific dashboards
+  # Grafana & Prometheus dashboards
   gf-dashboard-grafana-metrics:
     name: gf-dashboard-grafana-metrics-v1
     file: ./dashboards/grafana-metrics.json
@@ -214,4 +214,15 @@ configs:
   gf-dashboard-dockerswarm-services:
     name: gf-dashboard-dockerswarm-services-v1
     file: ./dashboards/dockerswarm-services.json
+    labels: [ "io.grafana.dashboard=true" ]
+
+  # cAdvisor
+  gf-dashboard-cadvisor:
+    name: gf-dashboard-cadvisor-v1
+    file: ./dashboards/cadvisor.json
+    labels: [ "io.grafana.dashboard=true" ]
+  # Node Exporter
+  gf-dashboard-node-exporter:
+    name: gf-dashboard-node-exporter-v1
+    file: ./dashboards/node-exporter.json
     labels: [ "io.grafana.dashboard=true" ]

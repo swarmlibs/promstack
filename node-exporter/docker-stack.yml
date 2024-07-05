@@ -53,13 +53,6 @@ configs:
     labels:
       - "io.prometheus.scrape_config=true"
 
-  # Grafana datasource provisioning
-  gf-dashboard-node-exporter:
-    name: gf-dashboard-node-exporter-v1
-    file: ./grafana/1860-node-exporter-full.json
-    labels: [ "io.grafana.dashboard=true" ]
-
-
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
