@@ -1,0 +1,520 @@
+version: "3.12"
+services:
+  blackbox-exporter:
+    deploy:
+      replicas: 1
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: blackbox-exporter
+        io.prometheus.role: blackbox-exporter
+        io.prometheus.scrape_port: "9115"
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+    hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
+    image: prom/blackbox-exporter:latest
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus: null
+      prometheus_gwnetwork:
+        aliases:
+        - blackbox-exporter.svc.cluster.local
+      prometheus_internal: null
+      public: null
+  cadvisor:
+    command:
+    - -docker_only
+    configs:
+    - source: prometheus-cadvisor
+    - source: gf-dashboard-cadvisor
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: cadvisor
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+    hostname: replica-{{.Task.Slot}}.cadvisor.local
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_gwnetwork: null
+    ports:
+    - mode: host
+      target: 8080
+      published: 8080
+    volumes:
+    - type: bind
+      source: /
+      target: /rootfs
+      read_only: true
+    - type: bind
+      source: /var/run
+      target: /var/run
+      read_only: true
+    - type: bind
+      source: /sys
+      target: /sys
+      read_only: true
+    - type: bind
+      source: /var/lib/docker
+      target: /var/lib/docker
+      read_only: true
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    - type: bind
+      source: /dev/disk
+      target: /dev/disk
+      read_only: true
+    - type: bind
+      source: /dev/kmsg
+      target: /dev/kmsg
+      read_only: true
+  grafana:
+    depends_on:
+    - grafana-dashboard-provider
+    - grafana-provisioning-dashboard-provider
+    - grafana-provisioning-datasource-provider
+    deploy:
+      replicas: 1
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: grafana
+        io.prometheus.scrape_port: "3000"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.grafana == true
+        max_replicas_per_node: 1
+    hostname: replica-{{.Task.Slot}}.grafana.local
+    image: swarmlibs/grafana:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      grafana: null
+      prometheus_gwnetwork: null
+      public:
+        aliases:
+        - grafana.svc.cluster.local
+    ports:
+    - target: 3000
+      published: 3000
+    volumes:
+    - type: volume
+      source: grafana-data
+      target: /var/lib/grafana
+    - type: volume
+      source: grafana-dashboards
+      target: /etc/grafana/dashboards
+    - type: volume
+      source: grafana-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards
+    - type: volume
+      source: grafana-provisioning-datasources
+      target: /etc/grafana/provisioning/datasources
+  grafana-dashboard-provider:
+    command:
+    - --output-ext=json
+    - --output-dir=/grafana-dashboards.d
+    - --prometheus-scrape-config-label=io.grafana.dashboard
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.grafana == true
+        max_replicas_per_node: 1
+    image: swarmlibs/prometheus-config-provider:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: grafana-dashboards
+      target: /grafana-dashboards.d
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+  grafana-provisioning-config-reloader:
+    configs:
+    - source: gf-provisioning-dashboards
+    - source: gf-provisioning-datasource-prometheus
+    - source: gf-dashboard-grafana-metrics
+    - source: gf-dashboard-prometheus-stats
+    - source: gf-dashboard-prometheus-stats-v2
+    - source: gf-dashboard-dockerswarm-nodes-dashboard
+    - source: gf-dashboard-dockerswarm-services-endpoints
+    - source: gf-dashboard-dockerswarm-services
+    depends_on:
+    - grafana
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.grafana == true
+        max_replicas_per_node: 1
+    environment:
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
+    image: swarmlibs/grafana-provisioning-config-reloader:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      grafana: null
+    volumes:
+    - type: volume
+      source: grafana-provisioning-config-reloader
+      target: /data
+    - type: volume
+      source: grafana-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards
+    - type: volume
+      source: grafana-provisioning-datasources
+      target: /etc/grafana/provisioning/datasources
+      read_only: true
+  grafana-provisioning-dashboard-provider:
+    command:
+    - --output-dir=/grafana-provisioning-dashboards.d
+    - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.grafana == true
+        max_replicas_per_node: 1
+    image: swarmlibs/prometheus-config-provider:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: grafana-provisioning-dashboards
+      target: /grafana-provisioning-dashboards.d
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+  grafana-provisioning-datasource-provider:
+    command:
+    - --output-dir=/grafana-provisioning-datasources.d
+    - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.grafana == true
+        max_replicas_per_node: 1
+    image: swarmlibs/prometheus-config-provider:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: grafana-provisioning-datasources
+      target: /grafana-provisioning-datasources.d
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+  node-exporter:
+    configs:
+    - source: prometheus-node-exporter
+    - source: gf-dashboard-node-exporter
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: node-exporter
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+    hostname: replica-{{.Task.Slot}}.node-exporter.local
+    image: swarmlibs/node-exporter:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_gwnetwork: null
+    ports:
+    - mode: host
+      target: 9100
+      published: 9100
+    volumes:
+    - type: bind
+      source: /
+      target: /rootfs
+      read_only: true
+  prometheus:
+    depends_on:
+    - prometheus-config-reloader
+    - prometheus-config-provider
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: prometheus
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.prometheus == true
+        max_replicas_per_node: 1
+    environment:
+      DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
+      DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
+      DOCKERSWARM_SERVICE_ID: '{{.Service.ID}}'
+      DOCKERSWARM_SERVICE_NAME: '{{.Service.Name}}'
+      DOCKERSWARM_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
+      DOCKERSWARM_TASK_ID: '{{.Task.ID}}'
+      DOCKERSWARM_TASK_NAME: '{{.Task.Name}}'
+      DOCKERSWARM_TASK_SLOT: '{{.Task.Slot}}'
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    hostname: replica-{{.Task.Slot}}.prometheus.local
+    image: swarmlibs/prometheus:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus: null
+      prometheus_gwnetwork: null
+      prometheus_internal: null
+      public:
+        aliases:
+        - prometheus.svc.cluster.local
+    ports:
+    - mode: host
+      target: 9090
+      published: 9090
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    - type: volume
+      source: prometheus-data
+      target: /prometheus/data
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+  prometheus-config-provider:
+    command:
+    - --output-dir=/prometheus-configs.d
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.role: prometheus-config-provider
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.prometheus == true
+        max_replicas_per_node: 1
+    image: swarmlibs/prometheus-config-provider:main
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+  prometheus-config-reloader:
+    command:
+    - --listen-address=:8080
+    - --watched-dir=/prometheus-configs.d
+    - --reload-url=http://prometheus:9090/-/reload
+    - --runtimeinfo-url=http://prometheus:9090/api/v1/status/runtimeinfo
+    - --watch-interval=15s
+    - --reload-timeout=10s
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: prometheus-config-reloader
+        io.prometheus.role: prometheus-config-reloader
+        io.prometheus.scrape_port: "8080"
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.prometheus == true
+        max_replicas_per_node: 1
+    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_internal: null
+    volumes:
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+networks:
+  grafana: {}
+  prometheus:
+    name: prometheus
+    external: true
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
+  prometheus_internal:
+    internal: true
+  public:
+    name: public
+    external: true
+volumes:
+  grafana-dashboards: {}
+  grafana-data: {}
+  grafana-provisioning-config-reloader: {}
+  grafana-provisioning-dashboards: {}
+  grafana-provisioning-datasources: {}
+  prometheus-configs: {}
+  prometheus-data: {}
+configs:
+  gf-dashboard-cadvisor:
+    name: gf-dashboard-cadvisor-v1
+    file: grafana/dashboards/cadvisor.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-dockerswarm-nodes-dashboard:
+    name: gf-dashboard-dockerswarm-nodes-dashboard-v1
+    file: grafana/dashboards/dockerswarm-nodes.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-dockerswarm-services:
+    name: gf-dashboard-dockerswarm-services-v1
+    file: grafana/dashboards/dockerswarm-services.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-dockerswarm-services-endpoints:
+    name: gf-dashboard-dockerswarm-services-endpoints-v1
+    file: grafana/dashboards/dockerswarm-services-endpoints.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-grafana-metrics:
+    name: gf-dashboard-grafana-metrics-v1
+    file: grafana/dashboards/grafana-metrics.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-node-exporter:
+    name: gf-dashboard-node-exporter-v1
+    file: grafana/dashboards/node-exporter.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-prometheus-stats:
+    name: gf-dashboard-prometheus-stats-v1
+    file: grafana/dashboards/prometheus-stats.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-prometheus-stats-v2:
+    name: gf-dashboard-prometheus-stats-v2
+    file: grafana/dashboards/prometheus-2-0-stats.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-provisioning-dashboards:
+    name: gf-provisioning-dashboards-v1
+    file: grafana/provisioning/dashboards/grafana-dashboards.yml
+    labels:
+      io.grafana.provisioning.dashboard: "true"
+  gf-provisioning-datasource-prometheus:
+    name: gf-provisioning-datasource-prometheus-v1
+    file: grafana/provisioning/datasources/prometheus.yaml
+    labels:
+      io.grafana.provisioning.datasource: "true"
+  prometheus-cadvisor:
+    name: prometheus-cadvisor-v1
+    file: prometheus/scrape-configs/dockerswarm-nodes-cadvisor.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-node-exporter:
+    name: prometheus-node-exporter-v1
+    file: prometheus/scrape-configs/dockerswarm-nodes-node-exporter.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+x-default-logging:
+  driver: json-file
+  options:
+    max-file: "5"
+    max-size: 12m
+x-exporter-resources-constraints:
+  limits:
+    memory: 128M
+  reservations:
+    memory: 64M
