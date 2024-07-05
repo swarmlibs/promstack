@@ -38,7 +38,7 @@ services:
       prometheus_gwnetwork:
     hostname: replica-{{.Task.Slot}}.cadvisor.local
     configs:
-      - prometheus-scrape-config
+      - prometheus-scrape-config-cadvisor
     volumes:
       - type: bind
         source: /
@@ -72,7 +72,7 @@ services:
       #   read_only: true
 
 configs:
-  prometheus-scrape-config:
+  prometheus-scrape-config-cadvisor:
     name: prometheus-scrape-config-cadvisor-v1
     file: ./prometheus/dockerswarm-nodes-cadvisor.yml
     labels:

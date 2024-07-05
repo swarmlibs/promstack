@@ -37,7 +37,7 @@ services:
       prometheus_gwnetwork:
     hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     configs:
-      - prometheus-scrape-config
+      - prometheus-scrape-config-node-exporter
     volumes:
       - type: bind
         source: /
@@ -45,7 +45,7 @@ services:
         read_only: true
 
 configs:
-  prometheus-scrape-config:
+  prometheus-scrape-config-node-exporter:
     name: prometheus-scrape-config-node-exporter-v1
     file: ./prometheus/dockerswarm-nodes-node-exporter.yml
     labels:
