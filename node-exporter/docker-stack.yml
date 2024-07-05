@@ -38,6 +38,7 @@ services:
     hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     configs:
       - prometheus-node-exporter
+      - gf-dashboard-node-exporter
     volumes:
       - type: bind
         source: /
@@ -45,11 +46,19 @@ services:
         read_only: true
 
 configs:
+  # Prometheus scrape config
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
     file: ./prometheus/dockerswarm-nodes-node-exporter.yml
     labels:
       - "io.prometheus.scrape_config=true"
+
+  # Grafana datasource provisioning
+  gf-dashboard-node-exporter:
+    name: gf-dashboard-node-exporter-v1
+    file: ./grafana/1860-node-exporter-full.json
+    labels: [ "io.grafana.dashboard=true" ]
+
 
 networks:
   prometheus_gwnetwork:
