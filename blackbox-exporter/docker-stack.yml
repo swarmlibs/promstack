@@ -22,7 +22,7 @@ services:
   blackbox-exporter:
     image: prom/blackbox-exporter:latest
     deploy:
-      mode: global
+      replicas: 1
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "blackbox-exporter"
