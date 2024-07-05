@@ -20,7 +20,9 @@ docker-stack.yml:
 		-c _tmp/prometheus.yml \
 	> docker-stack.yml
 	@rm -rf _tmp
-	@cat docker-stack.yml | sed 's|$(PWD)/||g' | tee docker-stack.yml
+	@sed "s|$(PWD)/||g" docker-stack.yml > docker-stack.yml.tmp
+	@rm docker-stack.yml
+	@mv docker-stack.yml.tmp docker-stack.yml
 	
 deploy: docker-stack.yml
 	docker stack deploy -c docker-stack.yml promstack
