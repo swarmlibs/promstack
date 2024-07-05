@@ -186,7 +186,11 @@ configs:
     file: ./provisioning/dashboards/grafana-dashboards.yml
     labels: [ "io.grafana.provisioning.dashboard=true" ]
   # Grafana datasources provisioning config
-  # - ./provisioning/datasources/prometheus.yaml
+  gf-provisioning-datasource-prometheus:
+    name: gf-provisioning-datasource-prometheus-v1
+    file: ./provisioning/datasources/prometheus.yaml
+    labels:
+      - "io.grafana.provisioning.datasource=true"
 
   # Grafana & Prometheus dashboards
   gf-dashboard-grafana-metrics:
