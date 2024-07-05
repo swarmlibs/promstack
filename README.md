@@ -54,13 +54,17 @@ cd promstack
 Create user-defined networks:
 
 ```sh
-docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork
+# This ingress network is used by Blackbox exporter to perform network probes
+docker network create --scope=swarm --driver=overlay --attachable public
+
+# The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
 docker network create --scope=swarm --driver=overlay --attachable prometheus
 
-# This network is used by Blackbox exporter to perform HTTP and HTTPS probes
-docker network create --scope=swarm --driver=overlay --attachable dockerswarm_ingress
+# The `prometheus_gwnetwork` network is used for the internal communication between the Prometheus Server, exporters and other agents.
+docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork
 ```
 
+* The `public` network is used as 3rd-party ingress.
 * The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
 * The `prometheus_gwnetwork` network is used for the internal communication between the Prometheus Server, exporters and other agents.
 

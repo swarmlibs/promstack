@@ -28,7 +28,7 @@ services:
   # ====================================================
 
   prometheus:
-    image: swarmlibs/prometheus:main
+    image: swarmlibs/prometheus:local
     deploy:
       <<: *x-deploy
       labels:
@@ -51,11 +51,11 @@ services:
         mode: host
     hostname: replica-{{.Task.Slot}}.prometheus.local
     networks:
-      prometheus_internal:
-      prometheus:
-      prometheus_gwnetwork:
+      public:
         aliases:
           - prometheus.svc.cluster.local
+      prometheus:
+      prometheus_internal:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     configs:
@@ -125,19 +125,20 @@ volumes:
   prometheus-configs:
 
 networks:
-  prometheus_internal:
-    internal: true
-  prometheus_gwnetwork:
-    name: prometheus_gwnetwork
+  public: # The 3rd-party ingress network
+    name: public
     external: true
   prometheus:
     name: prometheus
     external: true
-  dockerswarm_ingress:
-    name: dockerswarm_ingress
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
     external: true
+  prometheus_internal:
+    internal: true
 
 configs:
+  # Grafana datasource provisioning
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
     file: ./grafana/prometheus.yml

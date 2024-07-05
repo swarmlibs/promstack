@@ -33,22 +33,22 @@ services:
     logging: *x-default-logging
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
     networks:
-      prometheus_internal:
-      prometheus:
+      public:
       prometheus_gwnetwork:
         aliases:
           - blackbox-exporter.svc.cluster.local
-      dockerswarm_ingress:
+      prometheus:
+      prometheus_internal:
 
 networks:
-  prometheus_internal:
-    internal: true
+  public: # The 3rd-party ingress network
+    name: public
+    external: true
   prometheus:
     name: prometheus
     external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
-  dockerswarm_ingress:
-    name: dockerswarm_ingress
-    external: true
+  prometheus_internal:
+    internal: true
