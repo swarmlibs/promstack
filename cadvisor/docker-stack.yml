@@ -72,14 +72,6 @@ services:
         target: /dev/kmsg
         read_only: true
 
-configs:
-  # Prometheus scrape config
-  prometheus-cadvisor:
-    name: prometheus-cadvisor-v1
-    file: ./prometheus/dockerswarm-nodes-cadvisor.yml
-    labels:
-      - "io.prometheus.scrape_config=true"
-
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork

@@ -45,14 +45,6 @@ services:
         target: /rootfs
         read_only: true
 
-configs:
-  # Prometheus scrape config
-  prometheus-node-exporter:
-    name: prometheus-node-exporter-v1
-    file: ./prometheus/dockerswarm-nodes-node-exporter.yml
-    labels:
-      - "io.prometheus.scrape_config=true"
-
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
