@@ -1,5 +1,8 @@
 # yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
 #
+# # Scrape config for container metrics
+# https://github.com/google/cadvisor
+# 
 scrape_configs:
 
   - job_name: 'dockerswarm/nodes/cadvisor'

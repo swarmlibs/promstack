@@ -84,6 +84,11 @@ services:
       labels:
         io.prometheus.role: "prometheus-config-provider"
     logging: *x-default-logging
+    configs:
+      - prometheus-cadvisor
+      - prometheus-node-exporter
+      - prometheus-blackbox-exporter
+      - prometheus-pushgateway
     volumes:
       - type: volume
         source: prometheus-configs
@@ -147,5 +152,17 @@ configs:
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
     file: ./scrape-configs/dockerswarm-nodes-node-exporter.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+  # Blackbox exporter
+  prometheus-blackbox-exporter:
+    name: prometheus-blackbox-exporter-v1
+    file: ./scrape-configs/blackbox-exporter.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+  # Prometheus Pushgateway
+  prometheus-pushgateway:
+    name: prometheus-pushgateway-v1
+    file: ./scrape-configs/pushgateway.yml
     labels:
       - "io.prometheus.scrape_config=true"

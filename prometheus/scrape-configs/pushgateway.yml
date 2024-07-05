@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
 #
-# Scrape config for Docker Swarm Nodes
-# https://docs.docker.com/config/daemon/prometheus/
-# 
-# The Docker Engine metrics are required to be configured in the daemon.json file for Prometheus to scrape them.
-# This configuration also includes a job to scrape the Node Exporter metrics that run on each node.
+# Scrape config for Prometheus Pushgateway
+# https://github.com/prometheus/pushgateway
+#
 scrape_configs:
-  - job_name: 'dockerswarm/nodes/node-exporter'
+  - job_name: 'pushgateway'
 
     dockerswarm_sd_configs:
       - host: unix:///var/run/docker.sock
         role: nodes
+
+    honor_labels: true
 
     relabel_configs:
       # ================================================================================
@@ -19,13 +19,13 @@ scrape_configs:
       - source_labels:
         - __meta_dockerswarm_node_id
         target_label: __address__
-        replacement: replica-$1.node-exporter.local:9100
+        replacement: replica-$1.pushgateway.local:9091
 
       # Set hostname as instance label
       - source_labels:
         - __meta_dockerswarm_node_address
         target_label: instance
-        replacement: $1:9100
+        replacement: $1:9091
 
       # ================================================================================
       # Label mapping

@@ -2,13 +2,11 @@ version: "3.12"
 services:
   blackbox-exporter:
     deploy:
-      replicas: 1
+      mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: blackbox-exporter
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.role: blackbox-exporter
-        io.prometheus.scrape_port: "9115"
       resources:
         limits:
           memory: "134217728"
@@ -31,9 +29,6 @@ services:
   cadvisor:
     command:
     - -docker_only
-    configs:
-    - source: prometheus-cadvisor
-    - source: gf-dashboard-cadvisor
     deploy:
       mode: global
       labels:
@@ -54,10 +49,6 @@ services:
         max-size: 12m
     networks:
       prometheus_gwnetwork: null
-    ports:
-    - mode: host
-      target: 8080
-      published: 8080
     volumes:
     - type: bind
       source: /
@@ -137,6 +128,13 @@ services:
     - --output-ext=json
     - --output-dir=/grafana-dashboards.d
     - --prometheus-scrape-config-label=io.grafana.dashboard
+    configs:
+    - source: gf-dashboard-grafana-metrics
+    - source: gf-dashboard-prometheus-stats
+    - source: gf-dashboard-prometheus-stats-v2
+    - source: gf-dashboard-dockerswarm-nodes-dashboard
+    - source: gf-dashboard-dockerswarm-services-endpoints
+    - source: gf-dashboard-dockerswarm-services
     deploy:
       replicas: 1
       resources:
@@ -164,15 +162,6 @@ services:
       target: /var/run/docker.sock
       read_only: true
   grafana-provisioning-config-reloader:
-    configs:
-    - source: gf-provisioning-dashboards
-    - source: gf-provisioning-datasource-prometheus
-    - source: gf-dashboard-grafana-metrics
-    - source: gf-dashboard-prometheus-stats
-    - source: gf-dashboard-prometheus-stats-v2
-    - source: gf-dashboard-dockerswarm-nodes-dashboard
-    - source: gf-dashboard-dockerswarm-services-endpoints
-    - source: gf-dashboard-dockerswarm-services
     depends_on:
     - grafana
     deploy:
@@ -213,6 +202,8 @@ services:
     command:
     - --output-dir=/grafana-provisioning-dashboards.d
     - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
+    configs:
+    - source: gf-provisioning-dashboards
     deploy:
       replicas: 1
       resources:
@@ -243,6 +234,8 @@ services:
     command:
     - --output-dir=/grafana-provisioning-datasources.d
     - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
+    configs:
+    - source: gf-provisioning-datasource-prometheus
     deploy:
       replicas: 1
       resources:
@@ -270,9 +263,6 @@ services:
       target: /var/run/docker.sock
       read_only: true
   node-exporter:
-    configs:
-    - source: prometheus-node-exporter
-    - source: gf-dashboard-node-exporter
     deploy:
       mode: global
       labels:
@@ -293,10 +283,6 @@ services:
         max-size: 12m
     networks:
       prometheus_gwnetwork: null
-    ports:
-    - mode: host
-      target: 9100
-      published: 9100
     volumes:
     - type: bind
       source: /
@@ -360,6 +346,11 @@ services:
   prometheus-config-provider:
     command:
     - --output-dir=/prometheus-configs.d
+    configs:
+    - source: prometheus-cadvisor
+    - source: prometheus-node-exporter
+    - source: prometheus-blackbox-exporter
+    - source: prometheus-pushgateway
     deploy:
       mode: global
       labels:
@@ -426,6 +417,34 @@ services:
     - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
+  pushgateway:
+    deploy:
+      replicas: 1
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: pushgateway
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
+    hostname: replica-{{.Task.Slot}}.pushgateway.local
+    image: prom/pushgateway:latest
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus: null
+      prometheus_gwnetwork:
+        aliases:
+        - pushgateway.svc.cluster.local
+      prometheus_internal: null
+      public:
+        aliases:
+        - pushgateway.svc.cluster.local
 networks:
   grafana: {}
   prometheus:
@@ -498,6 +517,11 @@ configs:
     file: grafana/provisioning/datasources/prometheus.yaml
     labels:
       io.grafana.provisioning.datasource: "true"
+  prometheus-blackbox-exporter:
+    name: prometheus-blackbox-exporter-v1
+    file: prometheus/scrape-configs/blackbox-exporter.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-cadvisor:
     name: prometheus-cadvisor-v1
     file: prometheus/scrape-configs/dockerswarm-nodes-cadvisor.yml
@@ -506,6 +530,11 @@ configs:
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
     file: prometheus/scrape-configs/dockerswarm-nodes-node-exporter.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-pushgateway:
+    name: prometheus-pushgateway-v1
+    file: prometheus/scrape-configs/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
 x-default-logging:

@@ -11,6 +11,7 @@ docker-stack.yml:
 	docker stack config -c grafana/docker-stack.yml > _tmp/grafana.yml
 	docker stack config -c node-exporter/docker-stack.yml > _tmp/node-exporter.yml
 	docker stack config -c prometheus/docker-stack.yml > _tmp/prometheus.yml
+	docker stack config -c pushgateway/docker-stack.yml > _tmp/pushgateway.yml
 	docker stack config \
 		--skip-interpolation \
 		-c _tmp/blackbox-exporter.yml \
@@ -18,6 +19,7 @@ docker-stack.yml:
 		-c _tmp/grafana.yml \
 		-c _tmp/node-exporter.yml \
 		-c _tmp/prometheus.yml \
+		-c _tmp/pushgateway.yml \
 	> docker-stack.yml
 	@rm -rf _tmp
 	@sed "s|$(PWD)/||g" docker-stack.yml > docker-stack.yml.tmp

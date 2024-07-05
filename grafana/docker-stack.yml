@@ -81,15 +81,6 @@ services:
     logging: *x-default-logging
     networks:
       grafana:
-    configs:
-      - gf-provisioning-dashboards
-      - gf-provisioning-datasource-prometheus
-      - gf-dashboard-grafana-metrics
-      - gf-dashboard-prometheus-stats
-      - gf-dashboard-prometheus-stats-v2
-      - gf-dashboard-dockerswarm-nodes-dashboard
-      - gf-dashboard-dockerswarm-services-endpoints
-      - gf-dashboard-dockerswarm-services
     volumes:
       - type: volume
         source: grafana-provisioning-config-reloader
@@ -116,6 +107,13 @@ services:
       replicas: 1
       resources: *x-exporter-resources-constraints
     logging: *x-default-logging
+    configs:
+      - gf-dashboard-grafana-metrics
+      - gf-dashboard-prometheus-stats
+      - gf-dashboard-prometheus-stats-v2
+      - gf-dashboard-dockerswarm-nodes-dashboard
+      - gf-dashboard-dockerswarm-services-endpoints
+      - gf-dashboard-dockerswarm-services
     volumes:
       - type: volume
         source: grafana-dashboards
@@ -136,6 +134,8 @@ services:
       replicas: 1
       resources: *x-exporter-resources-constraints
     logging: *x-default-logging
+    configs:
+      - gf-provisioning-dashboards
     volumes:
       - type: volume
         source: grafana-provisioning-dashboards
@@ -154,6 +154,8 @@ services:
       replicas: 1
       resources: *x-exporter-resources-constraints
     logging: *x-default-logging
+    configs:
+      - gf-provisioning-datasource-prometheus
     volumes:
       - type: volume
         source: grafana-provisioning-datasources
