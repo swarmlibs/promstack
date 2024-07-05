@@ -1,4 +1,8 @@
 make: docker-stack.yml
+	@echo "Usage: make [deploy|remove|clean]"
+	@echo "  deploy: Deploy the stack"
+	@echo "  remove: Remove the stack"
+	@echo "  clean: Clean up temporary files"
 
 docker-stack.yml:
 	@mkdir -p _tmp
