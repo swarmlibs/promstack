@@ -1,18 +1,24 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
+x-deploy: &x-deploy
+  replicas: 1
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.role == manager
+      - node.labels.io.promstack.grafana == true
+
+x-exporter-resources-constraints: &x-exporter-resources-constraints
+  limits:
+    memory: 128M
+  reservations:
+    memory: 64M
+
 x-default-logging: &x-default-logging
   options:
     max-size: "12m"
     max-file: "5"
   driver: json-file
-
-x-deploy: &x-deploy
-  mode: global
-  placement:
-    max_replicas_per_node: 1
-    constraints:
-      - node.role == manager
-      - node.labels.io.swarmlibs.promstack == true
 
 services:
 
@@ -33,7 +39,7 @@ services:
     ports:
       - published: 3000
         target: 3000
-    hostname: replica-{{.Task.Slot}}.grafana.svc.cluster.local
+    hostname: replica-{{.Task.Slot}}.grafana.local
     networks:
       grafana:
         aliases:
@@ -57,18 +63,20 @@ services:
       - grafana-provisioning-dashboard-provider
       - grafana-provisioning-datasource-provider
 
-  # Grafana provisioning config reloader
+  # ====================================================
+  # Grafana provisioning config provider & reloader
+  # Only 1 replica is needed for each
+  # ====================================================
+  
   grafana-provisioning-config-reloader:
     image: swarmlibs/grafana-provisioning-config-reloader:main
     environment:
-      - GF_SERVER_DOMAIN=grafana.svc.cluster.local
+      - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     deploy:
+      <<: *x-deploy
       replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-          - node.labels.io.swarmlibs.promstack == true
+      resources: *x-exporter-resources-constraints
     logging: *x-default-logging
     networks:
       grafana:
@@ -101,7 +109,10 @@ services:
       - --output-ext=json
       - --output-dir=/grafana-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.dashboard
-    deploy: *x-deploy
+    deploy:
+      <<: *x-deploy
+      replicas: 1
+      resources: *x-exporter-resources-constraints
     logging: *x-default-logging
     volumes:
       - type: volume
@@ -118,7 +129,10 @@ services:
     command:
       - --output-dir=/grafana-provisioning-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
-    deploy: *x-deploy
+    deploy:
+      <<: *x-deploy
+      replicas: 1
+      resources: *x-exporter-resources-constraints
     logging: *x-default-logging
     volumes:
       - type: volume
@@ -133,7 +147,10 @@ services:
     command:
       - --output-dir=/grafana-provisioning-datasources.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
-    deploy: *x-deploy
+    deploy:
+      <<: *x-deploy
+      replicas: 1
+      resources: *x-exporter-resources-constraints
     logging: *x-default-logging
     volumes:
       - type: volume

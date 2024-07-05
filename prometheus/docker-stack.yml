@@ -1,10 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
-x-default-logging: &x-default-logging
-  options:
-    max-size: "12m"
-    max-file: "5"
-  driver: json-file
+x-deploy: &x-deploy
+  mode: global
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.role == manager
+      - node.labels.io.promstack.prometheus == true
 
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:
@@ -12,13 +14,11 @@ x-exporter-resources-constraints: &x-exporter-resources-constraints
   reservations:
     memory: 64M
 
-x-deploy: &x-deploy
-  mode: global
-  placement:
-    max_replicas_per_node: 1
-    constraints:
-      - node.role == manager
-      - node.labels.io.swarmlibs.promstack == true
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
 
 services:
 
@@ -49,7 +49,7 @@ services:
       - published: 9090
         target: 9090
         mode: host
-    hostname: replica-{{.Task.Slot}}.prometheus.svc.cluster.local
+    hostname: replica-{{.Task.Slot}}.prometheus.local
     networks:
       prometheus_internal:
       prometheus:
@@ -119,30 +119,6 @@ services:
       - type: volume
         source: prometheus-configs
         target: /prometheus-configs.d
-
-  # ====================================================
-  # Blackbox prober exporter
-  # https://github.com/prometheus/blackbox_exporter
-  # ====================================================
-
-  blackbox-exporter:
-    image: prom/blackbox-exporter:latest
-    deploy:
-      replicas: 1
-      resources: *x-exporter-resources-constraints
-      labels:
-        io.prometheus.role: "blackbox-exporter"
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: "blackbox-exporter"
-        io.prometheus.scrape_port: "9115"
-        io.prometheus.dockerswarm-services.should_be_probed: "false"
-    logging: *x-default-logging
-    hostname: blackbox-exporter.svc.cluster.local
-    networks:
-      prometheus_internal:
-      prometheus_gwnetwork:
-      prometheus:
-      dockerswarm_ingress:
 
 volumes:
   prometheus-data:
