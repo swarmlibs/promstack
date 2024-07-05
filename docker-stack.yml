@@ -24,7 +24,6 @@ services:
       prometheus_gwnetwork:
         aliases:
         - blackbox-exporter.svc.cluster.local
-      prometheus_internal: null
       public: null
   cadvisor:
     command:
@@ -419,7 +418,7 @@ services:
       target: /prometheus-configs.d
   pushgateway:
     deploy:
-      replicas: 1
+      mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -437,11 +436,9 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus: null
       prometheus_gwnetwork:
         aliases:
         - pushgateway.svc.cluster.local
-      prometheus_internal: null
       public:
         aliases:
         - pushgateway.svc.cluster.local

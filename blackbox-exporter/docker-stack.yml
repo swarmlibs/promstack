@@ -36,7 +36,6 @@ services:
         aliases:
           - blackbox-exporter.svc.cluster.local
       prometheus:
-      prometheus_internal:
 
 networks:
   public: # The 3rd-party ingress network
@@ -48,5 +47,3 @@ networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
-  prometheus_internal:
-    internal: true
