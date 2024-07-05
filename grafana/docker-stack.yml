@@ -83,6 +83,7 @@ services:
       grafana:
     configs:
       - gf-provisioning-dashboards
+      - gf-provisioning-datasource-prometheus
       - gf-dashboard-grafana-metrics
       - gf-dashboard-prometheus-stats
       - gf-dashboard-prometheus-stats-v2
