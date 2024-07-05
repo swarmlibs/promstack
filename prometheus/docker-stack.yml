@@ -28,7 +28,7 @@ services:
   # ====================================================
 
   prometheus:
-    image: swarmlibs/prometheus:local
+    image: swarmlibs/prometheus:main
     deploy:
       <<: *x-deploy
       labels:
