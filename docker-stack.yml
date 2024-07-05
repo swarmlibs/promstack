@@ -69,14 +69,6 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
-    - type: bind
-      source: /dev/disk
-      target: /dev/disk
-      read_only: true
-    - type: bind
-      source: /dev/kmsg
-      target: /dev/kmsg
-      read_only: true
   grafana:
     depends_on:
     - grafana-dashboard-provider
@@ -134,6 +126,8 @@ services:
     - source: gf-dashboard-dockerswarm-nodes-dashboard
     - source: gf-dashboard-dockerswarm-services-endpoints
     - source: gf-dashboard-dockerswarm-services
+    - source: gf-dashboard-cadvisor
+    - source: gf-dashboard-node-exporter
     deploy:
       replicas: 1
       resources:

@@ -114,6 +114,8 @@ services:
       - gf-dashboard-dockerswarm-nodes-dashboard
       - gf-dashboard-dockerswarm-services-endpoints
       - gf-dashboard-dockerswarm-services
+      - gf-dashboard-cadvisor
+      - gf-dashboard-node-exporter
     volumes:
       - type: volume
         source: grafana-dashboards
