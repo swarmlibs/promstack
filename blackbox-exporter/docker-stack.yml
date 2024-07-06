@@ -38,14 +38,10 @@ services:
       prometheus_gwnetwork:
         aliases:
           - blackbox-exporter.svc.cluster.local
-      prometheus:
 
 networks:
   public: # The 3rd-party ingress network
     name: public
-    external: true
-  prometheus:
-    name: prometheus
     external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork

@@ -23,7 +23,6 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus: null
       prometheus_gwnetwork:
         aliases:
         - blackbox-exporter.svc.cluster.local
