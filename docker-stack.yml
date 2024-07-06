@@ -12,6 +12,9 @@ services:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      placement:
+        constraints:
+        - node.role == worker
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
     image: prom/blackbox-exporter:latest
     logging:
@@ -426,6 +429,9 @@ services:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      placement:
+        constraints:
+        - node.role == worker
     hostname: replica-{{.Task.Slot}}.pushgateway.local
     image: prom/pushgateway:latest
     logging:
@@ -437,9 +443,7 @@ services:
       prometheus_gwnetwork:
         aliases:
         - pushgateway.svc.cluster.local
-      public:
-        aliases:
-        - pushgateway.svc.cluster.local
+      public: null
 networks:
   grafana: {}
   prometheus:

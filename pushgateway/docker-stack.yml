@@ -24,6 +24,9 @@ services:
     deploy:
       mode: global
       resources: *x-exporter-resources-constraints
+      placement:
+        constraints:
+          - node.role == worker
       labels:
         io.prometheus.role: "pushgateway"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -32,8 +35,6 @@ services:
     hostname: replica-{{.Task.Slot}}.pushgateway.local
     networks:
       public:
-        aliases:
-          - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
           - pushgateway.svc.cluster.local
