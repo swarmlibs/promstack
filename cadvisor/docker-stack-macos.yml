@@ -30,6 +30,10 @@ services:
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
     logging: *x-default-logging
+    # ports:
+    #   - published: 8080
+    #     target: 8080
+    #     mode: host
     networks:
       prometheus_gwnetwork:
     hostname: replica-{{.Task.Slot}}.cadvisor.local
