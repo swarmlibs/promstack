@@ -5,38 +5,10 @@
 #
 scrape_configs:
   - job_name: 'pushgateway'
-
-    dockerswarm_sd_configs:
-      - host: unix:///var/run/docker.sock
-        role: nodes
-
+    dns_sd_configs:
+      - names:
+          - tasks.pushgateway.svc.cluster.local
+        type: A
+        port: 9091
+        refresh_interval: "30s"
     honor_labels: true
-
-    relabel_configs:
-      # ================================================================================
-      # Override prometheus internal labels
-      # ================================================================================
-      - source_labels:
-        - __meta_dockerswarm_node_id
-        target_label: __address__
-        replacement: replica-$1.pushgateway.local:9091
-
-      # Set hostname as instance label
-      - source_labels:
-        - __meta_dockerswarm_node_address
-        target_label: instance
-        replacement: $1:9091
-
-      # ================================================================================
-      # Label mapping
-      # ================================================================================
-      - action: labelmap
-        regex: __meta_(dockerswarm_node_.+)
-      - action: labelmap
-        regex: __meta_dockerswarm_(node_(?:id|hostname))
-
-      # Set node_name label to node hostname
-      # This is useful for providing compatibility with the swarmprom dashboards
-      - source_labels:
-          - __meta_dockerswarm_node_hostname
-        target_label: node_name

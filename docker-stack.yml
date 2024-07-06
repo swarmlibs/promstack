@@ -2,7 +2,7 @@ version: "3.12"
 services:
   blackbox-exporter:
     deploy:
-      mode: global
+      replicas: 1
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -13,8 +13,7 @@ services:
         reservations:
           memory: "67108864"
       placement:
-        constraints:
-        - node.role == worker
+        max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
     image: prom/blackbox-exporter:latest
     logging:
@@ -70,14 +69,6 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
-      read_only: true
-    - type: bind
-      source: /dev/disk
-      target: /dev/disk
-      read_only: true
-    - type: bind
-      source: /dev/kmsg
-      target: /dev/kmsg
       read_only: true
   grafana:
     depends_on:
@@ -331,6 +322,10 @@ services:
       public:
         aliases:
         - prometheus.svc.cluster.local
+    ports:
+    - mode: host
+      target: 9090
+      published: 9090
     volumes:
     - type: bind
       source: /var/run/docker.sock
@@ -418,7 +413,7 @@ services:
       target: /prometheus-configs.d
   pushgateway:
     deploy:
-      mode: global
+      replicas: 1
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -429,8 +424,7 @@ services:
         reservations:
           memory: "67108864"
       placement:
-        constraints:
-        - node.role == worker
+        max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.local
     image: prom/pushgateway:latest
     logging:

@@ -22,11 +22,10 @@ services:
   pushgateway:
     image: prom/pushgateway:latest
     deploy:
-      mode: global
-      resources: *x-exporter-resources-constraints
+      replicas: 1
       placement:
-        constraints:
-          - node.role == worker
+        max_replicas_per_node: 1
+      resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "pushgateway"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
