@@ -70,6 +70,14 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+    - type: bind
+      source: /dev/disk
+      target: /dev/disk
+      read_only: true
+    - type: bind
+      source: /dev/kmsg
+      target: /dev/kmsg
+      read_only: true
   grafana:
     depends_on:
     - grafana-dashboard-provider
@@ -322,10 +330,6 @@ services:
       public:
         aliases:
         - prometheus.svc.cluster.local
-    ports:
-    - mode: host
-      target: 9090
-      published: 9090
     volumes:
     - type: bind
       source: /var/run/docker.sock
