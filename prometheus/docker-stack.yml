@@ -89,6 +89,10 @@ services:
         io.prometheus.role: "prometheus-config-provider"
     logging: *x-default-logging
     configs:
+      - prometheus-dockerswarm-nodes
+      - prometheus-dockerswarm-services-endpoints-host
+      - prometheus-dockerswarm-services-endpoints-ingress
+      - prometheus-dockerswarm-tasks
     volumes:
       - type: volume
         source: prometheus-configs
@@ -140,3 +144,25 @@ networks:
     external: true
   prometheus_internal:
     internal: true
+
+configs:
+  prometheus-dockerswarm-nodes:
+    name: prometheus-dockerswarm-nodes-v1
+    file: ./scrape-configs/dockerswarm-nodes.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+  prometheus-dockerswarm-services-endpoints-host:
+    name: prometheus-dockerswarm-services-endpoints-host-v1
+    file: ./scrape-configs/dockerswarm-services-endpoints-host.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+  prometheus-dockerswarm-services-endpoints-ingress:
+    name: prometheus-dockerswarm-services-endpoints-ingress-v1
+    file: ./scrape-configs/dockerswarm-services-endpoints-ingress.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+  prometheus-dockerswarm-tasks:
+    name: prometheus-dockerswarm-tasks-v1
+    file: ./scrape-configs/dockerswarm-tasks.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
