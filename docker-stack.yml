@@ -103,7 +103,7 @@ services:
         max-size: 12m
     networks:
       grafana: null
-      prometheus_gwnetwork: null
+      prometheus: null
       public:
         aliases:
         - grafana.svc.cluster.local
