@@ -24,7 +24,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - blackbox-exporter.svc.cluster.local
+        - blackbox-exporter.local
       public: null
   cadvisor:
     command:
@@ -443,8 +443,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - pushgateway.svc.cluster.local
-      public: null
+        - pushgateway.local
 networks:
   grafana: {}
   prometheus:
