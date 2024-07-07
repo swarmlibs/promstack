@@ -110,6 +110,7 @@ services:
     networks:
       grafana: null
       prometheus: null
+      prometheus_gwnetwork: null
       public:
         aliases:
         - grafana.svc.cluster.local

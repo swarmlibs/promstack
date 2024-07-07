@@ -46,6 +46,7 @@ services:
           - grafana.svc.cluster.local
       grafana:
       prometheus:
+      prometheus_gwnetwork:
     volumes:
       - type: volume
         source: grafana-data
@@ -178,11 +179,14 @@ networks:
   public:
     name: public
     external: true
+  grafana:
+    # Internal network for Grafana services
   prometheus:
     name: prometheus
     external: true
-  grafana:
-    # Internal network for Grafana services
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
 
 configs:
   # Grafana dashboards provisioning config
