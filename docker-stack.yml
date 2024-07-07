@@ -560,7 +560,7 @@ configs:
       io.prometheus.scrape_config: "true"
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
-    file: node-exporter/prometheus/node-exporter.yml
+    file: node-exporter/prometheus/node_exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
