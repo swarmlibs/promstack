@@ -35,12 +35,18 @@ docker-stack.yml:
 	@rm docker-stack.yml
 	@mv docker-stack.yml.tmp docker-stack.yml
 	
-deploy: docker-stack.yml
-	docker stack deploy -c docker-stack.yml promstack
-
-remove:
-	docker stack rm promstack
+deploy: docker-stack.yml stack-deploy
+remove: stack-remove config-prune
 
 clean:
 	@rm -rf _tmp || true
 	@rm -f docker-stack.yml || true
+
+stack-deploy:
+	docker stack deploy -c docker-stack.yml promstack
+stack-remove:
+	docker stack rm promstack
+config-prune:
+	docker config ls -q | xargs docker config rm
+volume-prune:
+	docker volume ls -q | xargs docker volume rm
