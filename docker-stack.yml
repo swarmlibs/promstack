@@ -1,6 +1,8 @@
 version: "3.12"
 services:
   blackbox-exporter:
+    configs:
+    - source: prometheus-blackbox-exporter
     deploy:
       replicas: 1
       labels:
@@ -29,6 +31,8 @@ services:
   cadvisor:
     command:
     - -docker_only
+    configs:
+    - source: prometheus-cadvisor
     deploy:
       mode: global
       labels:
@@ -267,6 +271,8 @@ services:
       target: /var/run/docker.sock
       read_only: true
   node-exporter:
+    configs:
+    - source: prometheus-node-exporter
     deploy:
       mode: global
       labels:
@@ -353,10 +359,10 @@ services:
     command:
     - --output-dir=/prometheus-configs.d
     configs:
-    - source: prometheus-cadvisor
-    - source: prometheus-node-exporter
-    - source: prometheus-blackbox-exporter
-    - source: prometheus-pushgateway
+    - source: prometheus-dockerswarm-nodes
+    - source: prometheus-dockerswarm-services-endpoints-host
+    - source: prometheus-dockerswarm-services-endpoints-ingress
+    - source: prometheus-dockerswarm-tasks
     deploy:
       mode: global
       labels:
@@ -424,6 +430,8 @@ services:
       source: prometheus-configs
       target: /prometheus-configs.d
   pushgateway:
+    configs:
+    - source: prometheus-pushgateway
     deploy:
       replicas: 1
       labels:
@@ -522,22 +530,42 @@ configs:
       io.grafana.provisioning.datasource: "true"
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
-    file: prometheus/scrape-configs/blackbox-exporter.yml
+    file: blackbox-exporter/prometheus/blackbox-exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-cadvisor:
     name: prometheus-cadvisor-v1
-    file: prometheus/scrape-configs/dockerswarm-nodes-cadvisor.yml
+    file: cadvisor/prometheus/dockerswarm-nodes-cadvisor.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-nodes:
+    name: prometheus-dockerswarm-nodes-v1
+    file: prometheus/scrape-configs/dockerswarm-nodes.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-services-endpoints-host:
+    name: prometheus-dockerswarm-services-endpoints-host-v1
+    file: prometheus/scrape-configs/dockerswarm-services-endpoints-host.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-services-endpoints-ingress:
+    name: prometheus-dockerswarm-services-endpoints-ingress-v1
+    file: prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-tasks:
+    name: prometheus-dockerswarm-tasks-v1
+    file: prometheus/scrape-configs/dockerswarm-tasks.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
-    file: prometheus/scrape-configs/dockerswarm-nodes-node-exporter.yml
+    file: node-exporter/prometheus/dockerswarm-nodes-node-exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
-    file: prometheus/scrape-configs/pushgateway.yml
+    file: pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
 x-default-logging:
