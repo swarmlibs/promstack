@@ -24,9 +24,6 @@ scrape_configs:
         role: services
 
     relabel_configs:
-      - target_label: job
-        replacement: dockerswarm/services-endpoints
-
       - target_label: module
         replacement: tcp_connect
 
