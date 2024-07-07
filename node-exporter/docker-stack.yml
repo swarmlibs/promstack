@@ -29,6 +29,7 @@ services:
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
     logging: *x-default-logging
+    hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     # ports:
     #   - published: 9100
     #     target: 9100
@@ -37,12 +38,20 @@ services:
       prometheus_gwnetwork:
         aliases:
           - node-exporter.local
-    hostname: "replica-{{.Task.Slot}}.node-exporter.local"
+    configs:
+      - prometheus-node-exporter
     volumes:
       - type: bind
         source: /
         target: /rootfs
         read_only: true
+
+configs:
+  prometheus-node-exporter:
+    name: prometheus-node-exporter-v1
+    file: ./prometheus/dockerswarm-nodes-node-exporter.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
 
 networks:
   prometheus_gwnetwork:

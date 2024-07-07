@@ -36,6 +36,15 @@ services:
       prometheus_gwnetwork:
         aliases:
           - pushgateway.local
+    configs:
+      - prometheus-pushgateway
+
+configs:
+  prometheus-pushgateway:
+    name: prometheus-pushgateway-v1
+    file: ./prometheus/pushgateway.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
 
 networks:
   prometheus_gwnetwork:

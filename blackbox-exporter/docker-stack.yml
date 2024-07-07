@@ -37,6 +37,15 @@ services:
       prometheus_gwnetwork:
         aliases:
           - blackbox-exporter.local
+    configs:
+      - prometheus-blackbox-exporter
+
+configs:
+  prometheus-blackbox-exporter:
+    name: prometheus-blackbox-exporter-v1
+    file: ./prometheus/blackbox-exporter.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
 
 networks:
   public: # The 3rd-party ingress network
