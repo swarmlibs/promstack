@@ -36,7 +36,7 @@ services:
       public:
       prometheus_gwnetwork:
         aliases:
-          - pushgateway.svc.cluster.local
+          - pushgateway.local
 
 networks:
   public: # The 3rd-party ingress network
