@@ -328,8 +328,12 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus: null
-      prometheus_gwnetwork: null
+      prometheus:
+        aliases:
+        - prometheus.svc.cluster.local
+      prometheus_gwnetwork:
+        aliases:
+        - prometheus.svc.cluster.local
       prometheus_internal: null
       public:
         aliases:
