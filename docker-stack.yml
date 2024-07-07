@@ -48,7 +48,9 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus_gwnetwork: null
+      prometheus_gwnetwork:
+        aliases:
+        - cadvisor.local
     volumes:
     - type: bind
       source: /
@@ -284,7 +286,9 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus_gwnetwork: null
+      prometheus_gwnetwork:
+        aliases:
+        - node-exporter.local
     volumes:
     - type: bind
       source: /

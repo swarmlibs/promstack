@@ -35,6 +35,8 @@ services:
     #     mode: host
     networks:
       prometheus_gwnetwork:
+        aliases:
+          - node-exporter.local
     hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     volumes:
       - type: bind

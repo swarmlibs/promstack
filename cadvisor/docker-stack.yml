@@ -36,6 +36,8 @@ services:
     #     mode: host
     networks:
       prometheus_gwnetwork:
+        aliases:
+          - cadvisor.local
     hostname: replica-{{.Task.Slot}}.cadvisor.local
     volumes:
       - type: bind

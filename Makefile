@@ -36,7 +36,7 @@ docker-stack.yml:
 	@mv docker-stack.yml.tmp docker-stack.yml
 	
 deploy: docker-stack.yml stack-deploy
-remove: stack-remove config-prune
+remove: stack-remove
 
 clean:
 	@rm -rf _tmp || true
