@@ -33,15 +33,11 @@ services:
     logging: *x-default-logging
     hostname: replica-{{.Task.Slot}}.pushgateway.local
     networks:
-      public:
       prometheus_gwnetwork:
         aliases:
           - pushgateway.local
 
 networks:
-  public: # The 3rd-party ingress network
-    name: public
-    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
