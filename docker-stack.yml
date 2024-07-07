@@ -535,7 +535,7 @@ configs:
       io.prometheus.scrape_config: "true"
   prometheus-cadvisor:
     name: prometheus-cadvisor-v1
-    file: cadvisor/prometheus/dockerswarm-nodes-cadvisor.yml
+    file: cadvisor/prometheus/cadvisor.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-nodes:
@@ -560,7 +560,7 @@ configs:
       io.prometheus.scrape_config: "true"
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
-    file: node-exporter/prometheus/dockerswarm-nodes-node-exporter.yml
+    file: node-exporter/prometheus/node-exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
