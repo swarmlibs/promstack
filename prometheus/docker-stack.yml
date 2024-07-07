@@ -56,10 +56,10 @@ services:
           - prometheus.svc.cluster.local
       prometheus:
         aliases:
-          - prometheus.svc.cluster.local
+          - prometheus.local
       prometheus_gwnetwork:
         aliases:
-          - prometheus.svc.cluster.local
+          - prometheus.local
       prometheus_internal:
     extra_hosts:
       - "host.docker.internal:host-gateway"

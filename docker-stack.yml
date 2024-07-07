@@ -330,10 +330,10 @@ services:
     networks:
       prometheus:
         aliases:
-        - prometheus.svc.cluster.local
+        - prometheus.local
       prometheus_gwnetwork:
         aliases:
-        - prometheus.svc.cluster.local
+        - prometheus.local
       prometheus_internal: null
       public:
         aliases:
