@@ -105,6 +105,7 @@ services:
       - --file=/run/configs/prometheus.yaml.tmpl
       - --out=/prometheus-configs.d/prometheus.yaml
     environment:
+      - GOMPLATE_LOG_FORMAT=logfmt
       - PROMETHEUS_CLUSTER_NAME=${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     deploy:
