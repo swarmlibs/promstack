@@ -101,10 +101,10 @@ You can apply custom configurations to Prometheus via Environment variables by r
 
 ```sh
 # Register the Alertmanager service address
-docker service update --env-add PROMETHEUS_SCRAPE_INTERVAL=15s promstack_prometheus-config
+docker service update --env-add PROMETHEUS_SCRAPE_INTERVAL=15s promstack_prometheus_config
 
 # Remove the Alertmanager service address
-docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus-config
+docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus_config
 ```
 
 **Global**:

@@ -98,7 +98,7 @@ services:
       - prometheus-config-reloader
       - prometheus-config-provider
 
-  prometheus-config:
+  prometheus_config:
     image: hairyhenderson/gomplate:v4.1-alpine
     command:
       - --verbose

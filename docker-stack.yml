@@ -519,35 +519,6 @@ services:
     - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
-  prometheus-config:
-    command:
-    - --verbose
-    - --file=/run/configs/prometheus.yaml.tmpl
-    - --out=/prometheus-configs.d/prometheus.yaml
-    configs:
-    - source: prometheus-config-template
-      target: /run/configs/prometheus.yaml.tmpl
-    deploy:
-      mode: global-job
-      placement:
-        constraints:
-        - node.role == manager
-        - node.labels.io.promstack.prometheus == true
-        max_replicas_per_node: 1
-    environment:
-      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
-        "com.docker.stack.namespace"}}}
-      PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: hairyhenderson/gomplate:v4.1-alpine
-    logging:
-      driver: json-file
-      options:
-        max-file: "5"
-        max-size: 12m
-    volumes:
-    - type: volume
-      source: prometheus-configs
-      target: /prometheus-configs.d
   prometheus-config-provider:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
@@ -654,6 +625,35 @@ services:
         max-size: 12m
     networks:
       prometheus_internal: null
+    volumes:
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+  prometheus_config:
+    command:
+    - --verbose
+    - --file=/run/configs/prometheus.yaml.tmpl
+    - --out=/prometheus-configs.d/prometheus.yaml
+    configs:
+    - source: prometheus-config-template
+      target: /run/configs/prometheus.yaml.tmpl
+    deploy:
+      mode: global-job
+      placement:
+        constraints:
+        - node.role == manager
+        - node.labels.io.promstack.prometheus == true
+        max_replicas_per_node: 1
+    environment:
+      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
+        "com.docker.stack.namespace"}}}
+      PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
+    image: hairyhenderson/gomplate:v4.1-alpine
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
     volumes:
     - type: volume
       source: prometheus-configs
