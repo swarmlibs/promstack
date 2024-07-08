@@ -28,7 +28,7 @@ services:
   # ====================================================
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.45.6
     command:
       - --config.file=/prometheus-configs.d/prometheus.yaml
       - --storage.tsdb.path=/prometheus
