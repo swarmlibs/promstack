@@ -95,8 +95,6 @@ services:
         target: /prometheus-configs.d
     depends_on:
       - prometheus-config
-      - prometheus-config-reloader
-      - prometheus-config-provider
 
   prometheus_config:
     image: hairyhenderson/gomplate:v4.1-alpine
@@ -204,7 +202,9 @@ services:
         source: prometheus-configs
         target: /prometheus-configs.d
     depends_on:
+      - prometheus
       - prometheus-config
+      - prometheus-config-provider
 
 volumes:
   prometheus:

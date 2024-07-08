@@ -457,8 +457,6 @@ services:
       target: /etc/prometheus/scrape-configs/prometheus.yaml
     depends_on:
     - prometheus-config
-    - prometheus-config-reloader
-    - prometheus-config-provider
     deploy:
       mode: global
       labels:
@@ -582,7 +580,9 @@ services:
     - --watch-interval=15s
     - --reload-timeout=10s
     depends_on:
+    - prometheus
     - prometheus-config
+    - prometheus-config-provider
     deploy:
       mode: global
       labels:
