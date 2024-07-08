@@ -99,7 +99,7 @@ services:
       - prometheus-config-provider
 
   prometheus-config:
-    image: hairyhenderson/gomplate:stable
+    image: hairyhenderson/gomplate:v4.1-alpine
     command:
       - --verbose
       - --file=/run/configs/prometheus.yaml.tmpl
