@@ -62,8 +62,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     configs:
-      - source: prometheus.json
-        target: /etc/prometheus/scrape-configs/prometheus.json
+      - source: prometheus-prometheus
+        target: /etc/prometheus/scrape-configs/prometheus.yaml
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -177,9 +177,9 @@ configs:
   prometheus.yaml:
     name: prometheus-v1.yaml
     file: ./configs/prometheus.yaml
-  prometheus.json:
-    name: prometheus-v1.json
-    file: ./configs/prometheus.json
+  prometheus-prometheus:
+    name: prometheus-prometheus-v1
+    file: ./configs/scrape-configs/prometheus.yaml
     template_driver: golang
 
   # Prometheus's scrape config files

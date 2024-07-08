@@ -1,0 +1,13 @@
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          dockerswarm_service_id: '{{ .Service.ID }}'
+          dockerswarm_service_name: '{{ .Service.Name }}'
+          dockerswarm_node_id: '{{ .Node.ID }}'
+          dockerswarm_node_hostname: '{{ .Node.Hostname }}'
+          dockerswarm_task_id: '{{ .Task.ID }}'
+          dockerswarm_task_name: '{{ .Task.Name }}'
+          dockerswarm_task_slot: '{{ .Task.Slot }}'
+          dockerswarm_stack_namespace: '{{ index .Service.Labels "com.docker.stack.namespace" }}'
