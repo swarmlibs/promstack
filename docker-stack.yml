@@ -393,7 +393,7 @@ services:
     command:
     - --path.rootfs=/rootfs
     - --collector.textfile.directory=/etc/node-exporter
-    - --collector.filesystem.mount-points-exclude="^/(sys|proc|dev|host|etc)($$|/)"
+    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
     - --no-collector.ipvs
     configs:
     - source: node-exporter-node-meta
