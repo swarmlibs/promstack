@@ -100,8 +100,13 @@ TBD
 You can apply custom configurations to Prometheus running `docker service update` command:
 
 **Alertmanager**
+
 ```sh
+# Register the Alertmanager service address
 docker service update --env-add PROMETHEUS_ALERTMANAGER_ADDR=tasks.alertmanager promstack_prometheus-config
+
+# Remove the Alertmanager service address
+docker service update --env-rm PROMETHEUS_ALERTMANAGER_ADDR promstack_prometheus-config
 ```
 
 ---
