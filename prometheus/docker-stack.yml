@@ -148,21 +148,21 @@ networks:
 configs:
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
-    file: ./scrape-configs/dockerswarm-nodes.yml
+    file: ./scrape-configs/dockerswarm-nodes.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: ./scrape-configs/dockerswarm-services-endpoints-host.yml
+    file: ./scrape-configs/dockerswarm-services-endpoints-host.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-services-endpoints-ingress:
     name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: ./scrape-configs/dockerswarm-services-endpoints-ingress.yml
+    file: ./scrape-configs/dockerswarm-services-endpoints-ingress.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-tasks:
     name: prometheus-dockerswarm-tasks-v1
-    file: ./scrape-configs/dockerswarm-tasks.yml
+    file: ./scrape-configs/dockerswarm-tasks.yaml
     labels:
       - "io.prometheus.scrape_config=true"
