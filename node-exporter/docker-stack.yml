@@ -28,6 +28,23 @@ services:
         io.prometheus.role: "node-exporter"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     # ports:
