@@ -21,6 +21,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Getting Started](#getting-started)
   - [Deploy `promstack`](#deploy-promstack)
   - [Remove `promstack`](#remove-promstack)
+- [Configurations](#configurations)
+  - [Prometheus](#prometheus)
 
 ## Stacks
 
@@ -87,6 +89,19 @@ make deploy
 
 ```sh
 make remove
+```
+
+## Configurations
+
+TBD
+
+### Prometheus
+
+You can apply custom configurations to Prometheus running `docker service update` command:
+
+**Alertmanager**
+```sh
+docker service update --env-add PROMETHEUS_ALERTMANAGER_ADDR=tasks.alertmanager promstack_prometheus-config
 ```
 
 ---
