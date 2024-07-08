@@ -33,7 +33,7 @@ services:
       - --config.file=/prometheus-configs.d/prometheus.yaml
       - --storage.tsdb.path=/prometheus
       - --web.console.libraries=/usr/share/prometheus/console_libraries
-      - --web.console.templates=/usr/share/prometheus/consoles"
+      - --web.console.templates=/usr/share/prometheus/consoles
       - --web.enable-lifecycle
       - --log.level=info
     user: "0:0"
