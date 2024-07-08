@@ -112,7 +112,7 @@ services:
       mode: global-job
     logging: *x-default-logging
     configs:
-      - source: prometheus.yaml
+      - source: prometheus-config
         target: /run/configs/prometheus.yaml.tmpl
     volumes:
       - type: volume
@@ -225,8 +225,8 @@ networks:
 
 configs:
   # Prometheus config files
-  prometheus.yaml:
-    name: prometheus-v1.yaml
+  prometheus-config:
+    name: prometheus-config-v1
     file: ./configs/prometheus.yaml
   prometheus-prometheus:
     name: prometheus-prometheus-v1
