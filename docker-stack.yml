@@ -119,10 +119,6 @@ services:
       target: /dev/kmsg
       read_only: true
   grafana:
-    depends_on:
-    - grafana-dashboard-provider
-    - grafana-provisioning-dashboard-provider
-    - grafana-provisioning-datasource-provider
     deploy:
       replicas: 1
       labels:
@@ -241,6 +237,9 @@ services:
   grafana-provisioning-config-reloader:
     depends_on:
     - grafana
+    - grafana-dashboard-provider
+    - grafana-provisioning-dashboard-provider
+    - grafana-provisioning-datasource-provider
     deploy:
       replicas: 1
       update_config:

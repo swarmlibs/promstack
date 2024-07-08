@@ -77,10 +77,6 @@ services:
       - type: volume
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
-    depends_on:
-      - grafana-dashboard-provider
-      - grafana-provisioning-dashboard-provider
-      - grafana-provisioning-datasource-provider
 
   # ====================================================
   # Grafana provisioning config provider & reloader
@@ -129,6 +125,9 @@ services:
         read_only: true
     depends_on:
       - grafana
+      - grafana-dashboard-provider
+      - grafana-provisioning-dashboard-provider
+      - grafana-provisioning-datasource-provider
 
   # Grafana dashboards provider
   grafana-dashboard-provider:
