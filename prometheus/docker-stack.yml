@@ -76,6 +76,7 @@ services:
         source: prometheus-configs
         target: /prometheus-configs.d
     depends_on:
+      - prometheus-config
       - prometheus-config-reloader
       - prometheus-config-provider
 
@@ -91,10 +92,6 @@ services:
     deploy:
       <<: *x-deploy
       mode: global-job
-      labels:
-        io.prometheus.role: "prometheus-config"
-        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.dockerswarm-services.should_be_probed: "false"
     logging: *x-default-logging
     configs:
       - source: prometheus.yaml
@@ -113,6 +110,23 @@ services:
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-provider"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     configs:
       - source: prometheus-dockerswarm-nodes
@@ -147,6 +161,23 @@ services:
         io.prometheus.job_name: "prometheus-config-reloader"
         io.prometheus.scrape_port: "8080"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     networks:
       prometheus_internal:
@@ -154,6 +185,8 @@ services:
       - type: volume
         source: prometheus-configs
         target: /prometheus-configs.d
+    depends_on:
+      - prometheus-config
 
 volumes:
   prometheus:

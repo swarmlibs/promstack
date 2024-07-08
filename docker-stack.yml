@@ -312,6 +312,7 @@ services:
     - source: prometheus-prometheus
       target: /etc/prometheus/scrape-configs/prometheus.yaml
     depends_on:
+    - prometheus-config
     - prometheus-config-reloader
     - prometheus-config-provider
     deploy:
@@ -367,10 +368,6 @@ services:
       target: /run/configs/prometheus.yaml.tmpl
     deploy:
       mode: global-job
-      labels:
-        io.prometheus.dockerswarm-services.should_be_probed: "false"
-        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.role: prometheus-config
       placement:
         constraints:
         - node.role == manager
@@ -402,11 +399,28 @@ services:
       mode: global
       labels:
         io.prometheus.role: prometheus-config-provider
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.role == manager
@@ -435,6 +449,8 @@ services:
     - --runtimeinfo-url=http://prometheus:9090/api/v1/status/runtimeinfo
     - --watch-interval=15s
     - --reload-timeout=10s
+    depends_on:
+    - prometheus-config
     deploy:
       mode: global
       labels:
@@ -443,11 +459,28 @@ services:
         io.prometheus.job_name: prometheus-config-reloader
         io.prometheus.role: prometheus-config-reloader
         io.prometheus.scrape_port: "8080"
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.role == manager
