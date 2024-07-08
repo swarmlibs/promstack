@@ -20,13 +20,12 @@ services:
   # ====================================================
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.8.1
     command:
       - --path.rootfs=/rootfs
       - --collector.textfile.directory=/etc/node-exporter
       - --collector.filesystem.mount-points-exclude="^/(sys|proc|dev|host|etc)($$|/)"
       - --no-collector.ipvs
-    user: "0:0"
     deploy:
       mode: global
       resources: *x-exporter-resources-constraints
