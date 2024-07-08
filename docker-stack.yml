@@ -525,7 +525,7 @@ services:
     - --file=/run/configs/prometheus.yaml.tmpl
     - --out=/prometheus-configs.d/prometheus.yaml
     configs:
-    - source: prometheus-config
+    - source: prometheus-config-template
       target: /run/configs/prometheus.yaml.tmpl
     deploy:
       mode: global-job
@@ -538,7 +538,7 @@ services:
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: hairyhenderson/gomplate:stable
+    image: hairyhenderson/gomplate:v4.1-alpine
     logging:
       driver: json-file
       options:
@@ -788,9 +788,9 @@ configs:
     file: cadvisor/prometheus/cadvisor.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-config:
-    name: prometheus-config-v1
-    file: prometheus/configs/prometheus.yaml
+  prometheus-config-template:
+    name: prometheus-config-template-v1
+    file: prometheus/configs/prometheus.yaml.tmpl
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
     file: prometheus/configs/scrape-configs/dockerswarm-nodes.yaml
