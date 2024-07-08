@@ -391,7 +391,14 @@ services:
       target: /var/run/docker.sock
       read_only: true
   node-exporter:
+    command:
+    - --path.rootfs=/rootfs
+    - --collector.textfile.directory=/etc/node-exporter
+    - --collector.filesystem.mount-points-exclude="^/(sys|proc|dev|host|etc)($$|/)"
+    - --no-collector.ipvs
     configs:
+    - source: node_meta
+      target: /etc/node-exporter/node_meta.prom
     - source: prometheus-node-exporter
     deploy:
       mode: global
@@ -422,7 +429,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.node-exporter.local
-    image: swarmlibs/node-exporter:main
+    image: prom/node-exporter:latest
     logging:
       driver: json-file
       options:
@@ -432,6 +439,7 @@ services:
       prometheus_gwnetwork:
         aliases:
         - node-exporter.local
+    user: "0:0"
     volumes:
     - type: bind
       source: /
@@ -444,6 +452,7 @@ services:
     - --web.console.libraries=/usr/share/prometheus/console_libraries
     - --web.console.templates=/usr/share/prometheus/consoles"
     - --web.enable-lifecycle
+    - --log.level=info
     configs:
     - source: prometheus-prometheus
       target: /etc/prometheus/scrape-configs/prometheus.yaml
@@ -517,7 +526,7 @@ services:
     - --file=/run/configs/prometheus.yaml.tmpl
     - --out=/prometheus-configs.d/prometheus.yaml
     configs:
-    - source: prometheus.yaml
+    - source: prometheus-config
       target: /run/configs/prometheus.yaml.tmpl
     deploy:
       mode: global-job
@@ -767,6 +776,9 @@ configs:
     file: grafana/provisioning/datasources/prometheus.yaml
     labels:
       io.grafana.provisioning.datasource: "true"
+  node_meta:
+    name: node_meta-v1
+    file: node-exporter/node_meta.prom
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
     file: blackbox-exporter/prometheus/blackbox-exporter.yml
@@ -777,6 +789,9 @@ configs:
     file: cadvisor/prometheus/cadvisor.yml
     labels:
       io.prometheus.scrape_config: "true"
+  prometheus-config:
+    name: prometheus-config-v1
+    file: prometheus/configs/prometheus.yaml
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
     file: prometheus/configs/scrape-configs/dockerswarm-nodes.yaml
@@ -811,9 +826,6 @@ configs:
     file: pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus.yaml:
-    name: prometheus-v1.yaml
-    file: prometheus/configs/prometheus.yaml
 x-default-logging:
   driver: json-file
   options:
