@@ -34,7 +34,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
-    image: prom/blackbox-exporter:latest
+    image: prom/blackbox-exporter:v0.25.0
     logging:
       driver: json-file
       options:
@@ -429,7 +429,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.node-exporter.local
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.8.1
     logging:
       driver: json-file
       options:
@@ -439,7 +439,6 @@ services:
       prometheus_gwnetwork:
         aliases:
         - node-exporter.local
-    user: "0:0"
     volumes:
     - type: bind
       source: /
@@ -491,7 +490,7 @@ services:
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Task.Slot}}.prometheus.local
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.45.6
     logging:
       driver: json-file
       options:
@@ -694,7 +693,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.local
-    image: prom/pushgateway:latest
+    image: prom/pushgateway:v1.9.0
     logging:
       driver: json-file
       options:
