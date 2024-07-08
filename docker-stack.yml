@@ -308,6 +308,9 @@ services:
     - --web.console.libraries=/usr/share/prometheus/console_libraries
     - --web.console.templates=/usr/share/prometheus/consoles"
     - --web.enable-lifecycle
+    configs:
+    - source: prometheus.json
+      target: /etc/prometheus/scrape-configs/prometheus.json
     depends_on:
     - prometheus-config-reloader
     - prometheus-config-provider
@@ -601,6 +604,10 @@ configs:
     file: pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
+  prometheus.json:
+    name: prometheus-v1.json
+    file: prometheus/configs/prometheus.json
+    template_driver: golang
   prometheus.yaml:
     name: prometheus-v1.yaml
     file: prometheus/configs/prometheus.yaml
