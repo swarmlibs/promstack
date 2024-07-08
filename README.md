@@ -97,7 +97,7 @@ TBD
 
 ### Prometheus
 
-You can apply custom configurations to Prometheus via Environment variables by running `docker service update` command on `promstack_prometheus-config` service:
+You can apply custom configurations to Prometheus via Environment variables by running `docker service update` command on `promstack_prometheus_config` service:
 
 ```sh
 # Register the Alertmanager service address

@@ -61,7 +61,7 @@ services:
         aliases:
           - node-exporter.local
     configs:
-      - source: node_meta
+      - source: node_meta.prom
         target: /etc/node-exporter/node_meta.prom
       - source: prometheus-node-exporter
     volumes:
@@ -72,8 +72,8 @@ services:
 
 configs:
   # Node exporter textfile collector
-  node_meta:
-    name: node_meta-v1
+  node_meta.prom:
+    name: node_meta.prom-v1
     file: ./node_meta.prom
 
   # Prometheus node exporter scrape config

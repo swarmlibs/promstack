@@ -397,7 +397,7 @@ services:
     - --collector.filesystem.mount-points-exclude="^/(sys|proc|dev|host|etc)($$|/)"
     - --no-collector.ipvs
     configs:
-    - source: node_meta
+    - source: node_meta.prom
       target: /etc/node-exporter/node_meta.prom
     - source: prometheus-node-exporter
     deploy:
@@ -635,7 +635,7 @@ services:
     - --file=/run/configs/prometheus.yaml.tmpl
     - --out=/prometheus-configs.d/prometheus.yaml
     configs:
-    - source: prometheus-config-template
+    - source: prometheus.yaml.tmpl
       target: /run/configs/prometheus.yaml.tmpl
     deploy:
       mode: global-job
@@ -774,8 +774,8 @@ configs:
     file: grafana/provisioning/datasources/prometheus.yaml
     labels:
       io.grafana.provisioning.datasource: "true"
-  node_meta:
-    name: node_meta-v1
+  node_meta.prom:
+    name: node_meta.prom-v1
     file: node-exporter/node_meta.prom
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
@@ -787,9 +787,6 @@ configs:
     file: cadvisor/prometheus/cadvisor.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-config-template:
-    name: prometheus-config-template-v1-1
-    file: prometheus/configs/prometheus.yaml.tmpl
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
     file: prometheus/configs/scrape-configs/dockerswarm-nodes.yaml
@@ -824,6 +821,9 @@ configs:
     file: pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
+  prometheus.yaml.tmpl:
+    name: prometheus.yaml.tmpl-v1
+    file: prometheus/configs/prometheus.yaml.tmpl
 x-default-logging:
   driver: json-file
   options:
