@@ -455,7 +455,7 @@ services:
     - source: prometheus-prometheus
       target: /etc/prometheus/scrape-configs/prometheus.yaml
     depends_on:
-    - prometheus-config
+    - prometheus_config
     deploy:
       mode: global
       labels:
@@ -580,7 +580,7 @@ services:
     - --reload-timeout=10s
     depends_on:
     - prometheus
-    - prometheus-config
+    - prometheus_config
     - prometheus-config-provider
     deploy:
       mode: global
@@ -637,18 +637,22 @@ services:
     - source: prometheus.yaml.tmpl
       target: /run/configs/prometheus.yaml.tmpl
     deploy:
-      mode: global-job
+      mode: global
+      resources:
+        limits:
+          memory: "134217728"
+        reservations:
+          memory: "67108864"
       placement:
         constraints:
         - node.role == manager
         - node.labels.io.promstack.prometheus == true
         max_replicas_per_node: 1
     environment:
-      GOMPLATE_LOG_FORMAT: logfmt
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: hairyhenderson/gomplate:v4.1-alpine
+    image: swarmlibs/genconfig:main
     logging:
       driver: json-file
       options:

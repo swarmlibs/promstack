@@ -94,21 +94,20 @@ services:
         source: prometheus-configs
         target: /prometheus-configs.d
     depends_on:
-      - prometheus-config
+      - prometheus_config
 
   prometheus_config:
-    image: hairyhenderson/gomplate:v4.1-alpine
+    image: swarmlibs/genconfig:main
     command:
       - --verbose
       - --file=/run/configs/prometheus.yaml.tmpl
       - --out=/prometheus-configs.d/prometheus.yaml
     environment:
-      - GOMPLATE_LOG_FORMAT=logfmt
       - PROMETHEUS_CLUSTER_NAME=${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     deploy:
       <<: *x-deploy
-      mode: global-job
+      resources: *x-exporter-resources-constraints
     logging: *x-default-logging
     configs:
       - source: prometheus.yaml.tmpl
@@ -203,7 +202,7 @@ services:
         target: /prometheus-configs.d
     depends_on:
       - prometheus
-      - prometheus-config
+      - prometheus_config
       - prometheus-config-provider
 
 volumes:
