@@ -37,7 +37,7 @@ services:
         aliases:
           - pushgateway.local
     configs:
-      - prometheus-pushgateway
+      - source: prometheus-pushgateway
 
 configs:
   prometheus-pushgateway:

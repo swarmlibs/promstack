@@ -40,7 +40,7 @@ services:
         aliases:
           - cadvisor.local
     configs:
-      - prometheus-cadvisor
+      - source: prometheus-cadvisor
     volumes:
       - type: bind
         source: /

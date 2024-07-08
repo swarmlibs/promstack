@@ -39,7 +39,7 @@ services:
         aliases:
           - node-exporter.local
     configs:
-      - prometheus-node-exporter
+      - source: prometheus-node-exporter
     volumes:
       - type: bind
         source: /

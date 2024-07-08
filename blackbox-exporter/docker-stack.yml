@@ -38,7 +38,7 @@ services:
         aliases:
           - blackbox-exporter.local
     configs:
-      - prometheus-blackbox-exporter
+      - source: prometheus-blackbox-exporter
 
 configs:
   prometheus-blackbox-exporter:
