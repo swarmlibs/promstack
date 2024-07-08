@@ -181,19 +181,18 @@ services:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
       restart_policy:
         condition: any
-        max_attempts: 15
-        delay: 15s
-        window: 10s
+        delay: 30s
+        window: 15s
       rollback_config:
         parallelism: 1
-        delay: 15s
         failure_action: rollback
+        delay: 30s
         monitor: 15s
         max_failure_ratio: 0.1
       update_config:
         parallelism: 1
-        delay: 15s
         failure_action: rollback
+        delay: 30s
         monitor: 15s
         max_failure_ratio: 0.1
     logging: *x-default-logging
@@ -226,7 +225,7 @@ networks:
 configs:
   # Prometheus config files
   prometheus-config-template:
-    name: prometheus-config-template-v1
+    name: prometheus-config-template-v1-1
     file: ./configs/prometheus.yaml.tmpl
   prometheus-prometheus:
     name: prometheus-prometheus-v1

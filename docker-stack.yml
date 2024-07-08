@@ -622,13 +622,13 @@ services:
         io.prometheus.scrape_port: "8080"
       update_config:
         parallelism: 1
-        delay: 15s
+        delay: 30s
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
       rollback_config:
         parallelism: 1
-        delay: 15s
+        delay: 30s
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
@@ -639,9 +639,8 @@ services:
           memory: "67108864"
       restart_policy:
         condition: any
-        delay: 15s
-        max_attempts: 15
-        window: 10s
+        delay: 30s
+        window: 15s
       placement:
         constraints:
         - node.role == manager
@@ -789,7 +788,7 @@ configs:
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-config-template:
-    name: prometheus-config-template-v1
+    name: prometheus-config-template-v1-1
     file: prometheus/configs/prometheus.yaml.tmpl
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1

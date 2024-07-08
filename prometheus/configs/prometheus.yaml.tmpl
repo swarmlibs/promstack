@@ -7,7 +7,7 @@ global:
   scrape_interval: '{{ getenv "PROMETHEUS_SCRAPE_INTERVAL" "10s" }}'
   scrape_timeout: '{{ getenv "PROMETHEUS_SCRAPE_TIMEOUT" "5s" }}'
   evaluation_interval: '{{ getenv "PROMETHEUS_EVALUATION_INTERVAL" "1m" }}'
-  keep_dropped_targets: 50
+  # keep_dropped_targets: 50
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
