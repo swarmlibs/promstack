@@ -35,6 +35,23 @@ services:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "grafana"
         io.prometheus.scrape_port: "3000"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     ports:
       - published: 3000
@@ -79,6 +96,23 @@ services:
       <<: *x-deploy
       replicas: 1
       resources: *x-exporter-resources-constraints
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     networks:
       grafana:
@@ -107,6 +141,23 @@ services:
       <<: *x-deploy
       replicas: 1
       resources: *x-exporter-resources-constraints
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     configs:
       - source: gf-dashboard-grafana-metrics
@@ -136,6 +187,23 @@ services:
       <<: *x-deploy
       replicas: 1
       resources: *x-exporter-resources-constraints
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     configs:
       - source: gf-provisioning-dashboards
@@ -156,6 +224,23 @@ services:
       <<: *x-deploy
       replicas: 1
       resources: *x-exporter-resources-constraints
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     configs:
       - source: gf-provisioning-datasource-prometheus

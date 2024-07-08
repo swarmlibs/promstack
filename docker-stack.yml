@@ -9,11 +9,28 @@ services:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.role: blackbox-exporter
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
@@ -39,11 +56,28 @@ services:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.role: cadvisor
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
     hostname: replica-{{.Task.Slot}}.cadvisor.local
     image: gcr.io/cadvisor/cadvisor:v0.47.0
     logging:
@@ -95,6 +129,23 @@ services:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: grafana
         io.prometheus.scrape_port: "3000"
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
       placement:
         constraints:
         - node.role == manager
@@ -146,11 +197,28 @@ services:
     - source: gf-dashboard-node-exporter
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.role == manager
@@ -175,11 +243,28 @@ services:
     - grafana
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.role == manager
@@ -215,11 +300,28 @@ services:
     - source: gf-provisioning-dashboards
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.role == manager
@@ -247,11 +349,28 @@ services:
     - source: gf-provisioning-datasource-prometheus
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.role == manager
@@ -280,11 +399,28 @@ services:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.role: node-exporter
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
     hostname: replica-{{.Task.Slot}}.node-exporter.local
     image: swarmlibs/node-exporter:main
     logging:
@@ -311,6 +447,23 @@ services:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.role: prometheus
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
       placement:
         constraints:
         - node.role == manager
@@ -439,11 +592,28 @@ services:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.role: pushgateway
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.local
