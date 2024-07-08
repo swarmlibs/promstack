@@ -397,7 +397,7 @@ services:
     - --collector.filesystem.mount-points-exclude="^/(sys|proc|dev|host|etc)($$|/)"
     - --no-collector.ipvs
     configs:
-    - source: node_meta.prom
+    - source: node-exporter-node-meta
       target: /etc/node-exporter/node_meta.prom
     - source: prometheus-node-exporter
     deploy:
@@ -774,8 +774,8 @@ configs:
     file: grafana/provisioning/datasources/prometheus.yaml
     labels:
       io.grafana.provisioning.datasource: "true"
-  node_meta.prom:
-    name: node_meta.prom-v1
+  node-exporter-node-meta:
+    name: node-exporter-node-meta-v1
     file: node-exporter/node_meta.prom
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
