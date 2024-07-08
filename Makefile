@@ -43,6 +43,9 @@ clean:
 	@rm -f docker-stack.yml || true
 
 stack-deploy:
+	docker network create --scope=swarm --driver=overlay --attachable public || true
+	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
+	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
 	docker stack deploy -c docker-stack.yml promstack
 stack-remove:
 	docker stack rm promstack
