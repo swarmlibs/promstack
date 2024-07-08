@@ -25,7 +25,7 @@ alerting:
       - names:
         - '{{ getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}'
         type: 'A'
-        port: {{ getenv "PROMETHEUS_ALERTMANAGER_SERVICE_PORT" "9093" }}
+        port: {{ getenv "PROMETHEUS_ALERTMANAGER_PORT" "9093" }}
         refresh_interval: 30s
 
   # All alerts sent to the Alertmanager will then also have different replica labels.
