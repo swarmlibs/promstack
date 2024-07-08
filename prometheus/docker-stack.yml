@@ -35,6 +35,7 @@ services:
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles"
       - --web.enable-lifecycle
+      - --log.level=info
     user: "0:0"
     deploy:
       <<: *x-deploy
