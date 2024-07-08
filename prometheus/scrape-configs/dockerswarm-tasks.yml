@@ -41,6 +41,12 @@ scrape_configs:
       # Keep or drop targets with the following rules
       # ================================================================================
 
+      # io.prometheus.enabled=<true|false>
+      - source_labels:
+        - __meta_dockerswarm_service_label_io_prometheus_enabled
+        regex: 'true'
+        action: keep
+
       # - io.prometheus.dockerswarm-tasks.should_be_scraped=<true|false>
       - source_labels:
         - __meta_dockerswarm_service_label_io_prometheus_dockerswarm_tasks_should_be_scraped
@@ -61,12 +67,6 @@ scrape_configs:
       # ================================================================================
       # Override prometheus internal labels
       # ================================================================================
-      
-      # io.prometheus.enabled=<true|false>
-      - source_labels:
-        - __meta_dockerswarm_service_label_io_prometheus_enabled
-        regex: 'true'
-        action: keep
 
       # io.prometheus.scrape_scheme=<scheme>
       - source_labels:
