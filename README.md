@@ -99,26 +99,26 @@ TBD
 
 You can apply custom configurations to Prometheus via Environment variables by running `docker service update` command on `promstack_prometheus-config` service:
 
+```sh
+# Register the Alertmanager service address
+docker service update --env-add PROMETHEUS_SCRAPE_INTERVAL=15s promstack_prometheus-config
+
+# Remove the Alertmanager service address
+docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus-config
+```
+
 **Global**:
 - `PROMETHEUS_SCRAPE_INTERVAL`: The scrape interval for Prometheus, default is `10s`
 - `PROMETHEUS_SCRAPE_TIMEOUT`: The scrape timeout for Prometheus, default is `5`
 - `PROMETHEUS_EVALUATION_INTERVAL`: The evaluation interval for Prometheus, default is `1m`
 
 **Clustering**:
-- `PROMETHEUS_CLUSTER_NAME`: The cluster name for Prometheus, default is `prometheus`
+- `PROMETHEUS_CLUSTER_NAME`: The cluster name for Prometheus, default is `promstack`
 - `PROMETHEUS_CLUSTER_REPLICA`: The cluster replica for Prometheus, default is `1`
 
 **Alertmanager**:
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_SERVICE_PORT`: The Alertmanager service port, default is `9093`
-
-```sh
-# Register the Alertmanager service address
-docker service update --env-add PROMETHEUS_ALERTMANAGER_ADDR=tasks.alertmanager promstack_prometheus-config
-
-# Remove the Alertmanager service address
-docker service update --env-rm PROMETHEUS_ALERTMANAGER_ADDR promstack_prometheus-config
-```
 
 ---
 
