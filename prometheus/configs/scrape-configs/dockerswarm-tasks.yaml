@@ -130,13 +130,13 @@ scrape_configs:
       - source_labels:
           - __meta_dockerswarm_service_label_io_prometheus_job_name
           - __meta_dockerswarm_service_name
-        target_label: __tmp_job_name
+        target_label: __meta_dockerswarm_service_label_io_prometheus_job_name
         separator: ';'
         regex: ;(.*)
         replacement: $1
       - source_labels:
         - __meta_dockerswarm_service_label_com_docker_stack_namespace
-        - __tmp_job_name
+        - __meta_dockerswarm_service_label_io_prometheus_job_name
         target_label: job
         separator: /
 
