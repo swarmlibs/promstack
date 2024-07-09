@@ -27,7 +27,7 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
-  prometheus:
+  prometheus-server:
     image: prom/prometheus:v2.45.6
     command:
       - --config.file=/prometheus-configs.d/prometheus.yaml
@@ -77,6 +77,8 @@ services:
         aliases:
           - prometheus.local
       prometheus_internal:
+        aliases:
+          - prometheus.internal
     extra_hosts:
       - "host.docker.internal:host-gateway"
     configs:
@@ -94,9 +96,9 @@ services:
         source: prometheus-configs
         target: /prometheus-configs.d
     depends_on:
-      - prometheus_config
+      - prometheus
 
-  prometheus_config:
+  prometheus:
     image: swarmlibs/genconfig:main
     command:
       - --verbose
@@ -164,8 +166,8 @@ services:
       - --listen-address=:8080
       - --config-file=/prometheus-configs.d/prometheus.yaml
       - --watched-dir=/prometheus-configs.d/scrape-configs
-      - --reload-url=http://prometheus:9090/-/reload
-      - --runtimeinfo-url=http://prometheus:9090/api/v1/status/runtimeinfo
+      - --reload-url=http://prometheus.internal:9090/-/reload
+      - --runtimeinfo-url=http://prometheus.internal:9090/api/v1/status/runtimeinfo
       - --watch-interval=15s
       - --reload-timeout=10s
     deploy:
@@ -202,7 +204,7 @@ services:
         target: /prometheus-configs.d
     depends_on:
       - prometheus
-      - prometheus_config
+      - prometheus-server
       - prometheus-config-provider
 
 volumes:
