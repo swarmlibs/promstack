@@ -1,12 +1,18 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
 x-deploy: &x-deploy
-  mode: global
+  replicas: 1
   placement:
     max_replicas_per_node: 1
     constraints:
       - node.role == manager
-      - node.labels.io.promstack.prometheus == true
+
+x-prometheus-subservice-deploy: &x-prometheus-subservice-deploy
+  mode: global
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.labels.service.promstack_prometheus-server == true
 
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:
@@ -108,7 +114,7 @@ services:
       - PROMETHEUS_CLUSTER_NAME=${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     deploy:
-      <<: *x-deploy
+      <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
     logging: *x-default-logging
     configs:
@@ -124,7 +130,7 @@ services:
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
     deploy:
-      <<: *x-deploy
+      <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-provider"
@@ -171,7 +177,7 @@ services:
       - --watch-interval=15s
       - --reload-timeout=10s
     deploy:
-      <<: *x-deploy
+      <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-reloader"

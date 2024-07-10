@@ -6,7 +6,13 @@ x-deploy: &x-deploy
     max_replicas_per_node: 1
     constraints:
       - node.role == manager
-      - node.labels.io.promstack.grafana == true
+
+x-grafana-subservice-deploy: &x-grafana-subservice-deploy
+  replicas: 1
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.labels.service.promstack_grafana == true
 
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:
@@ -89,8 +95,7 @@ services:
       - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     deploy:
-      <<: *x-deploy
-      replicas: 1
+      <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
       restart_policy:
         condition: any
@@ -137,8 +142,7 @@ services:
       - --output-dir=/grafana-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.dashboard
     deploy:
-      <<: *x-deploy
-      replicas: 1
+      <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
       restart_policy:
         condition: any
@@ -183,8 +187,7 @@ services:
       - --output-dir=/grafana-provisioning-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
     deploy:
-      <<: *x-deploy
-      replicas: 1
+      <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
       restart_policy:
         condition: any
@@ -220,8 +223,7 @@ services:
       - --output-dir=/grafana-provisioning-datasources.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
     deploy:
-      <<: *x-deploy
-      replicas: 1
+      <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
       restart_policy:
         condition: any
