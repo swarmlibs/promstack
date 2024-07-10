@@ -118,7 +118,7 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 
 **Alertmanager**:
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
-- `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service port, default is `9093`
+- `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
 
 ---
 
