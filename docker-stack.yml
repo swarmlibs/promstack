@@ -458,6 +458,27 @@ services:
           memory: "134217728"
         reservations:
           memory: "67108864"
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: prometheus
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
       placement:
         constraints:
         - node.role == manager
