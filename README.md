@@ -36,6 +36,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - Docker running Swarm mode
 - A Docker Swarm cluster with at least 3 nodes
 - Configure Docker daemon to expose metrics for Prometheus
+- [Docker node metadata agent](https://github.com/swarmlibs/stacks/tree/main/dockerswarm)
 
 ## Getting Started
 
