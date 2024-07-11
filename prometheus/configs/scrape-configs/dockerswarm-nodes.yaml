@@ -30,3 +30,5 @@ scrape_configs:
       # ================================================================================
       - action: labelmap
         regex: __meta_(dockerswarm_node_.+)
+      - action: labeldrop
+        regex: dockerswarm_node_(label_.+)
