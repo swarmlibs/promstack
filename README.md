@@ -38,8 +38,6 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - Configure Docker daemon to expose metrics for Prometheus
 - The official [swarmlibs](https://github.com/swarmlibs/swarmlibs) stack, this provided necessary services for other stacks operate.
 
-
-
 ## Getting Started
 
 To get started, clone this repository to your local machine:
