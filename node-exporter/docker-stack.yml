@@ -20,7 +20,12 @@ services:
   # ====================================================
 
   node-exporter:
-    image: swarmlibs/node-exporter:main
+    image: prom/node-exporter:v1.8.1
+    command:
+      - --path.rootfs=/rootfs
+      - --collector.textfile.directory=/etc/node-exporter
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+      - --no-collector.ipvs
     deploy:
       mode: global
       resources: *x-exporter-resources-constraints
@@ -56,6 +61,8 @@ services:
         aliases:
           - node-exporter.local
     configs:
+      - source: node-exporter-node-meta
+        target: /etc/node-exporter/node_meta.prom
       - source: prometheus-node-exporter
     volumes:
       - type: bind
@@ -64,6 +71,12 @@ services:
         read_only: true
 
 configs:
+  # Node exporter textfile collector
+  node-exporter-node-meta:
+    name: node-exporter-node-meta-v1
+    file: ./node_meta.prom
+
+  # Prometheus node exporter scrape config
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
     file: ./prometheus/node_exporter.yml

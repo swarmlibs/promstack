@@ -128,6 +128,13 @@ scrape_configs:
       # Override "job" label to Docker Swarm's Service Name combined with "namespace" labels
       # e.g. <com.docker.stack.namespace>/<io.prometheus.job_name>
       - source_labels:
+          - __meta_dockerswarm_service_label_io_prometheus_job_name
+          - __meta_dockerswarm_service_name
+        target_label: __meta_dockerswarm_service_label_io_prometheus_job_name
+        separator: ';'
+        regex: ;(.*)
+        replacement: $1
+      - source_labels:
         - __meta_dockerswarm_service_label_com_docker_stack_namespace
         - __meta_dockerswarm_service_label_io_prometheus_job_name
         target_label: job

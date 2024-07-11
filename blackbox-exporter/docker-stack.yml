@@ -20,7 +20,7 @@ services:
   # ====================================================
 
   blackbox-exporter:
-    image: prom/blackbox-exporter:latest
+    image: prom/blackbox-exporter:v0.25.0
     deploy:
       replicas: 1
       placement:

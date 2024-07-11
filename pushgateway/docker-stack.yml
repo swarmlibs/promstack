@@ -20,7 +20,7 @@ services:
   # ====================================================
 
   pushgateway:
-    image: prom/pushgateway:latest
+    image: prom/pushgateway:v1.9.0
     deploy:
       replicas: 1
       placement:

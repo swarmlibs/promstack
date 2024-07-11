@@ -1,12 +1,18 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
 x-deploy: &x-deploy
-  mode: global
+  replicas: 1
   placement:
     max_replicas_per_node: 1
     constraints:
       - node.role == manager
-      - node.labels.io.promstack.prometheus == true
+
+x-prometheus-subservice-deploy: &x-prometheus-subservice-deploy
+  mode: global
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.labels.service.promstack_prometheus-server == true
 
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:
@@ -27,8 +33,16 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
-  prometheus:
-    image: swarmlibs/prometheus:main
+  prometheus-server:
+    image: prom/prometheus:v2.45.6
+    command:
+      - --config.file=/prometheus-configs.d/prometheus.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+      - --web.enable-lifecycle
+      - --log.level=info
+    user: "0:0"
     deploy:
       <<: *x-deploy
       labels:
@@ -53,15 +67,6 @@ services:
         monitor: 15s
         max_failure_ratio: 0.1
     logging: *x-default-logging
-    environment:
-      - DOCKERSWARM_SERVICE_ID={{.Service.ID}}
-      - DOCKERSWARM_SERVICE_NAME={{.Service.Name}}
-      - DOCKERSWARM_NODE_ID={{.Node.ID}}
-      - DOCKERSWARM_NODE_HOSTNAME={{.Node.Hostname}}
-      - DOCKERSWARM_TASK_ID={{.Task.ID}}
-      - DOCKERSWARM_TASK_NAME={{.Task.Name}}
-      - DOCKERSWARM_TASK_SLOT={{.Task.Slot}}
-      - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
     # ports:
     #   - published: 9090
     #     target: 9090
@@ -78,38 +83,80 @@ services:
         aliases:
           - prometheus.local
       prometheus_internal:
+        aliases:
+          - prometheus.internal
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    configs:
+      - source: prometheus-prometheus
+        target: /etc/prometheus/scrape-configs/prometheus.yaml
     volumes:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
       - type: volume
-        source: prometheus-data
-        target: /prometheus/data
+        source: prometheus
+        target: /prometheus
       - type: volume
         source: prometheus-configs
         target: /prometheus-configs.d
     depends_on:
-      - prometheus-config-reloader
-      - prometheus-config-provider
+      - prometheus
+
+  prometheus:
+    image: swarmlibs/genconfig:main
+    command:
+      - --verbose
+      - --file=/run/configs/prometheus.yaml.tmpl
+      - --out=/prometheus-configs.d/prometheus.yaml
+    environment:
+      - PROMETHEUS_CLUSTER_NAME=${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
+      - PROMETHEUS_CLUSTER_REPLICA=${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
+    deploy:
+      <<: *x-prometheus-subservice-deploy
+      resources: *x-exporter-resources-constraints
+    logging: *x-default-logging
+    configs:
+      - source: prometheus.yaml.tmpl
+        target: /run/configs/prometheus.yaml.tmpl
+    volumes:
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
 
   prometheus-config-provider:
     image: swarmlibs/prometheus-config-provider:main
     command:
-      - --output-dir=/prometheus-configs.d
+      - --output-dir=/prometheus-configs.d/scrape-configs
     deploy:
-      <<: *x-deploy
+      <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-provider"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     configs:
-      - prometheus-dockerswarm-nodes
-      - prometheus-dockerswarm-services-endpoints-host
-      - prometheus-dockerswarm-services-endpoints-ingress
-      - prometheus-dockerswarm-tasks
+      - source: prometheus-dockerswarm-nodes
+      - source: prometheus-dockerswarm-services-endpoints-host
+      - source: prometheus-dockerswarm-services-endpoints-ingress
+      - source: prometheus-dockerswarm-tasks
     volumes:
       - type: volume
         source: prometheus-configs
@@ -123,13 +170,14 @@ services:
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
     command:
       - --listen-address=:8080
-      - --watched-dir=/prometheus-configs.d
-      - --reload-url=http://prometheus:9090/-/reload
-      - --runtimeinfo-url=http://prometheus:9090/api/v1/status/runtimeinfo
+      - --config-file=/prometheus-configs.d/prometheus.yaml
+      - --watched-dir=/prometheus-configs.d/scrape-configs
+      - --reload-url=http://prometheus.internal:9090/-/reload
+      - --runtimeinfo-url=http://prometheus.internal:9090/api/v1/status/runtimeinfo
       - --watch-interval=15s
       - --reload-timeout=10s
     deploy:
-      <<: *x-deploy
+      <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-reloader"
@@ -137,6 +185,22 @@ services:
         io.prometheus.job_name: "prometheus-config-reloader"
         io.prometheus.scrape_port: "8080"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
+      restart_policy:
+        condition: any
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+        monitor: 15s
+        max_failure_ratio: 0.1
     logging: *x-default-logging
     networks:
       prometheus_internal:
@@ -144,9 +208,13 @@ services:
       - type: volume
         source: prometheus-configs
         target: /prometheus-configs.d
+    depends_on:
+      - prometheus
+      - prometheus-server
+      - prometheus-config-provider
 
 volumes:
-  prometheus-data:
+  prometheus:
   prometheus-configs:
 
 networks:
@@ -163,23 +231,33 @@ networks:
     internal: true
 
 configs:
+  # Prometheus config files
+  prometheus.yaml.tmpl:
+    name: prometheus.yaml.tmpl-v1
+    file: ./configs/prometheus.yaml.tmpl
+  prometheus-prometheus:
+    name: prometheus-prometheus-v1
+    file: ./configs/scrape-configs/prometheus.yaml
+    template_driver: golang
+
+  # Prometheus's scrape config files
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
-    file: ./scrape-configs/dockerswarm-nodes.yaml
+    file: ./configs/scrape-configs/dockerswarm-nodes.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: ./scrape-configs/dockerswarm-services-endpoints-host.yaml
+    file: ./configs/scrape-configs/dockerswarm-services-endpoints-host.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-services-endpoints-ingress:
     name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: ./scrape-configs/dockerswarm-services-endpoints-ingress.yaml
+    file: ./configs/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-tasks:
     name: prometheus-dockerswarm-tasks-v1
-    file: ./scrape-configs/dockerswarm-tasks.yaml
+    file: ./configs/scrape-configs/dockerswarm-tasks.yaml
     labels:
       - "io.prometheus.scrape_config=true"

@@ -1,0 +1,49 @@
+# A scrape configuration for running Prometheus on a Docker Swarm cluster.
+# This uses separate scrape configs for cluster components (i.e. nodes, services, tasks).
+# 
+# Keep at most 50 sets of details of targets dropped by relabeling.
+# This information is used to display in the UI for troubleshooting.
+global:
+  scrape_interval: '{{ getenv "PROMETHEUS_SCRAPE_INTERVAL" "10s" }}'
+  scrape_timeout: '{{ getenv "PROMETHEUS_SCRAPE_TIMEOUT" "5s" }}'
+  evaluation_interval: '{{ getenv "PROMETHEUS_EVALUATION_INTERVAL" "1m" }}'
+  # keep_dropped_targets: 50
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    __replica__: '{{ getenv "PROMETHEUS_CLUSTER_REPLICA" "replica-1" }}'
+    cluster: '{{ getenv "PROMETHEUS_CLUSTER_NAME" "default" }}'
+
+# ====================================================
+# Alertmanager configuration
+# ====================================================
+{{- if getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}
+alerting:
+  alertmanagers:
+    - dns_sd_configs:
+      - names:
+        - '{{ getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}'
+        type: 'A'
+        port: {{ getenv "PROMETHEUS_ALERTMANAGER_PORT" "9093" }}
+        refresh_interval: 30s
+
+  # All alerts sent to the Alertmanager will then also have different replica labels.
+  # Since the Alertmanager dedupes alerts based on identical label sets, 
+  # this deduplication will now break and you will get as many notifications as you have Prometheus server replicas!
+  # To avoid this, make sure that you drop the replica label on the alerting path using alert relabeling:
+  alert_relabel_configs:
+    - action: labeldrop
+      regex: __replica__
+{{- else }}
+# No alertmanager address provided
+{{- end }}
+
+# ====================================================
+# Scrape configuration
+# ====================================================
+
+# Load scrape configs from this directory.
+scrape_config_files:
+  - "/etc/prometheus/scrape-configs/*"
+  - "/prometheus-configs.d/scrape-configs/*"
