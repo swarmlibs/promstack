@@ -12,7 +12,7 @@ x-grafana-subservice-deploy: &x-grafana-subservice-deploy
   placement:
     max_replicas_per_node: 1
     constraints:
-      - node.labels.service.promstack_grafana == true
+      - node.labels.services.promstack_grafana == true
 
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:
