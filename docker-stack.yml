@@ -24,8 +24,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 30s
@@ -71,8 +69,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 30s
@@ -211,8 +207,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -259,8 +253,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -315,8 +307,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -363,8 +353,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -419,8 +407,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 30s
@@ -455,8 +441,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
@@ -501,8 +485,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -561,8 +543,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 30s
@@ -680,8 +660,6 @@ services:
       resources:
         limits:
           memory: "134217728"
-        reservations:
-          memory: "67108864"
       restart_policy:
         condition: any
         delay: 30s
@@ -836,5 +814,3 @@ x-default-logging:
 x-exporter-resources-constraints:
   limits:
     memory: 128M
-  reservations:
-    memory: 64M
