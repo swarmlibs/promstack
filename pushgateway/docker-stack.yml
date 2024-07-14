@@ -50,6 +50,9 @@ services:
     logging: *x-default-logging
     hostname: replica-{{.Task.Slot}}.pushgateway.local
     networks:
+      prometheus:
+        aliases:
+          - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
           - pushgateway.local
@@ -57,6 +60,9 @@ services:
       - source: prometheus-pushgateway
 
 configs:
+  prometheus:
+    name: prometheus
+    external: true
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./prometheus/pushgateway.yml

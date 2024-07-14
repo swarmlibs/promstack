@@ -68,7 +68,11 @@ services:
         aliases:
           - grafana.svc.cluster.local
       grafana:
+        aliases:
+          - grafana.local
       prometheus:
+        aliases:
+          - grafana.svc.cluster.local
       prometheus_gwnetwork:
     volumes:
       - type: volume
