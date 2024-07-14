@@ -10,9 +10,8 @@ x-deploy: &x-deploy
 x-prometheus-subservice-deploy: &x-prometheus-subservice-deploy
   mode: global
   placement:
-    max_replicas_per_node: 1
     constraints:
-      - node.labels.services.promstack_prometheus-server == true
+      - node.labels.services.promstack_prometheus_server == true
 
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:

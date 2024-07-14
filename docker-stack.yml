@@ -455,8 +455,7 @@ services:
           memory: "67108864"
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus-server == true
-        max_replicas_per_node: 1
+        - node.labels.services.promstack_prometheus_server == true
     environment:
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
@@ -507,8 +506,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus-server == true
-        max_replicas_per_node: 1
+        - node.labels.services.promstack_prometheus_server == true
     image: swarmlibs/prometheus-config-provider:main
     logging:
       driver: json-file
@@ -567,8 +565,7 @@ services:
         window: 15s
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus-server == true
-        max_replicas_per_node: 1
+        - node.labels.services.promstack_prometheus_server == true
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
     logging:
       driver: json-file
