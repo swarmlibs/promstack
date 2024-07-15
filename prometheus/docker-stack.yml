@@ -102,7 +102,7 @@ services:
       - prometheus
 
   prometheus:
-    image: swarmlibs/genconfig:main
+    image: swarmlibs/genconfig:0.1.0-rc.1
     command:
       - --verbose
       - --file=/run/configs/prometheus.yaml.tmpl

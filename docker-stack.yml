@@ -448,7 +448,7 @@ services:
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: swarmlibs/genconfig:main
+    image: swarmlibs/genconfig:0.1.0-rc.1
     logging:
       driver: json-file
       options:
