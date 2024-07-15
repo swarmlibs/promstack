@@ -138,7 +138,7 @@ services:
 
   # Grafana dashboards provider
   grafana-dashboard-provider:
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     command:
       - --output-ext=json
       - --output-dir=/grafana-dashboards.d
@@ -184,7 +184,7 @@ services:
 
   # Grafana provisioning config for datasources and dashboards
   grafana-provisioning-dashboard-provider:
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     command:
       - --output-dir=/grafana-provisioning-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
@@ -220,7 +220,7 @@ services:
         target: /var/run/docker.sock
         read_only: true
   grafana-provisioning-datasource-provider:
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     command:
       - --output-dir=/grafana-provisioning-datasources.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.datasource

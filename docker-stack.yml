@@ -216,7 +216,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -316,7 +316,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -362,7 +362,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -493,7 +493,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: swarmlibs/prometheus-config-provider:main
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
