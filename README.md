@@ -154,11 +154,42 @@ The following configuration are supported:
 
 #### Injecting Grafana Dashboards
 
-TBD
+To inject a Grafana Provisioning configurations, you need to specify config object in your `docker-compose.yml` or `docker-stack.yml` file as shown below. The label `io.grafana.dashboard=true` is used by the config provider service to inject the dashboards into Grafana.
+
+```yaml
+# See grafana/docker-stack.yml
+configs:
+  # Grafana & Prometheus dashboards
+  gf-dashboard-grafana-metrics:
+    name: gf-dashboard-grafana-metrics-v1
+    file: ./dashboards/grafana-metrics.json
+    labels: [ "io.grafana.dashboard=true" ]
+```
 
 #### Injecting Grafana Provisioning configurations
 
-TBD
+To inject a Grafana Provisioning configurations, you need to specify config object in your `docker-compose.yml` or `docker-stack.yml` file as shown below.
+
+There are two types of provisioning configurations:
+- Dashboards: Use `io.grafana.provisioning.dashboard=true` label to inject the provisioning configuration for dashboards.
+- Datasources: Use `io.grafana.provisioning.datasource=true` label to inject the provisioning configuration for data sources.
+
+```yaml
+# See grafana/docker-stack.yml
+configs:
+  # Grafana dashboards provisioning config
+  gf-provisioning-dashboards:
+    name: gf-provisioning-dashboards-v1
+    file: ./provisioning/dashboards/grafana-dashboards.yml
+    labels: [ "io.grafana.provisioning.dashboard=true" ]
+
+  # Grafana datasources provisioning config
+  gf-provisioning-datasource-prometheus:
+    name: gf-provisioning-datasource-prometheus-v1
+    file: ./provisioning/datasources/prometheus.yaml
+    labels:
+      - "io.grafana.provisioning.datasource=true"
+```
 
 ## Prometheus
 
@@ -200,7 +231,17 @@ networks:
 
 #### Register a custom scrape config
 
-TBD
+To register a custom scrape config, you need to specify config object in your `docker-compose.yml` or `docker-stack.yml` file as shown below. The label `io.prometheus.scrape_config=true` is used by the Prometheus config provider service to inject the scrape config into Prometheus.
+
+```yaml
+# See cadvisor/docker-stack.yml
+configs:
+  prometheus-cadvisor:
+    name: prometheus-cadvisor-v1
+    file: ./prometheus/cadvisor.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
+```
 
 ### Configurations
 
