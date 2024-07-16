@@ -16,11 +16,12 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
   - [Concepts](#concepts)
+    - [Prometheus](#prometheus)
     - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
-- [Prometheus](#prometheus)
+- [Prometheus](#prometheus-1)
     - [Registering services as Prometheus targets](#registering-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configurations](#configurations)
@@ -91,7 +92,11 @@ make deploy
 make remove
 ```
 
-### Concepts 
+### Concepts
+
+This section covers some concepts that are important to understand for day to day Promstack usage and operation.
+
+#### Prometheus
 
 By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
 
