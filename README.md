@@ -135,6 +135,10 @@ See https://github.com/swarmlibs/swarmlibs for more information.
 
 This will deploy the stack to the Docker Swarm cluster. Please ensure you have the necessary permissions to deploy the stack and the `swarmlibs` stack is deployed. See [Pre-requisites](#pre-requisites) for more information.
 
+> [!IMPORTANT]
+> It is important to note that the `logstack` is the default stack namespace for this deployment.  
+> It is **NOT RECOMMENDED** to change the stack namespace as it may cause issues with the deployment.
+
 ```sh
 make deploy
 ```
@@ -174,7 +178,7 @@ docker service ls --filter label=com.docker.stack.namespace=promstack
 You can continously monitor the deployment by running the following command:
 
 ```sh
-# The `watch` command will continously monitor the services in the `promstack` stack and update the output every 2 seconds.
+# The `watch` command will continously monitor the services in the stack and update the output every 2 seconds.
 watch docker service ls --filter label=com.docker.stack.namespace=promstack
 ```
 
