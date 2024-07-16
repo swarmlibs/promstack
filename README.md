@@ -32,10 +32,12 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 
 ## Stacks
 
-- [cadvisor](https://github.com/google/cadvisor): Analyzes resource usage and performance characteristics of running containers.
-- [grafana](https://github.com/swarmlibs/grafana): A custom Grafana Dashboard for Docker Swarm.
-- [node-exporter](https://github.com/swarmlibs/node-exporter): A custom Node exporter for Docker Swarm.
-- [prometheus](https://github.com/swarmlibs/prometheus): The Prometheus monitoring system and time series database customized for Docker Swarm.
+- [Blackbox prober exporter](https://github.com/prometheus/blackbox_exporter)
+- [cAdvisor](https://github.com/google/cadvisor)
+- [Grafana](https://github.com/grafana/grafana)
+- [Node exporter](https://github.com/prometheus/node_exporter)
+- [Prometheus](https://github.com/prometheus/prometheus)
+- [Pushgateway](https://github.com/prometheus/pushgateway)
 
 ## Pre-requisites
 
@@ -92,6 +94,8 @@ make deploy
 ```sh
 make remove
 ```
+
+---
 
 ## Grafana
 
