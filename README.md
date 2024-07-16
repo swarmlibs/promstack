@@ -13,8 +13,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Concepts](#concepts)
   - [Prometheus](#prometheus)
   - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
-- [Pre-requisites](#pre-requisites)
 - [Stacks](#stacks)
+- [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
@@ -74,21 +74,23 @@ We leverage the below services:
 
 ---
 
+## Stacks
+
+These are the services that are part of the stack:
+
+- Blackbox exporter: https://github.com/prometheus/blackbox_exporter
+- cAdvisor: https://github.com/google/cadvisor
+- Grafana: https://github.com/grafana/grafana
+- Node exporter: https://github.com/prometheus/node_exporter
+- Prometheus: https://github.com/prometheus/prometheus
+- Pushgateway: https://github.com/prometheus/pushgateway
+
 ## Pre-requisites
 
 - Docker running Swarm mode
 - A Docker Swarm cluster with at least 3 nodes
 - Configure Docker daemon to expose metrics for Prometheus
 - The official [swarmlibs](https://github.com/swarmlibs/swarmlibs) stack, this provided necessary services for other stacks operate.
-
-## Stacks
-
-- [Blackbox prober exporter](https://github.com/prometheus/blackbox_exporter)
-- [cAdvisor](https://github.com/google/cadvisor)
-- [Grafana](https://github.com/grafana/grafana)
-- [Node exporter](https://github.com/prometheus/node_exporter)
-- [Prometheus](https://github.com/prometheus/prometheus)
-- [Pushgateway](https://github.com/prometheus/pushgateway)
 
 ## Getting Started
 
