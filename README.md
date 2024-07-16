@@ -19,8 +19,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
-  - [Deploy `promstack`](#deploy-promstack)
-  - [Remove `promstack`](#remove-promstack)
+  - [Deploy stack](#deploy-stack)
+  - [Remove stack](#remove-stack)
 - [Prometheus](#prometheus)
   - [Configurations](#configurations)
   - [Prometheus Kubernetes compatible labels](#prometheus-kubernetes-compatible-labels)
@@ -72,22 +72,17 @@ docker network create --scope=swarm --driver=overlay --attachable prometheus_gwn
 * The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
 * The `prometheus_gwnetwork` network is used for the internal communication between the Prometheus Server, exporters and other agents.
 
-The `prometheu` and `grafana` services are deployed on nodes that match the following labels:
+The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reload service. In order to ensure placement of these services, you need to deploy the `swarmlibs` stack.
 
-```sh
-docker node update --label-add "io.promstack.prometheus=true" <node-id>
-docker node update --label-add "io.promstack.grafana=true" <node-id>
-```
+See https://github.com/swarmlibs/swarmlibs for more information.
 
-See [Control service placement](https://docs.docker.com/engine/swarm/services/#control-service-placement) for more information.
-
-### Deploy `promstack`
+### Deploy stack
 
 ```sh
 make deploy
 ```
 
-### Remove `promstack`
+### Remove stack
 
 ```sh
 make remove
