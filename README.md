@@ -10,14 +10,14 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 
 **Table of Contents**:
 - [About](#about)
-- [Stacks](#stacks)
+- [Concepts](#concepts)
+  - [Prometheus](#prometheus)
+  - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
 - [Pre-requisites](#pre-requisites)
+- [Stacks](#stacks)
 - [Getting Started](#getting-started)
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
-  - [Concepts](#concepts)
-    - [Prometheus](#prometheus)
-    - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
@@ -25,6 +25,61 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Registering services as Prometheus targets](#registering-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configurations](#configurations)
+
+
+## Concepts
+
+This section covers some concepts that are important to understand for day to day Promstack usage and operation.
+
+### Prometheus
+
+By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus/assets/4363857/de6989e9-4a01-4a51-929a-677093c4a07f">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus/assets/4363857/935760e1-7493-40d0-acd7-8abae1b7ced8">
+  <img src="https://github.com/swarmlibs/prometheus/assets/4363857/935760e1-7493-40d0-acd7-8abae1b7ced8">
+</picture>
+
+**Prometheus Kubernetes compatible labels**
+
+Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
+
+| Kubernetes   | Docker                                                        | Scrape config                    |
+| ------------ | ------------------------------------------------------------- | -------------------------------- |
+| `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
+| `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
+| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/tasks`              |
+| `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
+
+* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
+* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
+
+### Configuration providers and config reloader services
+
+The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
+
+Here an example visual representation of the services:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/5e790dd2-0d06-434a-98f7-a1e412388c96">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
+  <img src="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
+</picture>
+
+We leverage the below services:
+- [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
+- [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
+- [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
+
+---
+
+## Pre-requisites
+
+- Docker running Swarm mode
+- A Docker Swarm cluster with at least 3 nodes
+- Configure Docker daemon to expose metrics for Prometheus
+- The official [swarmlibs](https://github.com/swarmlibs/swarmlibs) stack, this provided necessary services for other stacks operate.
 
 ## Stacks
 
@@ -34,13 +89,6 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Node exporter](https://github.com/prometheus/node_exporter)
 - [Prometheus](https://github.com/prometheus/prometheus)
 - [Pushgateway](https://github.com/prometheus/pushgateway)
-
-## Pre-requisites
-
-- Docker running Swarm mode
-- A Docker Swarm cluster with at least 3 nodes
-- Configure Docker daemon to expose metrics for Prometheus
-- The official [swarmlibs](https://github.com/swarmlibs/swarmlibs) stack, this provided necessary services for other stacks operate.
 
 ## Getting Started
 
@@ -91,52 +139,8 @@ make deploy
 make remove
 ```
 
-### Concepts
-
-This section covers some concepts that are important to understand for day to day Promstack usage and operation.
-
-#### Prometheus
-
-By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus/assets/4363857/de6989e9-4a01-4a51-929a-677093c4a07f">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus/assets/4363857/935760e1-7493-40d0-acd7-8abae1b7ced8">
-  <img src="https://github.com/swarmlibs/prometheus/assets/4363857/935760e1-7493-40d0-acd7-8abae1b7ced8">
-</picture>
-
-**Prometheus Kubernetes compatible labels**
-
-Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
-
-| Kubernetes   | Docker                                                        | Scrape config                    |
-| ------------ | ------------------------------------------------------------- | -------------------------------- |
-| `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
-| `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
-| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/tasks`              |
-| `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
-
-* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
-* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
-
-#### Configuration providers and config reloader services
-
-The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
-
-Here an example visual representation of the services:
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/5e790dd2-0d06-434a-98f7-a1e412388c96">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
-  <img src="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
-</picture>
-
-We leverage the below services:
-- [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
-- [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
-- [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
-
 ---
+
 
 ## Grafana
 
