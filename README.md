@@ -18,6 +18,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Getting Started](#getting-started)
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
+  - [Verify deployment](#verify-deployment)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
@@ -132,14 +133,49 @@ See https://github.com/swarmlibs/swarmlibs for more information.
 
 ### Deploy stack
 
+This will deploy the stack to the Docker Swarm cluster. Please ensure you have the necessary permissions to deploy the stack and the `swarmlibs` stack is deployed. See [Pre-requisites](#pre-requisites) for more information.
+
 ```sh
 make deploy
 ```
 
 ### Remove stack
 
+> [!WARNING]
+> This will remove the stack and all the services associated with it. Use with caution.
+
 ```sh
 make remove
+```
+
+### Verify deployment
+
+To verify the deployment, you can use the following commands:
+
+```sh
+docker service ls --filter label=com.docker.stack.namespace=promstack
+
+# ID  NAME                                                 MODE         REPLICAS               IMAGE
+# **  promstack_blackbox-exporter                          replicated   1/1 (max 1 per node)   prom/blackbox-exporter:v0.25.0
+# **  promstack_cadvisor                                   global       1/1                    gcr.io/cadvisor/cadvisor:v0.47.0
+# **  promstack_grafana                                    replicated   1/1 (max 1 per node)   swarmlibs/grafana:main
+# **  promstack_grafana-dashboard-provider                 replicated   1/1 (max 1 per node)   swarmlibs/prometheus-config-provider:0.1.0-rc.1
+# **  promstack_grafana-provisioning-config-reloader       replicated   1/1 (max 1 per node)   swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
+# **  promstack_grafana-provisioning-dashboard-provider    replicated   1/1 (max 1 per node)   swarmlibs/prometheus-config-provider:0.1.0-rc.1
+# **  promstack_grafana-provisioning-datasource-provider   replicated   1/1 (max 1 per node)   swarmlibs/prometheus-config-provider:0.1.0-rc.1
+# **  promstack_node-exporter                              global       1/1                    prom/node-exporter:v1.8.1
+# **  promstack_prometheus                                 global       1/1                    swarmlibs/genconfig:0.1.0-rc.1
+# **  promstack_prometheus-config-provider                 global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1
+# **  promstack_prometheus-config-reloader                 global       1/1                    quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+# **  promstack_prometheus-server                          replicated   1/1 (max 1 per node)   prom/prometheus:v2.45.6
+# **  promstack_pushgateway                                replicated   1/1 (max 1 per node)   prom/pushgateway:v1.9.0
+```
+
+You can continously monitor the deployment by running the following command:
+
+```sh
+# The `watch` command will continously monitor the services in the `promstack` stack and update the output every 2 seconds.
+watch docker service ls --filter label=com.docker.stack.namespace=promstack
 ```
 
 ---
