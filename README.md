@@ -21,7 +21,12 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Getting Started](#getting-started)
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
+- [Grafana](#grafana)
+  - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
+  - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
 - [Prometheus](#prometheus)
+  - [Registering services as Prometheus targets](#registering-services-as-prometheus-targets)
+  - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configurations](#configurations)
   - [Prometheus Kubernetes compatible labels](#prometheus-kubernetes-compatible-labels)
 
@@ -72,7 +77,7 @@ docker network create --scope=swarm --driver=overlay --attachable prometheus_gwn
 * The `prometheus` network is used to perform service discovery for Prometheus scrape configs.
 * The `prometheus_gwnetwork` network is used for the internal communication between the Prometheus Server, exporters and other agents.
 
-The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reload service. In order to ensure placement of these services, you need to deploy the `swarmlibs` stack.
+The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service. In order to ensure placement of these services, you need to deploy the `swarmlibs` stack.
 
 See https://github.com/swarmlibs/swarmlibs for more information.
 
@@ -88,10 +93,28 @@ make deploy
 make remove
 ```
 
+## Grafana
+
+The Grafana service is configured with config provider and config reload services. The config provider service is responsible for providing the configuration files for the Grafana service. The config reloader service is responsible for reloading the Grafana service configuration when the config provider service updates the configuration files.
+
+The following configuration are supported:
+- Grafana Dashboards
+- Provisioning (Datasources, Dashboards)
+
+### Injecting Grafana Dashboards
+
+TBD
+
+### Injecting Grafana Provisioning configurations
+
+TBD
+
 ## Prometheus
 
 By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks.
-You can use Docker object labels in the `deploy` block to automagically register services as targets for Prometheus.
+You can use Docker object labels in the `deploy` block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
+
+### Registering services as Prometheus targets
 
 - `io.prometheus.enabled`: Enable the Prometheus scraping for the service.
 - `io.prometheus.job_name`: The Prometheus job name. Default is `<docker_stack_namespace>/<service_name|job_name>`.
@@ -123,6 +146,10 @@ networks:
     name: prometheus
     external: true
 ```
+
+### Register a custom scrape config
+
+TBD
 
 ### Configurations
 
