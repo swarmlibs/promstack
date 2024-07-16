@@ -22,7 +22,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
 - [Prometheus](#prometheus-1)
-    - [Registering services as Prometheus targets](#registering-services-as-prometheus-targets)
+    - [Register services as Prometheus targets](#register-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configure Prometheus](#configure-prometheus)
     - [Environment variables](#environment-variables)
@@ -197,7 +197,7 @@ configs:
 By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks.
 You can use Docker object labels in the `deploy` block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
 
-#### Registering services as Prometheus targets
+#### Register services as Prometheus targets
 
 - `io.prometheus.enabled`: Enable the Prometheus scraping for the service.
 - `io.prometheus.job_name`: The Prometheus job name. Default is `<docker_stack_namespace>/<service_name|job_name>`.
