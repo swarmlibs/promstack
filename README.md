@@ -21,6 +21,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Getting Started](#getting-started)
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
+- [Concepts of configuration providers and config reloader services](#concepts-of-configuration-providers-and-config-reloader-services)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
@@ -96,6 +97,23 @@ make remove
 ```
 
 ---
+
+## Concepts of configuration providers and config reloader services
+
+The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
+
+Here an example visual representation of the services:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/5e790dd2-0d06-434a-98f7-a1e412388c96">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
+  <img src="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
+</picture>
+
+We leverage the below services:
+- [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
+- [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
+- [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
 
 ## Grafana
 
