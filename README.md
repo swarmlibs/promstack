@@ -140,7 +140,8 @@ Here is a list of Docker Service/Task labels that are mapped to Kubernetes label
 | `pod`        | `dockerswarm_task_name`                                       | `promstack/tasks`              |
 | `service`    | `__meta_dockerswarm_service_name`                             | `promstack/services-endpoints` |
 
-* **dockerswarm_task_name**: A combination of the service name, slot and task id.
+* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
+* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
 
 ### Configurations
 
