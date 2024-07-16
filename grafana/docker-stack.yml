@@ -92,7 +92,7 @@ services:
   # ====================================================
   
   grafana-provisioning-config-reloader:
-    image: swarmlibs/grafana-provisioning-config-reloader:main
+    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
     environment:
       - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning

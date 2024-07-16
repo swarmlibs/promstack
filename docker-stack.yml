@@ -265,7 +265,7 @@ services:
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
-    image: swarmlibs/grafana-provisioning-config-reloader:main
+    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
     logging:
       driver: json-file
       options:
