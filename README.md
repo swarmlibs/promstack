@@ -24,7 +24,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Prometheus](#prometheus-1)
     - [Registering services as Prometheus targets](#registering-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
-  - [Configurations](#configurations)
+  - [Configure Prometheus](#configure-prometheus)
+    - [Environment variables](#environment-variables)
 
 
 ## Concepts
@@ -243,7 +244,7 @@ configs:
       - "io.prometheus.scrape_config=true"
 ```
 
-### Configurations
+### Configure Prometheus
 
 You can apply custom configurations to Prometheus via Environment variables by running `docker service update` command on `promstack_prometheus` service:
 
@@ -254,17 +255,13 @@ docker service update --env-add PROMETHEUS_SCRAPE_INTERVAL=15s promstack_prometh
 # Remove the Alertmanager service address
 docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 ```
+#### Environment variables
 
-**Global**:
 - `PROMETHEUS_SCRAPE_INTERVAL`: The scrape interval for Prometheus, default is `10s`
 - `PROMETHEUS_SCRAPE_TIMEOUT`: The scrape timeout for Prometheus, default is `5`
 - `PROMETHEUS_EVALUATION_INTERVAL`: The evaluation interval for Prometheus, default is `1m`
-
-**Clustering**:
 - `PROMETHEUS_CLUSTER_NAME`: The cluster name for Prometheus, default is `promstack`
 - `PROMETHEUS_CLUSTER_REPLICA`: The cluster replica for Prometheus, default is `1`
-
-**Alertmanager**:
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
 
