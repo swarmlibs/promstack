@@ -25,7 +25,6 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Registering services as Prometheus targets](#registering-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configurations](#configurations)
-  - [Prometheus Kubernetes compatible labels](#prometheus-kubernetes-compatible-labels)
 
 ## Stacks
 
@@ -105,6 +104,20 @@ By design, the Prometheus server is configured to automatically discover and scr
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus/assets/4363857/935760e1-7493-40d0-acd7-8abae1b7ced8">
   <img src="https://github.com/swarmlibs/prometheus/assets/4363857/935760e1-7493-40d0-acd7-8abae1b7ced8">
 </picture>
+
+**Prometheus Kubernetes compatible labels**
+
+Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
+
+| Kubernetes   | Docker                                                        | Scrape config                    |
+| ------------ | ------------------------------------------------------------- | -------------------------------- |
+| `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
+| `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
+| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/tasks`              |
+| `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
+
+* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
+* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
 
 #### Configuration providers and config reloader services
 
@@ -207,20 +220,6 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 **Alertmanager**:
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
-
-### Prometheus Kubernetes compatible labels
-
-Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
-
-| Kubernetes   | Docker                                                        | Scrape config                    |
-| ------------ | ------------------------------------------------------------- | -------------------------------- |
-| `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
-| `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
-| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/tasks`              |
-| `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
-
-* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
-* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
 
 ---
 
