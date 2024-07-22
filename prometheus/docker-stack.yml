@@ -1,5 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
+# prom/prometheus:v2.45.6
+# swarmlibs/genconfig:0.1.0-rc.1
+# swarmlibs/prometheus-config-provider:0.1.0-rc.1
+# quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+
 x-deploy: &x-deploy
   replicas: 1
   placement:
