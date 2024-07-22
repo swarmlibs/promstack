@@ -106,6 +106,14 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+    - type: bind
+      source: /dev/disk
+      target: /dev/disk
+      read_only: true
+    - type: bind
+      source: /dev/kmsg
+      target: /dev/kmsg
+      read_only: true
   grafana:
     deploy:
       replicas: 1
