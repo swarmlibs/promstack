@@ -509,13 +509,11 @@ services:
       read_only: true
   prometheus-config-reloader:
     command:
-    - --listen-address=:8080
-    - --config-file=/prometheus-configs.d/prometheus.yaml
-    - --watched-dir=/prometheus-configs.d/scrape-configs
-    - --reload-url=http://prometheus.internal:9090/-/reload
-    - --runtimeinfo-url=http://prometheus.internal:9090/api/v1/status/runtimeinfo
-    - --watch-interval=15s
-    - --reload-timeout=10s
+    - -ec
+    - /bin/prometheus-config-reloader --listen-address=:8080 --watch-interval=$${RELOADER_WATCH_INTERVAL}
+      --reload-timeout=$${RELOADER_RELOAD_TIMEOUT} --config-file=$${RELOADER_CONFIG_FILE}
+      --watched-dir=$${RELOADER_WATCH_DIR} --reload-url=http://$${PROMETHEUS_HOST}:9090/-/reload
+      --runtimeinfo-url=http://$${PROMETHEUS_HOST}:9090/api/v1/status/runtimeinfo
     depends_on:
     - prometheus
     - prometheus-server
@@ -550,6 +548,14 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
+    entrypoint:
+    - /bin/sh
+    environment:
+      PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.local
+      RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
+      RELOADER_RELOAD_TIMEOUT: 10s
+      RELOADER_WATCH_DIR: /prometheus-configs.d/scrape-configs
+      RELOADER_WATCH_INTERVAL: 15s
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
     logging:
       driver: json-file
@@ -604,7 +610,7 @@ services:
         max_replicas_per_node: 1
     extra_hosts:
     - host.docker.internal:host-gateway
-    hostname: replica-{{.Task.Slot}}.prometheus.local
+    hostname: replica-{{.Node.ID}}.prometheus.local
     image: prom/prometheus:v2.45.6
     logging:
       driver: json-file

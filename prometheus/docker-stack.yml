@@ -68,7 +68,7 @@ services:
     #   - published: 9090
     #     target: 9090
     #     mode: host
-    hostname: replica-{{.Task.Slot}}.prometheus.local
+    hostname: replica-{{.Node.ID}}.prometheus.local
     networks:
       public:
         aliases:
@@ -165,14 +165,14 @@ services:
 
   prometheus-config-reloader:
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
-    command:
-      - --listen-address=:8080
-      - --config-file=/prometheus-configs.d/prometheus.yaml
-      - --watched-dir=/prometheus-configs.d/scrape-configs
-      - --reload-url=http://prometheus.internal:9090/-/reload
-      - --runtimeinfo-url=http://prometheus.internal:9090/api/v1/status/runtimeinfo
-      - --watch-interval=15s
-      - --reload-timeout=10s
+    entrypoint: ["/bin/sh"]
+    command: -ec "/bin/prometheus-config-reloader --listen-address=:8080 --watch-interval=$${RELOADER_WATCH_INTERVAL} --reload-timeout=$${RELOADER_RELOAD_TIMEOUT} --config-file=$${RELOADER_CONFIG_FILE} --watched-dir=$${RELOADER_WATCH_DIR} --reload-url=http://$${PROMETHEUS_HOST}:9090/-/reload --runtimeinfo-url=http://$${PROMETHEUS_HOST}:9090/api/v1/status/runtimeinfo"
+    environment:
+      - RELOADER_WATCH_INTERVAL=15s
+      - RELOADER_RELOAD_TIMEOUT=10s
+      - RELOADER_CONFIG_FILE=/prometheus-configs.d/prometheus.yaml
+      - RELOADER_WATCH_DIR=/prometheus-configs.d/scrape-configs
+      - PROMETHEUS_HOST=replica-{{.Node.ID}}.prometheus.local
     deploy:
       <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
