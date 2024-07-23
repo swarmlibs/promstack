@@ -26,6 +26,25 @@ services:
       - --collector.textfile.directory=/etc/node-exporter
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
       - --no-collector.ipvs
+    # ports:
+    #   - published: 9100
+    #     target: 9100
+    #     mode: host
+    hostname: "replica-{{.Task.Slot}}.node-exporter.local"
+    networks:
+      prometheus_gwnetwork:
+        aliases:
+          - node-exporter.local
+    configs:
+      - source: node-exporter-node-meta
+        target: /etc/node-exporter/node_meta.prom
+      - source: prometheus-node-exporter
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+    logging: *x-default-logging
     deploy:
       mode: global
       resources: *x-exporter-resources-constraints
@@ -50,25 +69,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    hostname: "replica-{{.Task.Slot}}.node-exporter.local"
-    # ports:
-    #   - published: 9100
-    #     target: 9100
-    #     mode: host
-    networks:
-      prometheus_gwnetwork:
-        aliases:
-          - node-exporter.local
-    configs:
-      - source: node-exporter-node-meta
-        target: /etc/node-exporter/node_meta.prom
-      - source: prometheus-node-exporter
-    volumes:
-      - type: bind
-        source: /
-        target: /rootfs
-        read_only: true
 
 configs:
   # Node exporter textfile collector

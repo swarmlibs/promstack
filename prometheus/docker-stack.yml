@@ -45,6 +45,41 @@ services:
       - --web.enable-lifecycle
       - --log.level=info
     user: "0:0"
+    # ports:
+    #   - published: 9090
+    #     target: 9090
+    #     mode: host
+    networks:
+      public:
+        aliases:
+          - prometheus.svc.cluster.local
+      prometheus:
+        aliases:
+          - prometheus.local
+      prometheus_gwnetwork:
+        aliases:
+          - prometheus.local
+      prometheus_internal:
+        aliases:
+          - prometheus.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    hostname: replica-{{.Node.ID}}.prometheus.local
+    configs:
+      - source: prometheus-prometheus
+        target: /etc/prometheus/scrape-configs/prometheus.yaml
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: volume
+        source: prometheus
+        target: /prometheus
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+    logging: *x-default-logging
     deploy:
       <<: *x-deploy
       labels:
@@ -68,41 +103,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    # ports:
-    #   - published: 9090
-    #     target: 9090
-    #     mode: host
-    hostname: replica-{{.Node.ID}}.prometheus.local
-    networks:
-      public:
-        aliases:
-          - prometheus.svc.cluster.local
-      prometheus:
-        aliases:
-          - prometheus.local
-      prometheus_gwnetwork:
-        aliases:
-          - prometheus.local
-      prometheus_internal:
-        aliases:
-          - prometheus.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    configs:
-      - source: prometheus-prometheus
-        target: /etc/prometheus/scrape-configs/prometheus.yaml
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
-      - type: volume
-        source: prometheus
-        target: /prometheus
-      - type: volume
-        source: prometheus-configs
-        target: /prometheus-configs.d
     depends_on:
       - prometheus
 
@@ -131,6 +131,20 @@ services:
     image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
+    configs:
+      - source: prometheus-dockerswarm-nodes
+      - source: prometheus-dockerswarm-services-endpoints-host
+      - source: prometheus-dockerswarm-services-endpoints-ingress
+      - source: prometheus-dockerswarm-tasks
+    volumes:
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    logging: *x-default-logging
     deploy:
       <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
@@ -153,20 +167,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    configs:
-      - source: prometheus-dockerswarm-nodes
-      - source: prometheus-dockerswarm-services-endpoints-host
-      - source: prometheus-dockerswarm-services-endpoints-ingress
-      - source: prometheus-dockerswarm-tasks
-    volumes:
-      - type: volume
-        source: prometheus-configs
-        target: /prometheus-configs.d
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
 
   prometheus-config-reloader:
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
@@ -178,6 +178,13 @@ services:
       - RELOADER_CONFIG_FILE=/prometheus-configs.d/prometheus.yaml
       - RELOADER_WATCH_DIR=/prometheus-configs.d/scrape-configs
       - PROMETHEUS_HOST=replica-{{.Node.ID}}.prometheus.local
+    networks:
+      prometheus_internal:
+    volumes:
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+    logging: *x-default-logging
     deploy:
       <<: *x-prometheus-subservice-deploy
       resources: *x-exporter-resources-constraints
@@ -203,13 +210,6 @@ services:
         delay: 30s
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    networks:
-      prometheus_internal:
-    volumes:
-      - type: volume
-        source: prometheus-configs
-        target: /prometheus-configs.d
     depends_on:
       - prometheus
       - prometheus-server

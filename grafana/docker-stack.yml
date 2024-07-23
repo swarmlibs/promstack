@@ -59,6 +59,35 @@ services:
       - GF_UNIFIED_ALERTING_HA_PEERS=${GF_UNIFIED_ALERTING_HA_PEERS:-tasks.grafana:9094}
       - GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS=${GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS:-:9094}
       - GF_UNIFIED_ALERTING_HA_PEER_TIMEOUT=${GF_UNIFIED_ALERTING_HA_PEER_TIMEOUT:-15s}
+    ports:
+      - published: 3000
+        target: 3000
+    networks:
+      public:
+        aliases:
+          - grafana.svc.cluster.local
+      grafana:
+        aliases:
+          - grafana.local
+      prometheus:
+        aliases:
+          - grafana.svc.cluster.local
+      prometheus_gwnetwork:
+    hostname: replica-{{.Task.Slot}}.grafana.local
+    volumes:
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+      - type: volume
+        source: grafana-dashboards
+        target: /etc/grafana/dashboards
+      - type: volume
+        source: grafana-provisioning-dashboards
+        target: /etc/grafana/provisioning/dashboards
+      - type: volume
+        source: grafana-provisioning-datasources
+        target: /etc/grafana/provisioning/datasources
+    logging: *x-default-logging
     deploy:
       <<: *x-deploy
       labels:
@@ -82,35 +111,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    ports:
-      - published: 3000
-        target: 3000
-    hostname: replica-{{.Task.Slot}}.grafana.local
-    networks:
-      public:
-        aliases:
-          - grafana.svc.cluster.local
-      grafana:
-        aliases:
-          - grafana.local
-      prometheus:
-        aliases:
-          - grafana.svc.cluster.local
-      prometheus_gwnetwork:
-    volumes:
-      - type: volume
-        source: grafana-data
-        target: /var/lib/grafana
-      - type: volume
-        source: grafana-dashboards
-        target: /etc/grafana/dashboards
-      - type: volume
-        source: grafana-provisioning-dashboards
-        target: /etc/grafana/provisioning/dashboards
-      - type: volume
-        source: grafana-provisioning-datasources
-        target: /etc/grafana/provisioning/datasources
 
   # ====================================================
   # Grafana provisioning config provider & reloader
@@ -122,27 +122,6 @@ services:
     environment:
       - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-    deploy:
-      <<: *x-grafana-subservice-deploy
-      resources: *x-exporter-resources-constraints
-      restart_policy:
-        condition: any
-        max_attempts: 15
-        delay: 15s
-        window: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-      update_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-    logging: *x-default-logging
     networks:
       grafana:
     volumes:
@@ -156,19 +135,7 @@ services:
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
         read_only: true
-    depends_on:
-      - grafana
-      - grafana-dashboard-provider
-      - grafana-provisioning-dashboard-provider
-      - grafana-provisioning-datasource-provider
-
-  # Grafana dashboards provider
-  grafana-dashboard-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
-    command:
-      - --output-ext=json
-      - --output-dir=/grafana-dashboards.d
-      - --prometheus-scrape-config-label=io.grafana.dashboard
+    logging: *x-default-logging
     deploy:
       <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
@@ -189,7 +156,19 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
+    depends_on:
+      - grafana
+      - grafana-dashboard-provider
+      - grafana-provisioning-dashboard-provider
+      - grafana-provisioning-datasource-provider
+
+  # Grafana dashboards provider
+  grafana-dashboard-provider:
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    command:
+      - --output-ext=json
+      - --output-dir=/grafana-dashboards.d
+      - --prometheus-scrape-config-label=io.grafana.dashboard
     configs:
       - source: gf-dashboard-grafana-metrics
       - source: gf-dashboard-prometheus-stats
@@ -207,13 +186,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
-
-  # Grafana provisioning config for datasources and dashboards
-  grafana-provisioning-dashboard-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
-    command:
-      - --output-dir=/grafana-provisioning-dashboards.d
-      - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
+    logging: *x-default-logging
     deploy:
       <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
@@ -234,7 +207,13 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
+
+  # Grafana provisioning config for datasources and dashboards
+  grafana-provisioning-dashboard-provider:
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    command:
+      - --output-dir=/grafana-provisioning-dashboards.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
     configs:
       - source: gf-provisioning-dashboards
     volumes:
@@ -245,11 +224,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
-  grafana-provisioning-datasource-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
-    command:
-      - --output-dir=/grafana-provisioning-datasources.d
-      - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
+    logging: *x-default-logging
     deploy:
       <<: *x-grafana-subservice-deploy
       resources: *x-exporter-resources-constraints
@@ -270,7 +245,12 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
+
+  grafana-provisioning-datasource-provider:
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    command:
+      - --output-dir=/grafana-provisioning-datasources.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
     configs:
       - source: gf-provisioning-datasource-prometheus
     volumes:
@@ -281,6 +261,27 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
+    logging: *x-default-logging
+    deploy:
+      <<: *x-grafana-subservice-deploy
+      resources: *x-exporter-resources-constraints
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
 
 volumes:
   grafana-data:

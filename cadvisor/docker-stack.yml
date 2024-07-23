@@ -22,32 +22,6 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.0
     command: -docker_only
-    deploy:
-      mode: global
-      resources: *x-exporter-resources-constraints
-      labels:
-        io.prometheus.role: "cadvisor"
-        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.dockerswarm-services.should_be_probed: "false"
-      restart_policy:
-        condition: any
-        max_attempts: 15
-        delay: 30s
-        window: 15s
-      rollback_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-      update_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-    logging: *x-default-logging
-    hostname: replica-{{.Task.Slot}}.cadvisor.local
     # ports:
     #   - published: 8080
     #     target: 8080
@@ -56,6 +30,7 @@ services:
       prometheus_gwnetwork:
         aliases:
           - cadvisor.local
+    hostname: replica-{{.Task.Slot}}.cadvisor.local
     configs:
       - source: prometheus-cadvisor
     volumes:
@@ -89,6 +64,31 @@ services:
         source: /dev/kmsg
         target: /dev/kmsg
         read_only: true
+    logging: *x-default-logging
+    deploy:
+      mode: global
+      resources: *x-exporter-resources-constraints
+      labels:
+        io.prometheus.role: "cadvisor"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
 
 networks:
   prometheus_gwnetwork:

@@ -22,6 +22,15 @@ services:
 
   blackbox-exporter:
     image: prom/blackbox-exporter:v0.25.0
+    networks:
+      public:
+      prometheus_gwnetwork:
+        aliases:
+          - blackbox-exporter.local
+    hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
+    configs:
+      - source: prometheus-blackbox-exporter
+    logging: *x-default-logging
     deploy:
       replicas: 1
       placement:
@@ -48,15 +57,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
-    networks:
-      public:
-      prometheus_gwnetwork:
-        aliases:
-          - blackbox-exporter.local
-    configs:
-      - source: prometheus-blackbox-exporter
 
 configs:
   prometheus-blackbox-exporter:

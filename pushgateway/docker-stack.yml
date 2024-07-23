@@ -21,6 +21,17 @@ services:
 
   pushgateway:
     image: prom/pushgateway:v1.9.0
+    networks:
+      prometheus:
+        aliases:
+          - pushgateway.svc.cluster.local
+      prometheus_gwnetwork:
+        aliases:
+          - pushgateway.local
+    hostname: replica-{{.Task.Slot}}.pushgateway.local
+    configs:
+      - source: prometheus-pushgateway
+    logging: *x-default-logging
     deploy:
       replicas: 1
       placement:
@@ -47,17 +58,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.1
-    logging: *x-default-logging
-    hostname: replica-{{.Task.Slot}}.pushgateway.local
-    networks:
-      prometheus:
-        aliases:
-          - pushgateway.svc.cluster.local
-      prometheus_gwnetwork:
-        aliases:
-          - pushgateway.local
-    configs:
-      - source: prometheus-pushgateway
 
 configs:
   prometheus:
