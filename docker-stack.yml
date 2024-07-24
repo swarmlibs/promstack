@@ -68,7 +68,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "268435456"
       restart_policy:
         condition: any
         delay: 30s
@@ -105,6 +105,14 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
+      read_only: true
+    - type: bind
+      source: /dev/disk
+      target: /dev/disk
+      read_only: true
+    - type: bind
+      source: /dev/kmsg
+      target: /dev/kmsg
       read_only: true
   grafana:
     deploy:
