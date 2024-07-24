@@ -521,12 +521,10 @@ services:
       target: /var/run/docker.sock
       read_only: true
   prometheus-config-reloader:
-    command:
-    - -ec
-    - /bin/prometheus-config-reloader --listen-address=:8080 --watch-interval=$${RELOADER_WATCH_INTERVAL}
-      --reload-timeout=$${RELOADER_RELOAD_TIMEOUT} --config-file=$${RELOADER_CONFIG_FILE}
-      --watched-dir=$${RELOADER_WATCH_DIR} --reload-url=http://$${PROMETHEUS_HOST}:9090/-/reload
-      --runtimeinfo-url=http://$${PROMETHEUS_HOST}:9090/api/v1/status/runtimeinfo
+    configs:
+    - source: prometheus-config-reloader-entrypoint
+      target: /docker-entrypoint-shim.sh
+      mode: 365
     depends_on:
     - prometheus
     - prometheus-server
@@ -562,7 +560,7 @@ services:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
     entrypoint:
-    - /bin/sh
+    - /docker-entrypoint-shim.sh
     environment:
       PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.local
       RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
@@ -789,6 +787,9 @@ configs:
     file: cadvisor/prometheus/cadvisor.yml
     labels:
       io.prometheus.scrape_config: "true"
+  prometheus-config-reloader-entrypoint:
+    name: prometheus-config-reloader-entrypoint-v1
+    file: prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
     file: prometheus/prometheus/scrape-configs/dockerswarm-nodes.yaml

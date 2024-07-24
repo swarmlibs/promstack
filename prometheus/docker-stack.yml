@@ -171,16 +171,19 @@ services:
 
   prometheus-config-reloader:
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
-    entrypoint: ["/bin/sh"]
-    command: -ec "/bin/prometheus-config-reloader --listen-address=:8080 --watch-interval=$${RELOADER_WATCH_INTERVAL} --reload-timeout=$${RELOADER_RELOAD_TIMEOUT} --config-file=$${RELOADER_CONFIG_FILE} --watched-dir=$${RELOADER_WATCH_DIR} --reload-url=http://$${PROMETHEUS_HOST}:9090/-/reload --runtimeinfo-url=http://$${PROMETHEUS_HOST}:9090/api/v1/status/runtimeinfo"
+    entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
-      - RELOADER_WATCH_INTERVAL=15s
-      - RELOADER_RELOAD_TIMEOUT=10s
       - RELOADER_CONFIG_FILE=/prometheus-configs.d/prometheus.yaml
       - RELOADER_WATCH_DIR=/prometheus-configs.d/scrape-configs
+      - RELOADER_WATCH_INTERVAL=15s
+      - RELOADER_RELOAD_TIMEOUT=10s
       - PROMETHEUS_HOST=replica-{{.Node.ID}}.prometheus.local
     networks:
       prometheus_internal:
+    configs:
+      - source: prometheus-config-reloader-entrypoint
+        target: /docker-entrypoint-shim.sh
+        mode: 0555
     volumes:
       - type: volume
         source: prometheus-configs
@@ -264,3 +267,8 @@ configs:
     file: ./prometheus/scrape-configs/dockerswarm-tasks.yaml
     labels:
       - "io.prometheus.scrape_config=true"
+
+  # prometheus-config-reloader
+  prometheus-config-reloader-entrypoint:
+    name: prometheus-config-reloader-entrypoint-v1
+    file: ./prometheus-config-reloader/docker-entrypoint-shim.sh
