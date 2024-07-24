@@ -237,30 +237,30 @@ configs:
   # Prometheus config files
   prometheus.yaml.tmpl:
     name: prometheus.yaml.tmpl-v1
-    file: ./configs/prometheus.yaml.tmpl
+    file: ./prometheus/prometheus.yaml.tmpl
   prometheus-prometheus:
     name: prometheus-prometheus-v1
-    file: ./configs/scrape-configs/prometheus.yaml
+    file: ./prometheus/scrape-configs/prometheus.yaml
     template_driver: golang
 
   # Prometheus's scrape config files
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
-    file: ./configs/scrape-configs/dockerswarm-nodes.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-nodes.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: ./configs/scrape-configs/dockerswarm-services-endpoints-host.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-services-endpoints-ingress:
     name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: ./configs/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
     labels:
       - "io.prometheus.scrape_config=true"
   prometheus-dockerswarm-tasks:
     name: prometheus-dockerswarm-tasks-v1
-    file: ./configs/scrape-configs/dockerswarm-tasks.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-tasks.yaml
     labels:
       - "io.prometheus.scrape_config=true"
