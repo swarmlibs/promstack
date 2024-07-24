@@ -8,13 +8,13 @@ ifeq ($(macos),true)
 	cadvisor_docker_stack_file := cadvisor/docker-stack-macos.yml
 endif
 
-make: docker-stack.yml
+make:
 	@echo "Usage: make [deploy|remove|clean]"
 	@echo "  deploy: Deploy the stack"
 	@echo "  remove: Remove the stack"
 	@echo "  clean: Clean up temporary files"
 
-docker-stack.yml:
+compile:
 	@mkdir -p _tmp
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c blackbox-exporter/docker-stack.yml > _tmp/blackbox-exporter.yml
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c $(cadvisor_docker_stack_file) > _tmp/cadvisor.yml
@@ -35,7 +35,7 @@ docker-stack.yml:
 	@rm docker-stack.yml
 	@mv docker-stack.yml.tmp docker-stack.yml
 	
-deploy: docker-stack.yml stack-deploy
+deploy: compile stack-deploy
 remove: stack-remove
 
 clean:
@@ -46,10 +46,6 @@ stack-deploy:
 	docker network create --scope=swarm --driver=overlay --attachable public || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
-	docker stack deploy -c docker-stack.yml promstack
+	docker stack deploy --detach --prune -c docker-stack.yml promstack
 stack-remove:
 	docker stack rm promstack
-config-prune:
-	docker config ls -q | xargs docker config rm
-volume-prune:
-	docker volume ls -q | xargs docker volume rm
