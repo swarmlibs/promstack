@@ -106,14 +106,6 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
-    - type: bind
-      source: /dev/disk
-      target: /dev/disk
-      read_only: true
-    - type: bind
-      source: /dev/kmsg
-      target: /dev/kmsg
-      read_only: true
   grafana:
     deploy:
       replicas: 1
@@ -223,7 +215,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -269,7 +261,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -323,7 +315,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -369,7 +361,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -457,7 +449,7 @@ services:
       mode: global
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
@@ -501,7 +493,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       restart_policy:
         condition: any
         delay: 15s
@@ -557,7 +549,7 @@ services:
         max_failure_ratio: 0.1
       resources:
         limits:
-          memory: "134217728"
+          memory: "67108864"
       restart_policy:
         condition: any
         delay: 30s

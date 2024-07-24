@@ -11,16 +11,16 @@ x-deploy: &x-deploy
     constraints:
       - node.role == manager
 
-x-grafana-subservice-deploy: &x-grafana-subservice-deploy
+x-grafana-helpers-deploy: &x-grafana-helpers-deploy
   replicas: 1
   placement:
     max_replicas_per_node: 1
     constraints:
       - node.labels.services.promstack_grafana == true
 
-x-exporter-resources-constraints: &x-exporter-resources-constraints
+x-grafana-helpers-resources-constraints: &x-grafana-helpers-resources-constraints
   limits:
-    memory: 128M
+    memory: 64M
 
 x-default-logging: &x-default-logging
   options:
@@ -137,8 +137,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-grafana-helpers-deploy
+      resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
         max_attempts: 15
@@ -188,8 +188,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-grafana-helpers-deploy
+      resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
         max_attempts: 15
@@ -226,8 +226,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-grafana-helpers-deploy
+      resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
         max_attempts: 15
@@ -263,8 +263,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-grafana-helpers-deploy
+      resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
         max_attempts: 15

@@ -12,15 +12,15 @@ x-deploy: &x-deploy
     constraints:
       - node.role == manager
 
-x-prometheus-subservice-deploy: &x-prometheus-subservice-deploy
+x-prometheus-helpers-deploy: &x-prometheus-helpers-deploy
   mode: global
   placement:
     constraints:
       - node.labels.services.promstack_prometheus_server == true
 
-x-exporter-resources-constraints: &x-exporter-resources-constraints
+x-prometheus-helpers-resources-constraints: &x-prometheus-helpers-resources-constraints
   limits:
-    memory: 128M
+    memory: 64M
 
 x-default-logging: &x-default-logging
   options:
@@ -116,8 +116,8 @@ services:
       - PROMETHEUS_CLUSTER_NAME=${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     deploy:
-      <<: *x-prometheus-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-prometheus-helpers-deploy
+      resources: *x-prometheus-helpers-resources-constraints
     logging: *x-default-logging
     configs:
       - source: prometheus.yaml.tmpl
@@ -146,8 +146,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-prometheus-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-prometheus-helpers-deploy
+      resources: *x-prometheus-helpers-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-provider"
       restart_policy:
@@ -186,8 +186,8 @@ services:
         target: /prometheus-configs.d
     logging: *x-default-logging
     deploy:
-      <<: *x-prometheus-subservice-deploy
-      resources: *x-exporter-resources-constraints
+      <<: *x-prometheus-helpers-deploy
+      resources: *x-prometheus-helpers-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-reloader"
         io.prometheus.enabled: "true"
