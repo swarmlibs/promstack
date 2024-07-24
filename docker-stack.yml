@@ -75,7 +75,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.cadvisor.local
-    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
     logging:
       driver: json-file
       options:
