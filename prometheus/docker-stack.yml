@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
-# prom/prometheus:v2.45.6
+# prom/prometheus:v2.53.1
 # swarmlibs/genconfig:0.1.0-rc.1
 # swarmlibs/prometheus-config-provider:0.1.0-rc.1
 # quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
@@ -36,7 +36,7 @@ services:
   # ====================================================
 
   prometheus-server:
-    image: prom/prometheus:v2.45.6
+    image: prom/prometheus:v2.53.1
     command:
       - --config.file=/prometheus-configs.d/prometheus.yaml
       - --storage.tsdb.path=/prometheus

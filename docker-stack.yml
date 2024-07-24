@@ -624,7 +624,7 @@ services:
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Node.ID}}.prometheus.local
-    image: prom/prometheus:v2.45.6
+    image: prom/prometheus:v2.53.1
     logging:
       driver: json-file
       options:
