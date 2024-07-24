@@ -14,7 +14,8 @@ make:
 	@echo "  remove: Remove the stack"
 	@echo "  clean: Clean up temporary files"
 
-compile:
+compile: docker-stack.yml
+docker-stack.yml:
 	@mkdir -p _tmp
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c blackbox-exporter/docker-stack.yml > _tmp/blackbox-exporter.yml
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c $(cadvisor_docker_stack_file) > _tmp/cadvisor.yml
