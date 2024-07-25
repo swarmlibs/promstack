@@ -31,7 +31,7 @@ services:
   # https://github.com/grafana/grafana
   # ====================================================
 
-  grafana-server:
+  grafana:
     image: ${PROMSTACK_GRAFANA_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
