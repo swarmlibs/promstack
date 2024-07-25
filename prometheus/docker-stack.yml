@@ -1,0 +1,280 @@
+version: "3.12"
+services:
+  prometheus:
+    command:
+    - --verbose
+    - --file=/run/configs/prometheus.yaml.tmpl
+    - --out=/prometheus-configs.d/prometheus.yaml
+    configs:
+    - source: prometheus.yaml.tmpl
+      target: /run/configs/prometheus.yaml.tmpl
+    deploy:
+      mode: global
+      resources:
+        limits:
+          memory: "67108864"
+      placement:
+        constraints:
+        - node.labels.services.promstack_prometheus_server == true
+    environment:
+      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
+        "com.docker.stack.namespace"}}}
+      PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
+    image: swarmlibs/genconfig:0.1.0-rc.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+  prometheus-config-provider:
+    command:
+    - --output-dir=/prometheus-configs.d/scrape-configs
+    configs:
+    - source: prometheus-dockerswarm-nodes
+    - source: prometheus-dockerswarm-services-endpoints-host
+    - source: prometheus-dockerswarm-services-endpoints-ingress
+    - source: prometheus-dockerswarm-tasks
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.role: prometheus-config-provider
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      resources:
+        limits:
+          memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
+      placement:
+        constraints:
+        - node.labels.services.promstack_prometheus_server == true
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+  prometheus-config-reloader:
+    configs:
+    - source: prometheus-config-reloader-entrypoint
+      target: /docker-entrypoint-shim.sh
+      mode: 365
+    depends_on:
+    - prometheus
+    - prometheus-server
+    - prometheus-config-provider
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: prometheus-config-reloader
+        io.prometheus.role: prometheus-config-reloader
+        io.prometheus.scrape_port: "8080"
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      resources:
+        limits:
+          memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 30s
+        window: 15s
+      placement:
+        constraints:
+        - node.labels.services.promstack_prometheus_server == true
+    entrypoint:
+    - /docker-entrypoint-shim.sh
+    environment:
+      PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.local
+      RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
+      RELOADER_RELOAD_TIMEOUT: 10s
+      RELOADER_WATCH_DIR: /prometheus-configs.d/scrape-configs
+      RELOADER_WATCH_INTERVAL: 15s
+    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_internal: null
+    volumes:
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+  prometheus-server:
+    command:
+    - --config.file=/prometheus-configs.d/prometheus.yaml
+    - --storage.tsdb.path=/prometheus
+    - --storage.tsdb.retention.time=182d
+    - --web.console.libraries=/usr/share/prometheus/console_libraries
+    - --web.console.templates=/usr/share/prometheus/consoles
+    - --web.enable-lifecycle
+    - --log.level=info
+    configs:
+    - source: prometheus-prometheus
+      target: /etc/prometheus/scrape-configs/prometheus.yaml
+    depends_on:
+    - prometheus
+    deploy:
+      replicas: 1
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: prometheus
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+      placement:
+        constraints:
+        - node.role == manager
+        max_replicas_per_node: 1
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    hostname: replica-{{.Node.ID}}.prometheus.local
+    image: prom/prometheus:v2.53.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus:
+        aliases:
+        - prometheus.local
+      prometheus_gwnetwork:
+        aliases:
+        - prometheus.local
+      prometheus_internal:
+        aliases:
+        - prometheus.internal
+      public:
+        aliases:
+        - prometheus.svc.cluster.local
+    user: "0:0"
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    - type: volume
+      source: prometheus
+      target: /prometheus
+    - type: volume
+      source: prometheus-configs
+      target: /prometheus-configs.d
+networks:
+  prometheus:
+    name: prometheus
+    external: true
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
+  prometheus_internal:
+    internal: true
+  public:
+    name: public
+    external: true
+volumes:
+  prometheus: {}
+  prometheus-configs: {}
+configs:
+  prometheus-config-reloader-entrypoint:
+    name: prometheus-config-reloader-entrypoint-v1
+    file: ./prometheus-config-reloader/docker-entrypoint-shim.sh
+  prometheus-dockerswarm-nodes:
+    name: prometheus-dockerswarm-nodes-v1
+    file: ./prometheus/scrape-configs/dockerswarm-nodes.yaml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-services-endpoints-host:
+    name: prometheus-dockerswarm-services-endpoints-host-v1
+    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-services-endpoints-ingress:
+    name: prometheus-dockerswarm-services-endpoints-ingress-v1
+    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-tasks:
+    name: prometheus-dockerswarm-tasks-v1
+    file: ./prometheus/scrape-configs/dockerswarm-tasks.yaml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-prometheus:
+    name: prometheus-prometheus-v1
+    file: ./prometheus/scrape-configs/prometheus.yaml
+    template_driver: golang
+  prometheus.yaml.tmpl:
+    name: prometheus.yaml.tmpl-v1
+    file: ./prometheus/prometheus.yaml.tmpl
+x-default-logging:
+  driver: json-file
+  options:
+    max-file: "5"
+    max-size: 12m
+x-deploy:
+  placement:
+    constraints:
+    - node.role == manager
+    max_replicas_per_node: 1
+  replicas: 1
+x-prometheus-helpers-deploy:
+  mode: global
+  placement:
+    constraints:
+    - node.labels.services.promstack_prometheus_server == true
+x-prometheus-helpers-resources-constraints:
+  limits:
+    memory: 64M

@@ -1,0 +1,75 @@
+version: "3.12"
+services:
+  node-exporter:
+    command:
+    - --path.rootfs=/rootfs
+    - --collector.textfile.directory=/etc/node-exporter
+    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    - --no-collector.ipvs
+    configs:
+    - source: node-exporter-node-meta
+      target: /etc/node-exporter/node_meta.prom
+    - source: prometheus-node-exporter
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: node-exporter
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      resources:
+        limits:
+          memory: "134217728"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+    hostname: replica-{{.Task.Slot}}.node-exporter.local
+    image: prom/node-exporter:v1.8.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_gwnetwork:
+        aliases:
+        - node-exporter.local
+    volumes:
+    - type: bind
+      source: /
+      target: /rootfs
+      read_only: true
+networks:
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
+configs:
+  node-exporter-node-meta:
+    name: node-exporter-node-meta-v1
+    file: ./node_meta.prom
+  prometheus-node-exporter:
+    name: prometheus-node-exporter-v1
+    file: ./prometheus/node_exporter.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+x-default-logging:
+  driver: json-file
+  options:
+    max-file: "5"
+    max-size: 12m
+x-exporter-resources-constraints:
+  limits:
+    memory: 128M

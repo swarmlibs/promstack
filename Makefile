@@ -17,27 +17,32 @@ make:
 	@echo "  remove: Remove the stack"
 	@echo "  clean: Clean up temporary files"
 
+
+define docker-stack-config
+cd $1 \
+&& $(DOCKER_STACK_CONFIG) -c docker-stack.tmpl.yml > docker-stack-config.yml \
+&& sed "s|$(PWD)/$1/|./|g" docker-stack-config.yml > docker-stack.yml
+endef
+
 compile: docker-stack.yml
 docker-stack.yml:
-	@mkdir -p _tmp
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c blackbox-exporter/docker-stack.tmpl.yml > _tmp/blackbox-exporter.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c $(cadvisor_docker_stack_file) > _tmp/cadvisor.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c grafana/docker-stack.tmpl.yml > _tmp/grafana.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c node-exporter/docker-stack.tmpl.yml > _tmp/node-exporter.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c prometheus/docker-stack.tmpl.yml > _tmp/prometheus.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c pushgateway/docker-stack.tmpl.yml > _tmp/pushgateway.yml
-	$(DOCKER_STACK_CONFIG) \
-		-c _tmp/blackbox-exporter.yml \
-		-c _tmp/cadvisor.yml \
-		-c _tmp/grafana.yml \
-		-c _tmp/node-exporter.yml \
-		-c _tmp/prometheus.yml \
-		-c _tmp/pushgateway.yml \
-	> docker-stack.yml
-	@rm -rf _tmp
-	@sed "s|$(PWD)/||g" docker-stack.yml > docker-stack.yml.tmp
-	@rm docker-stack.yml
-	@mv docker-stack.yml.tmp docker-stack.yml
+	$(call docker-stack-config,blackbox-exporter)
+	$(call docker-stack-config,cadvisor)
+	$(call docker-stack-config,grafana)
+	$(call docker-stack-config,node-exporter)
+	$(call docker-stack-config,prometheus)
+	$(call docker-stack-config,pushgateway)
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) \
+		-c blackbox-exporter/docker-stack-config.yml \
+		-c cadvisor/docker-stack-config.yml \
+		-c grafana/docker-stack-config.yml \
+		-c node-exporter/docker-stack-config.yml \
+		-c prometheus/docker-stack-config.yml \
+		-c pushgateway/docker-stack-config.yml \
+	> docker-stack.yml.tmp
+	@sed "s|$(PWD)/||g" docker-stack.yml.tmp > docker-stack.yml
+	@rm docker-stack.yml.tmp
+	@rm **/docker-stack-config.yml
 
 print:
 	$(DOCKER_STACK_CONFIG) -c docker-stack.yml
