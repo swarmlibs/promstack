@@ -303,50 +303,50 @@ configs:
   # Grafana dashboards provisioning config
   gf-provisioning-dashboards:
     name: gf-provisioning-dashboards-v1
-    file: ./provisioning/dashboards/grafana-dashboards.yml
+    file: ./grafana/provisioning/dashboards/grafana-dashboards.yml
     labels: [ "io.grafana.provisioning.dashboard=true" ]
   # Grafana datasources provisioning config
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: ./provisioning/datasources/prometheus.yaml
+    file: ./grafana/provisioning/datasources/prometheus.yaml
     labels:
       - "io.grafana.provisioning.datasource=true"
 
   # Grafana & Prometheus dashboards
   gf-dashboard-grafana-metrics:
     name: gf-dashboard-grafana-metrics-v1
-    file: ./dashboards/grafana-metrics.json
+    file: ./grafana/dashboards/grafana-metrics.json
     labels: [ "io.grafana.dashboard=true" ]
   gf-dashboard-prometheus-stats:
     name: gf-dashboard-prometheus-stats-v1
-    file: ./dashboards/prometheus-stats.json
+    file: ./grafana/dashboards/prometheus-stats.json
     labels: [ "io.grafana.dashboard=true" ]
   gf-dashboard-prometheus-stats-v2:
     name: gf-dashboard-prometheus-stats-v2
-    file: ./dashboards/prometheus-2-0-stats.json
+    file: ./grafana/dashboards/prometheus-2-0-stats.json
     labels: [ "io.grafana.dashboard=true" ]
 
   # Docker Swarm specific dashboards
   gf-dashboard-dockerswarm-nodes-dashboard:
     name: gf-dashboard-dockerswarm-nodes-dashboard-v1
-    file: ./dashboards/dockerswarm-nodes.json
+    file: ./grafana/dashboards/dockerswarm-nodes.json
     labels: [ "io.grafana.dashboard=true" ]
   gf-dashboard-dockerswarm-services-endpoints:
     name: gf-dashboard-dockerswarm-services-endpoints-v1
-    file: ./dashboards/dockerswarm-services-endpoints.json
+    file: ./grafana/dashboards/dockerswarm-services-endpoints.json
     labels: [ "io.grafana.dashboard=true" ]
   gf-dashboard-dockerswarm-services:
     name: gf-dashboard-dockerswarm-services-v1
-    file: ./dashboards/dockerswarm-services.json
+    file: ./grafana/dashboards/dockerswarm-services.json
     labels: [ "io.grafana.dashboard=true" ]
 
   # cAdvisor
   gf-dashboard-cadvisor:
     name: gf-dashboard-cadvisor-v1
-    file: ./dashboards/cadvisor.json
+    file: ./grafana/dashboards/cadvisor.json
     labels: [ "io.grafana.dashboard=true" ]
   # Node Exporter
   gf-dashboard-node-exporter:
     name: gf-dashboard-node-exporter-v1
-    file: ./dashboards/node-exporter.json
+    file: ./grafana/dashboards/node-exporter.json
     labels: [ "io.grafana.dashboard=true" ]
