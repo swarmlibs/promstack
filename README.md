@@ -135,7 +135,7 @@ See https://github.com/swarmlibs/swarmlibs for more information.
 This will deploy the stack to the Docker Swarm cluster. Please ensure you have the necessary permissions to deploy the stack and the `swarmlibs` stack is deployed. See [Pre-requisites](#pre-requisites) for more information.
 
 > [!IMPORTANT]
-> It is important to note that the `logstack` is the default stack namespace for this deployment.  
+> It is important to note that the `promstack` is the default stack namespace for this deployment.  
 > It is **NOT RECOMMENDED** to change the stack namespace as it may cause issues with the deployment.
 
 ```sh
