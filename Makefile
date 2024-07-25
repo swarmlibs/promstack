@@ -3,9 +3,9 @@ DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
 
 # if darwin == true, then use the cadvisor_docker_stack_darwin.yml file
 macos := false
-cadvisor_docker_stack_file := cadvisor/docker-stack.yml
+cadvisor_docker_stack_file := cadvisor/docker-stack.tmpl.yml
 ifeq ($(macos),true)
-	cadvisor_docker_stack_file := cadvisor/docker-stack-macos.yml
+	cadvisor_docker_stack_file := cadvisor/docker-stack-macos.tmpl.yml
 endif
 
 .EXPORT_ALL_VARIABLES:
@@ -20,12 +20,12 @@ make:
 compile: docker-stack.yml
 docker-stack.yml:
 	@mkdir -p _tmp
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c blackbox-exporter/docker-stack.yml > _tmp/blackbox-exporter.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c blackbox-exporter/docker-stack.tmpl.yml > _tmp/blackbox-exporter.yml
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c $(cadvisor_docker_stack_file) > _tmp/cadvisor.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c grafana/docker-stack.yml > _tmp/grafana.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c node-exporter/docker-stack.yml > _tmp/node-exporter.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c prometheus/docker-stack.yml > _tmp/prometheus.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c pushgateway/docker-stack.yml > _tmp/pushgateway.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c grafana/docker-stack.tmpl.yml > _tmp/grafana.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c node-exporter/docker-stack.tmpl.yml > _tmp/node-exporter.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c prometheus/docker-stack.tmpl.yml > _tmp/prometheus.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c pushgateway/docker-stack.tmpl.yml > _tmp/pushgateway.yml
 	$(DOCKER_STACK_CONFIG) \
 		-c _tmp/blackbox-exporter.yml \
 		-c _tmp/cadvisor.yml \
