@@ -43,13 +43,14 @@ clean:
 	@rm -rf _tmp || true
 	@rm -f docker-stack.yml || true
 
-deploy: compile stack-deploy
+deploy: compile stack-networks stack-deploy
 remove: stack-remove
 
-stack-deploy:
+stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable public || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
+stack-deploy:
 	docker stack deploy --detach --prune -c docker-stack.yml promstack
 stack-remove:
 	docker stack rm promstack
