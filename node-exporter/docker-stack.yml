@@ -22,7 +22,9 @@ services:
     command:
       - --path.rootfs=/rootfs
       - --collector.textfile.directory=/etc/node-exporter
-      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+      # Due to interpolation the dolar sign must be escaped,
+      # since it double dollar sign we need to escape it twice
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$$$|/)
       - --no-collector.ipvs
     # ports:
     #   - published: 9100

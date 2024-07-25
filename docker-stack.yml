@@ -387,7 +387,7 @@ services:
     command:
     - --path.rootfs=/rootfs
     - --collector.textfile.directory=/etc/node-exporter
-    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)
+    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
     - --no-collector.ipvs
     configs:
     - source: node-exporter-node-meta
@@ -452,8 +452,9 @@ services:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
     environment:
-      PROMETHEUS_CLUSTER_NAME: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
-      PROMETHEUS_CLUSTER_REPLICA: replica-{{.Task.Slot}}
+      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
+        "com.docker.stack.namespace"}}}
+      PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     image: swarmlibs/genconfig:0.1.0-rc.1
     logging:
       driver: json-file

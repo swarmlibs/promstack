@@ -109,8 +109,8 @@ services:
       - --file=/run/configs/prometheus.yaml.tmpl
       - --out=/prometheus-configs.d/prometheus.yaml
     environment:
-      - PROMETHEUS_CLUSTER_NAME=${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
-      - PROMETHEUS_CLUSTER_REPLICA=${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
+      - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
+      - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     deploy:
       <<: *x-prometheus-helpers-deploy
       resources: *x-prometheus-helpers-resources-constraints
