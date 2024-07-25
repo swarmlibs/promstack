@@ -10,7 +10,6 @@ make:
 	@echo "  remove: Remove the stack"
 	@echo "  clean: Clean up temporary files"
 
-
 define docker-stack-config
 cd $1 \
 && $(DOCKER_STACK_CONFIG) -c docker-stack.tmpl.yml > docker-stack-config.yml \
