@@ -54,6 +54,8 @@ services:
         source: /dev/kmsg
         target: /dev/kmsg
         read_only: true
+    cap_add:
+      - SYSLOG
     logging: *x-default-logging
     deploy:
       mode: global

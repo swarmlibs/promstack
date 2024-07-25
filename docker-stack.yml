@@ -44,6 +44,8 @@ services:
         - blackbox-exporter.local
       public: null
   cadvisor:
+    cap_add:
+    - SYSLOG
     command:
     - -docker_only
     configs:

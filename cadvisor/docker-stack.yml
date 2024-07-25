@@ -1,6 +1,8 @@
 version: "3.12"
 services:
   cadvisor:
+    cap_add:
+    - SYSLOG
     command:
     - -docker_only
     configs:
