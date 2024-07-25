@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env sh
+# Copyright (c) Swarm Library Maintainers.
+# SPDX-License-Identifier: MIT
 set -e
-
 # Default credentials
 export GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-grafana}
 export GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-grafana}
@@ -22,5 +23,5 @@ export GF_UNIFIED_ALERTING_HA_LISTEN_ADDRESS=${GF_UNIFIED_ALERTING_HA_LISTEN_ADD
 export GF_UNIFIED_ALERTING_HA_PEERS=${GF_UNIFIED_ALERTING_HA_PEERS:-tasks.grafana:9094}
 export GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS=${GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS:-:9094}
 export GF_UNIFIED_ALERTING_HA_PEER_TIMEOUT=${GF_UNIFIED_ALERTING_HA_PEER_TIMEOUT:-15s}
-
+# Redirect to original entrypoint
 exec /run.sh "$@"
