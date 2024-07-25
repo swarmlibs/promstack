@@ -8,6 +8,9 @@ ifeq ($(macos),true)
 	cadvisor_docker_stack_file := cadvisor/docker-stack-macos.yml
 endif
 
+.EXPORT_ALL_VARIABLES:
+include .dockerenv
+
 make:
 	@echo "Usage: make [deploy|remove|clean]"
 	@echo "  deploy: Deploy the stack"
@@ -35,13 +38,16 @@ docker-stack.yml:
 	@sed "s|$(PWD)/||g" docker-stack.yml > docker-stack.yml.tmp
 	@rm docker-stack.yml
 	@mv docker-stack.yml.tmp docker-stack.yml
-	
-deploy: compile stack-deploy
-remove: stack-remove
+
+print:
+	$(DOCKER_STACK_CONFIG) -c docker-stack.yml
 
 clean:
 	@rm -rf _tmp || true
 	@rm -f docker-stack.yml || true
+
+deploy: compile stack-deploy
+remove: stack-remove
 
 stack-deploy:
 	docker network create --scope=swarm --driver=overlay --attachable public || true

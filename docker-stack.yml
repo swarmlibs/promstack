@@ -32,7 +32,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
-    image: prom/blackbox-exporter:v0.25.0
+    image: ${PROMSTACK_BLACKBOX_EXPORTER_VERSION}
     logging:
       driver: json-file
       options:
@@ -75,7 +75,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.cadvisor.local
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: ${PROMSTACK_CADVISOR_VERSION}
     logging:
       driver: json-file
       options:
@@ -156,7 +156,7 @@ services:
       GF_UNIFIED_ALERTING_HA_PEERS: ${GF_UNIFIED_ALERTING_HA_PEERS:-tasks.grafana:9094}
       GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP:-false}
     hostname: replica-{{.Task.Slot}}.grafana.local
-    image: grafana/grafana:10.0.0
+    image: ${PROMSTACK_GRAFANA_VERSION}
     logging:
       driver: json-file
       options:
@@ -229,7 +229,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     logging:
       driver: json-file
       options:
@@ -278,7 +278,7 @@ services:
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
-    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION}
     logging:
       driver: json-file
       options:
@@ -329,7 +329,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     logging:
       driver: json-file
       options:
@@ -375,7 +375,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     logging:
       driver: json-file
       options:
@@ -426,7 +426,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.node-exporter.local
-    image: prom/node-exporter:v1.8.1
+    image: ${PROMSTACK_NODE_EXPORTER_VERSION}
     logging:
       driver: json-file
       options:
@@ -461,7 +461,7 @@ services:
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: swarmlibs/genconfig:0.1.0-rc.1
+    image: ${PROMSTACK_PROMETHEUS_GENCONFIG_VERSION}
     logging:
       driver: json-file
       options:
@@ -506,7 +506,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
     logging:
       driver: json-file
       options:
@@ -567,7 +567,7 @@ services:
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d/scrape-configs
       RELOADER_WATCH_INTERVAL: 15s
-    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    image: ${PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION}
     logging:
       driver: json-file
       options:
@@ -623,7 +623,7 @@ services:
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Node.ID}}.prometheus.local
-    image: prom/prometheus:v2.53.1
+    image: ${PROMSTACK_PROMETHEUS_VERSION}
     logging:
       driver: json-file
       options:
@@ -686,7 +686,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.local
-    image: prom/pushgateway:v1.9.0
+    image: ${PROMSTACK_PUSHGATEWAY_VERSION}
     logging:
       driver: json-file
       options:

@@ -1,10 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
-# prom/prometheus:v2.53.1
-# swarmlibs/genconfig:0.1.0-rc.1
-# swarmlibs/prometheus-config-provider:0.1.0-rc.1
-# quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
-
 x-deploy: &x-deploy
   replicas: 1
   placement:
@@ -36,7 +31,7 @@ services:
   # ====================================================
 
   prometheus-server:
-    image: prom/prometheus:v2.53.1
+    image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
       - --config.file=/prometheus-configs.d/prometheus.yaml
       - --storage.tsdb.path=/prometheus
@@ -108,7 +103,7 @@ services:
       - prometheus
 
   prometheus:
-    image: swarmlibs/genconfig:0.1.0-rc.1
+    image: ${PROMSTACK_PROMETHEUS_GENCONFIG_VERSION}
     command:
       - --verbose
       - --file=/run/configs/prometheus.yaml.tmpl
@@ -129,7 +124,7 @@ services:
         target: /prometheus-configs.d
 
   prometheus-config-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
@@ -170,7 +165,7 @@ services:
         max_failure_ratio: 0.1
 
   prometheus-config-reloader:
-    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    image: ${PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
       - RELOADER_CONFIG_FILE=/prometheus-configs.d/prometheus.yaml

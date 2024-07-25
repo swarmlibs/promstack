@@ -1,9 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
-# grafana/grafana:10.0.0
-# swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
-# swarmlibs/prometheus-config-provider:0.1.0-rc.1
-
 x-deploy: &x-deploy
   replicas: 1
   placement:
@@ -36,7 +32,7 @@ services:
   # ====================================================
 
   grafana:
-    image: grafana/grafana:10.0.0
+    image: ${PROMSTACK_GRAFANA_VERSION}
     environment:
       # Default credentials
       - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-grafana}
@@ -118,7 +114,7 @@ services:
   # ====================================================
   
   grafana-provisioning-config-reloader:
-    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION}
     environment:
       - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.local
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
@@ -164,7 +160,7 @@ services:
 
   # Grafana dashboards provider
   grafana-dashboard-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     command:
       - --output-ext=json
       - --output-dir=/grafana-dashboards.d
@@ -210,7 +206,7 @@ services:
 
   # Grafana provisioning config for datasources and dashboards
   grafana-provisioning-dashboard-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     command:
       - --output-dir=/grafana-provisioning-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
@@ -247,7 +243,7 @@ services:
         max_failure_ratio: 0.1
 
   grafana-provisioning-datasource-provider:
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     command:
       - --output-dir=/grafana-provisioning-datasources.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
