@@ -75,6 +75,9 @@ services:
         source: grafana-data
         target: /var/lib/grafana
       - type: volume
+        source: grafana-logs
+        target: /var/log/grafana
+      - type: volume
         source: grafana-dashboards
         target: /etc/grafana/dashboards
       - type: volume
@@ -281,6 +284,7 @@ services:
 
 volumes:
   grafana-data:
+  grafana-logs:
   grafana-dashboards:
   grafana-provisioning-dashboards:
   grafana-provisioning-datasources:
