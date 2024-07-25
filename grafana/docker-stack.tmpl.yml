@@ -31,24 +31,23 @@ services:
   # https://github.com/grafana/grafana
   # ====================================================
 
-  grafana:
+  grafana-server:
     image: ${PROMSTACK_GRAFANA_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
       GF_SECURITY_ADMIN_USER: $${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: $${GF_SECURITY_ADMIN_PASSWORD}
       GF_USERS_ALLOW_SIGN_UP: $${GF_USERS_ALLOW_SIGN_UP}
-    ports:
-      - published: 3000
-        target: 3000
+      # docker-entrypoint-shim.sh
+      GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
     networks:
-      public:
-        aliases:
-          - grafana.svc.cluster.local
-      grafana:
+      prometheus: # eth1
+      grafana: # eth2
         aliases:
           - grafana.local
-      prometheus:
+      public: # eth3
+        aliases:
+          - grafana.svc.cluster.local
       prometheus_gwnetwork:
     hostname: replica-{{.Task.Slot}}.grafana.local
     configs:
@@ -104,8 +103,10 @@ services:
   grafana-provisioning-config-reloader:
     image: ${PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION}
     environment:
-      - GF_SERVER_DOMAIN=replica-{{.Task.Slot}}.grafana.local
-      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_SECURITY_ADMIN_USER: $${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: $${GF_SECURITY_ADMIN_PASSWORD}
     networks:
       grafana:
     volumes:
