@@ -111,6 +111,10 @@ services:
       target: /dev/kmsg
       read_only: true
   grafana:
+    configs:
+    - source: gf-server-entrypoint
+      target: /docker-entrypoint-shim.sh
+      mode: 365
     deploy:
       replicas: 1
       labels:
@@ -138,23 +142,12 @@ services:
         constraints:
         - node.role == manager
         max_replicas_per_node: 1
+    entrypoint:
+    - /docker-entrypoint-shim.sh
     environment:
-      GF_ANALYTICS_CHECK_FOR_UPDATES: ${GF_ANALYTICS_CHECK_FOR_UPDATES:-false}
-      GF_ANALYTICS_FEEDBACK_LINKS_ENABLED: ${GF_ANALYTICS_FEEDBACK_LINKS_ENABLED:-false}
-      GF_ANALYTICS_REPORTING_ENABLED: ${GF_ANALYTICS_REPORTING_ENABLED:-false}
-      GF_FEATURE_TOGGLES_ENABLE: ${GF_FEATURE_TOGGLES_ENABLE:-true}
-      GF_LOG_LEVEL: ${GF_LOG_LEVEL:-info}
-      GF_METRICS_ENABLED: ${GF_METRICS_ENABLED:-true}
-      GF_NEWS_NEWS_FEED_ENABLED: ${GF_NEWS_NEWS_FEED_ENABLED:-false}
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:-grafana}
-      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-grafana}
-      GF_SUPPORT_BUNDLES_ENABLED: ${GF_SUPPORT_BUNDLES_ENABLED:-false}
-      GF_UNIFIED_ALERTING_ENABLED: ${GF_UNIFIED_ALERTING_ENABLED:-true}
-      GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS: ${GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS:-:9094}
-      GF_UNIFIED_ALERTING_HA_LISTEN_ADDRESS: ${GF_UNIFIED_ALERTING_HA_LISTEN_ADDRESS:-:9094}
-      GF_UNIFIED_ALERTING_HA_PEER_TIMEOUT: ${GF_UNIFIED_ALERTING_HA_PEER_TIMEOUT:-15s}
-      GF_UNIFIED_ALERTING_HA_PEERS: ${GF_UNIFIED_ALERTING_HA_PEERS:-tasks.grafana:9094}
-      GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP:-false}
+      GF_SECURITY_ADMIN_PASSWORD: null
+      GF_SECURITY_ADMIN_USER: null
+      GF_USERS_ALLOW_SIGN_UP: null
     hostname: replica-{{.Task.Slot}}.grafana.local
     image: ${PROMSTACK_GRAFANA_VERSION}
     logging:
@@ -166,9 +159,7 @@ services:
       grafana:
         aliases:
         - grafana.local
-      prometheus:
-        aliases:
-        - grafana.svc.cluster.local
+      prometheus: null
       prometheus_gwnetwork: null
       public:
         aliases:
@@ -180,6 +171,9 @@ services:
     - type: volume
       source: grafana-data
       target: /var/lib/grafana
+    - type: volume
+      source: grafana-logs
+      target: /var/log/grafana
     - type: volume
       source: grafana-dashboards
       target: /etc/grafana/dashboards
@@ -715,6 +709,7 @@ networks:
 volumes:
   grafana-dashboards: {}
   grafana-data: {}
+  grafana-logs: {}
   grafana-provisioning-config-reloader: {}
   grafana-provisioning-dashboards: {}
   grafana-provisioning-datasources: {}
@@ -723,54 +718,57 @@ volumes:
 configs:
   gf-dashboard-cadvisor:
     name: gf-dashboard-cadvisor-v1
-    file: grafana/dashboards/cadvisor.json
+    file: grafana/grafana/dashboards/cadvisor.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-dockerswarm-nodes-dashboard:
     name: gf-dashboard-dockerswarm-nodes-dashboard-v1
-    file: grafana/dashboards/dockerswarm-nodes.json
+    file: grafana/grafana/dashboards/dockerswarm-nodes.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-dockerswarm-services:
     name: gf-dashboard-dockerswarm-services-v1
-    file: grafana/dashboards/dockerswarm-services.json
+    file: grafana/grafana/dashboards/dockerswarm-services.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-dockerswarm-services-endpoints:
     name: gf-dashboard-dockerswarm-services-endpoints-v1
-    file: grafana/dashboards/dockerswarm-services-endpoints.json
+    file: grafana/grafana/dashboards/dockerswarm-services-endpoints.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-grafana-metrics:
     name: gf-dashboard-grafana-metrics-v1
-    file: grafana/dashboards/grafana-metrics.json
+    file: grafana/grafana/dashboards/grafana-metrics.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-node-exporter:
     name: gf-dashboard-node-exporter-v1
-    file: grafana/dashboards/node-exporter.json
+    file: grafana/grafana/dashboards/node-exporter.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-prometheus-stats:
     name: gf-dashboard-prometheus-stats-v1
-    file: grafana/dashboards/prometheus-stats.json
+    file: grafana/grafana/dashboards/prometheus-stats.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-prometheus-stats-v2:
     name: gf-dashboard-prometheus-stats-v2
-    file: grafana/dashboards/prometheus-2-0-stats.json
+    file: grafana/grafana/dashboards/prometheus-2-0-stats.json
     labels:
       io.grafana.dashboard: "true"
   gf-provisioning-dashboards:
     name: gf-provisioning-dashboards-v1
-    file: grafana/provisioning/dashboards/grafana-dashboards.yml
+    file: grafana/grafana/provisioning/dashboards/grafana-dashboards.yml
     labels:
       io.grafana.provisioning.dashboard: "true"
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: grafana/provisioning/datasources/prometheus.yaml
+    file: grafana/grafana/provisioning/datasources/prometheus.yaml
     labels:
       io.grafana.provisioning.datasource: "true"
+  gf-server-entrypoint:
+    name: gf-server-entrypoint-v1
+    file: grafana/grafana/docker-entrypoint-shim.sh
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
     file: node-exporter/node_meta.prom
