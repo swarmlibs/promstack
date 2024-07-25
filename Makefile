@@ -11,18 +11,19 @@ make:
 	@echo "  clean: Clean up temporary files"
 
 define docker-stack-config
-cd $1 && $(DOCKER_STACK_CONFIG) -c docker-stack.tmpl.yml > docker-stack-config.yml
-@cd $1 && sed "s|$(PWD)/$1/|./|g" docker-stack-config.yml > docker-stack.yml
+$(1)/docker-stack.yml:
+	$(DOCKER_STACK_CONFIG) -c $1/docker-stack.tmpl.yml > $1/docker-stack-config.yml
+	@sed "s|$(PWD)/$1/|./|g" $1/docker-stack-config.yml > $1/docker-stack.yml
 endef
 
-compile: docker-stack.yml
+$(eval $(call docker-stack-config,blackbox-exporter))
+$(eval $(call docker-stack-config,cadvisor))
+$(eval $(call docker-stack-config,grafana))
+$(eval $(call docker-stack-config,node-exporter))
+$(eval $(call docker-stack-config,prometheus))
+$(eval $(call docker-stack-config,pushgateway))
+
 docker-stack.yml:
-	$(call docker-stack-config,blackbox-exporter)
-	$(call docker-stack-config,cadvisor)
-	$(call docker-stack-config,grafana)
-	$(call docker-stack-config,node-exporter)
-	$(call docker-stack-config,prometheus)
-	$(call docker-stack-config,pushgateway)
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) \
 		-c blackbox-exporter/docker-stack-config.yml \
 		-c cadvisor/docker-stack-config.yml \
@@ -35,12 +36,23 @@ docker-stack.yml:
 	@rm docker-stack.yml.tmp
 	@rm **/docker-stack-config.yml
 
+compile: \
+	blackbox-exporter/docker-stack.yml \
+	cadvisor/docker-stack.yml \
+	grafana/docker-stack.yml \
+	node-exporter/docker-stack.yml \
+	prometheus/docker-stack.yml \
+	pushgateway/docker-stack.yml \
+	docker-stack.yml
+
 print:
 	$(DOCKER_STACK_CONFIG) -c docker-stack.yml
 
 clean:
-	@rm -rf _tmp || true
-	@rm -f docker-stack.yml || true
+	@rm -rf docker-stack.yml || true
+	@rm -rf docker-stack.yml.tmp || true
+	@rm -rf **/docker-stack.yml || true
+	@rm -rf **/docker-stack-config.yml || true
 
 deploy: compile stack-networks stack-deploy
 remove: stack-remove
