@@ -40,7 +40,7 @@ services:
       GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP}
       GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
     hostname: replica-{{.Task.Slot}}.grafana.local
-    image: grafana/grafana:10.0.0
+    image: grafana/grafana:11.1.0
     logging:
       driver: json-file
       options:
