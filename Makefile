@@ -11,9 +11,8 @@ make:
 	@echo "  clean: Clean up temporary files"
 
 define docker-stack-config
-cd $1 \
-&& $(DOCKER_STACK_CONFIG) -c docker-stack.tmpl.yml > docker-stack-config.yml \
-&& sed "s|$(PWD)/$1/|./|g" docker-stack-config.yml > docker-stack.yml
+cd $1 && $(DOCKER_STACK_CONFIG) -c docker-stack.tmpl.yml > docker-stack-config.yml
+@cd $1 && sed "s|$(PWD)/$1/|./|g" docker-stack-config.yml > docker-stack.yml
 endef
 
 compile: docker-stack.yml
