@@ -32,7 +32,7 @@ docker-stack.yml:
 		-c prometheus/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
 	> docker-stack.yml.tmp
-	@sed "s|$(PWD)/||g" docker-stack.yml.tmp > docker-stack.yml
+	@sed "s|$(PWD)/|./|g" docker-stack.yml.tmp > docker-stack.yml
 	@rm docker-stack.yml.tmp
 	@rm **/docker-stack-config.yml
 

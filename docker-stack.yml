@@ -718,113 +718,113 @@ volumes:
 configs:
   gf-dashboard-cadvisor:
     name: gf-dashboard-cadvisor-v1
-    file: grafana/grafana/dashboards/cadvisor.json
+    file: ./grafana/grafana/dashboards/cadvisor.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-dockerswarm-nodes-dashboard:
     name: gf-dashboard-dockerswarm-nodes-dashboard-v1
-    file: grafana/grafana/dashboards/dockerswarm-nodes.json
+    file: ./grafana/grafana/dashboards/dockerswarm-nodes.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-dockerswarm-services:
     name: gf-dashboard-dockerswarm-services-v1
-    file: grafana/grafana/dashboards/dockerswarm-services.json
+    file: ./grafana/grafana/dashboards/dockerswarm-services.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-dockerswarm-services-endpoints:
     name: gf-dashboard-dockerswarm-services-endpoints-v1
-    file: grafana/grafana/dashboards/dockerswarm-services-endpoints.json
+    file: ./grafana/grafana/dashboards/dockerswarm-services-endpoints.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-grafana-metrics:
     name: gf-dashboard-grafana-metrics-v1
-    file: grafana/grafana/dashboards/grafana-metrics.json
+    file: ./grafana/grafana/dashboards/grafana-metrics.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-node-exporter:
     name: gf-dashboard-node-exporter-v1
-    file: grafana/grafana/dashboards/node-exporter.json
+    file: ./grafana/grafana/dashboards/node-exporter.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-prometheus-stats:
     name: gf-dashboard-prometheus-stats-v1
-    file: grafana/grafana/dashboards/prometheus-stats.json
+    file: ./grafana/grafana/dashboards/prometheus-stats.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-prometheus-stats-v2:
     name: gf-dashboard-prometheus-stats-v2
-    file: grafana/grafana/dashboards/prometheus-2-0-stats.json
+    file: ./grafana/grafana/dashboards/prometheus-2-0-stats.json
     labels:
       io.grafana.dashboard: "true"
   gf-provisioning-dashboards:
     name: gf-provisioning-dashboards-v1
-    file: grafana/grafana/provisioning/dashboards/grafana-dashboards.yml
+    file: ./grafana/grafana/provisioning/dashboards/grafana-dashboards.yml
     labels:
       io.grafana.provisioning.dashboard: "true"
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: grafana/grafana/provisioning/datasources/prometheus.yaml
+    file: ./grafana/grafana/provisioning/datasources/prometheus.yaml
     labels:
       io.grafana.provisioning.datasource: "true"
   gf-server-entrypoint:
     name: gf-server-entrypoint-v1
-    file: grafana/grafana/docker-entrypoint-shim.sh
+    file: ./grafana/grafana/docker-entrypoint-shim.sh
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
-    file: node-exporter/node_meta.prom
+    file: ./node-exporter/node_meta.prom
   prometheus:
     name: prometheus
     external: true
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
-    file: blackbox-exporter/prometheus/blackbox-exporter.yml
+    file: ./blackbox-exporter/prometheus/blackbox-exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-cadvisor:
     name: prometheus-cadvisor-v1
-    file: cadvisor/prometheus/cadvisor.yml
+    file: ./cadvisor/prometheus/cadvisor.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
-    file: prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
+    file: ./prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
-    file: prometheus/prometheus/scrape-configs/dockerswarm-nodes.yaml
+    file: ./prometheus/prometheus/scrape-configs/dockerswarm-nodes.yaml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
+    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-ingress:
     name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
+    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-tasks:
     name: prometheus-dockerswarm-tasks-v1
-    file: prometheus/prometheus/scrape-configs/dockerswarm-tasks.yaml
+    file: ./prometheus/prometheus/scrape-configs/dockerswarm-tasks.yaml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
-    file: node-exporter/prometheus/node_exporter.yml
+    file: ./node-exporter/prometheus/node_exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-prometheus:
     name: prometheus-prometheus-v1
-    file: prometheus/prometheus/scrape-configs/prometheus.yaml
+    file: ./prometheus/prometheus/scrape-configs/prometheus.yaml
     template_driver: golang
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
-    file: pushgateway/prometheus/pushgateway.yml
+    file: ./pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus.yaml.tmpl:
     name: prometheus.yaml.tmpl-v1
-    file: prometheus/prometheus/prometheus.yaml.tmpl
+    file: ./prometheus/prometheus/prometheus.yaml.tmpl
 x-default-logging:
   driver: json-file
   options:
