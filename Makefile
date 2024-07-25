@@ -1,13 +1,6 @@
 DOCKER_STACK_CONFIG := docker stack config
 DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
 
-# if darwin == true, then use the cadvisor_docker_stack_darwin.yml file
-macos := false
-cadvisor_docker_stack_file := cadvisor/docker-stack.tmpl.yml
-ifeq ($(macos),true)
-	cadvisor_docker_stack_file := cadvisor/docker-stack-macos.tmpl.yml
-endif
-
 .EXPORT_ALL_VARIABLES:
 include .dockerenv
 
