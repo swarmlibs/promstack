@@ -35,10 +35,9 @@ services:
     image: ${PROMSTACK_GRAFANA_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
-      # Default credentials
-      GF_SECURITY_ADMIN_USER:
-      GF_SECURITY_ADMIN_PASSWORD:
-      GF_USERS_ALLOW_SIGN_UP:
+      GF_SECURITY_ADMIN_USER: $${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: $${GF_SECURITY_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: $${GF_USERS_ALLOW_SIGN_UP}
     ports:
       - published: 3000
         target: 3000

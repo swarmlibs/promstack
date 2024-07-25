@@ -35,9 +35,9 @@ services:
     entrypoint:
     - /docker-entrypoint-shim.sh
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: null
-      GF_SECURITY_ADMIN_USER: null
-      GF_USERS_ALLOW_SIGN_UP: null
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP}
     hostname: replica-{{.Task.Slot}}.grafana.local
     image: grafana/grafana:10.0.0
     logging:
