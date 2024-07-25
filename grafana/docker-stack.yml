@@ -50,8 +50,6 @@ services:
         aliases:
           - grafana.local
       prometheus:
-        aliases:
-          - grafana.svc.cluster.local
       prometheus_gwnetwork:
     hostname: replica-{{.Task.Slot}}.grafana.local
     configs:
