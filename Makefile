@@ -26,7 +26,7 @@ docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c node-exporter/docker-stack.yml > _tmp/node-exporter.yml
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c prometheus/docker-stack.yml > _tmp/prometheus.yml
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c pushgateway/docker-stack.yml > _tmp/pushgateway.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) \
+	$(DOCKER_STACK_CONFIG) \
 		-c _tmp/blackbox-exporter.yml \
 		-c _tmp/cadvisor.yml \
 		-c _tmp/grafana.yml \

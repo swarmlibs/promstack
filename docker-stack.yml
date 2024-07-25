@@ -32,7 +32,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
-    image: ${PROMSTACK_BLACKBOX_EXPORTER_VERSION}
+    image: prom/blackbox-exporter:v0.25.0
     logging:
       driver: json-file
       options:
@@ -75,7 +75,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.cadvisor.local
-    image: ${PROMSTACK_CADVISOR_VERSION}
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
     logging:
       driver: json-file
       options:
@@ -149,7 +149,7 @@ services:
       GF_SECURITY_ADMIN_USER: null
       GF_USERS_ALLOW_SIGN_UP: null
     hostname: replica-{{.Task.Slot}}.grafana.local
-    image: ${PROMSTACK_GRAFANA_VERSION}
+    image: grafana/grafana:10.0.0
     logging:
       driver: json-file
       options:
@@ -223,7 +223,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -272,7 +272,7 @@ services:
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
-    image: ${PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION}
+    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -323,7 +323,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -369,7 +369,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -387,7 +387,7 @@ services:
     command:
     - --path.rootfs=/rootfs
     - --collector.textfile.directory=/etc/node-exporter
-    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)
     - --no-collector.ipvs
     configs:
     - source: node-exporter-node-meta
@@ -420,7 +420,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.node-exporter.local
-    image: ${PROMSTACK_NODE_EXPORTER_VERSION}
+    image: prom/node-exporter:v1.8.1
     logging:
       driver: json-file
       options:
@@ -452,10 +452,9 @@ services:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
     environment:
-      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
-        "com.docker.stack.namespace"}}}
-      PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: ${PROMSTACK_PROMETHEUS_GENCONFIG_VERSION}
+      PROMETHEUS_CLUSTER_NAME: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
+      PROMETHEUS_CLUSTER_REPLICA: replica-{{.Task.Slot}}
+    image: swarmlibs/genconfig:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -500,7 +499,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -561,7 +560,7 @@ services:
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d/scrape-configs
       RELOADER_WATCH_INTERVAL: 15s
-    image: ${PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION}
+    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
     logging:
       driver: json-file
       options:
@@ -617,7 +616,7 @@ services:
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Node.ID}}.prometheus.local
-    image: ${PROMSTACK_PROMETHEUS_VERSION}
+    image: prom/prometheus:v2.53.1
     logging:
       driver: json-file
       options:
@@ -680,7 +679,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.local
-    image: ${PROMSTACK_PUSHGATEWAY_VERSION}
+    image: prom/pushgateway:v1.9.0
     logging:
       driver: json-file
       options:
