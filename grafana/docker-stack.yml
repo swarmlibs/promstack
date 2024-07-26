@@ -82,6 +82,7 @@ services:
     - source: gf-dashboard-prometheus-stats-v2
     - source: gf-dashboard-dockerswarm-nodes-dashboard
     - source: gf-dashboard-dockerswarm-services-endpoints
+    - source: gf-dashboard-dockerswarm-services-logs
     - source: gf-dashboard-dockerswarm-services
     - source: gf-dashboard-cadvisor
     - source: gf-dashboard-node-exporter
@@ -310,6 +311,11 @@ configs:
   gf-dashboard-dockerswarm-services-endpoints:
     name: gf-dashboard-dockerswarm-services-endpoints-v1
     file: ./grafana/dashboards/dockerswarm-services-endpoints.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-dockerswarm-services-logs:
+    name: gf-dashboard-dockerswarm-services-logs-v1
+    file: ./grafana/dashboards/dockerswarm-services-logs.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-grafana-metrics:
