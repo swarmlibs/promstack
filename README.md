@@ -27,6 +27,9 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configure Prometheus](#configure-prometheus)
     - [Environment variables](#environment-variables)
+- [Troubleshooting](#troubleshooting)
+  - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
+- [License](#license)
 
 
 ## Concepts
@@ -305,8 +308,16 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
 
----
+## Troubleshooting
 
-> [!IMPORTANT]
-> This project is a work in progress and is not yet ready for production use.
-> But feel free to test it and provide feedback.
+### Grafana dashboards are not present
+
+If the Grafana dashboards are not present, please restart `grafana` service to reload the dashboards.
+
+```sh
+docker service update --force promstack_grafana
+```
+
+## License
+
+Licensed under the MIT License. See [LICENSE](LICENSE) for more information.
