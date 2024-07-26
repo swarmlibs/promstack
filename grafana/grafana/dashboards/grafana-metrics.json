@@ -1384,6 +1384,6 @@
   "timezone": "",
   "title": "Grafana metrics",
   "uid": "promstack-grafana-metrics",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
