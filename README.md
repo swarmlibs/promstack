@@ -233,7 +233,8 @@ configs:
 
 ## Prometheus
 
-By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks.
+By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. The default data retention is 182 days or ~6 months.
+
 You can use Docker object labels in the `deploy` block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
 
 #### Register services as Prometheus targets
