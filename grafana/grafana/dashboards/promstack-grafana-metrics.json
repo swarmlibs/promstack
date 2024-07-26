@@ -1328,7 +1328,8 @@
   "schemaVersion": 39,
   "tags": [
     "grafana",
-    "prometheus"
+    "prometheus",
+    "promstack"
   ],
   "templating": {
     "list": [

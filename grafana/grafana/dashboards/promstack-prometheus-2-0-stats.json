@@ -1524,7 +1524,8 @@
   "revision": "1.0",
   "schemaVersion": 39,
   "tags": [
-    "prometheus"
+    "prometheus",
+    "promstack"
   ],
   "templating": {
     "list": [
