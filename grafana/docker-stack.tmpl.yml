@@ -155,14 +155,14 @@ services:
       - --output-dir=/grafana-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.dashboard
     configs:
-      - source: gf-dashboard-grafana-metrics
-      - source: gf-dashboard-prometheus-stats
-      - source: gf-dashboard-prometheus-stats-v2
-      - source: gf-dashboard-dockerswarm-nodes-dashboard
-      - source: gf-dashboard-dockerswarm-services-endpoints
-      - source: gf-dashboard-dockerswarm-services
-      - source: gf-dashboard-cadvisor
-      - source: gf-dashboard-node-exporter
+      - source: gf-dashboard-promstack-grafana-metrics
+      - source: gf-dashboard-promstack-prometheus-stats
+      - source: gf-dashboard-promstack-prometheus-stats-v2
+      - source: gf-dashboard-promstack-dockerswarm-nodes
+      - source: gf-dashboard-promstack-dockerswarm-services-endpoints
+      - source: gf-dashboard-promstack-dockerswarm-services
+      - source: gf-dashboard-promstack-cadvisor
+      - source: gf-dashboard-promstack-node-exporter
     volumes:
       - type: volume
         source: grafana-dashboards
@@ -308,40 +308,40 @@ configs:
       - "io.grafana.provisioning.datasource=true"
 
   # Grafana & Prometheus dashboards
-  gf-dashboard-grafana-metrics:
-    name: gf-dashboard-grafana-metrics-v1
-    file: ./grafana/dashboards/grafana-metrics.json
+  gf-dashboard-promstack-grafana-metrics:
+    name: gf-dashboard-promstack-grafana-metrics-v1
+    file: ./grafana/dashboards/promstack-grafana-metrics.json
     labels: [ "io.grafana.dashboard=true" ]
-  gf-dashboard-prometheus-stats:
-    name: gf-dashboard-prometheus-stats-v1
-    file: ./grafana/dashboards/prometheus-stats.json
+  gf-dashboard-promstack-prometheus-stats:
+    name: gf-dashboard-promstack-prometheus-stats-v1
+    file: ./grafana/dashboards/promstack-prometheus-stats.json
     labels: [ "io.grafana.dashboard=true" ]
-  gf-dashboard-prometheus-stats-v2:
-    name: gf-dashboard-prometheus-stats-v2
-    file: ./grafana/dashboards/prometheus-2-0-stats.json
+  gf-dashboard-promstack-prometheus-stats-v2:
+    name: gf-dashboard-promstack-prometheus-stats-v2
+    file: ./grafana/dashboards/promstack-prometheus-2-0-stats.json
     labels: [ "io.grafana.dashboard=true" ]
 
   # Docker Swarm specific dashboards
-  gf-dashboard-dockerswarm-nodes-dashboard:
-    name: gf-dashboard-dockerswarm-nodes-dashboard-v1
-    file: ./grafana/dashboards/dockerswarm-nodes.json
+  gf-dashboard-promstack-dockerswarm-nodes:
+    name: gf-dashboard-promstack-dockerswarm-nodes-v1
+    file: ./grafana/dashboards/promstack-dockerswarm-nodes.json
     labels: [ "io.grafana.dashboard=true" ]
-  gf-dashboard-dockerswarm-services-endpoints:
-    name: gf-dashboard-dockerswarm-services-endpoints-v1
-    file: ./grafana/dashboards/dockerswarm-services-endpoints.json
+  gf-dashboard-promstack-dockerswarm-services-endpoints:
+    name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
+    file: ./grafana/dashboards/promstack-dockerswarm-services-endpoints.json
     labels: [ "io.grafana.dashboard=true" ]
-  gf-dashboard-dockerswarm-services:
-    name: gf-dashboard-dockerswarm-services-v1
-    file: ./grafana/dashboards/dockerswarm-services.json
+  gf-dashboard-promstack-dockerswarm-services:
+    name: gf-dashboard-promstack-dockerswarm-services-v1
+    file: ./grafana/dashboards/promstack-dockerswarm-services.json
     labels: [ "io.grafana.dashboard=true" ]
 
   # cAdvisor
-  gf-dashboard-cadvisor:
-    name: gf-dashboard-cadvisor-v1
-    file: ./grafana/dashboards/cadvisor.json
+  gf-dashboard-promstack-cadvisor:
+    name: gf-dashboard-promstack-cadvisor-v1
+    file: ./grafana/dashboards/promstack-cadvisor.json
     labels: [ "io.grafana.dashboard=true" ]
   # Node Exporter
-  gf-dashboard-node-exporter:
-    name: gf-dashboard-node-exporter-v1
-    file: ./grafana/dashboards/node-exporter.json
+  gf-dashboard-promstack-node-exporter:
+    name: gf-dashboard-promstack-node-exporter-v1
+    file: ./grafana/dashboards/promstack-node-exporter.json
     labels: [ "io.grafana.dashboard=true" ]

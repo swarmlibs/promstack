@@ -967,7 +967,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Prometheus Stats",
+  "title": "Promstack - Prometheus Stats",
   "uid": "promstack-prometheus-stats",
   "version": 1,
   "weekStart": ""

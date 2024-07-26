@@ -887,7 +887,7 @@
     },
     "timepicker": {},
     "timezone": "",
-    "title": "Docker Swarm Services Endpoints",
+    "title": "Promstack - DockerSwarm Services Endpoints",
     "uid": "promstack-dockerswarm-services-endpoints",
     "version": 1,
     "weekStart": ""

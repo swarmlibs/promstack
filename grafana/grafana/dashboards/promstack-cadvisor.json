@@ -870,7 +870,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Container Metrics",
+  "title": "Promstack - cAdvisor",
   "uid": "promstack-cadvisor",
   "version": 1,
   "weekStart": ""
