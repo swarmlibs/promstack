@@ -430,7 +430,7 @@
                     }
                 ]
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.1.0",
             "repeatDirection": "h",
             "targets": [
                 {
@@ -799,7 +799,11 @@
     ],
     "refresh": "1m",
     "schemaVersion": 39,
-    "tags": [],
+    "tags": [
+        "promstack",
+        "dockerswarm-services",
+        "blackbox"
+    ],
     "templating": {
         "list": [
             {
@@ -881,11 +885,10 @@
         "from": "now-30m",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {},
     "timezone": "",
     "title": "Docker Swarm Services Endpoints",
-    "uid": "swarmlibs-dockerswarm-services-endpoints",
+    "uid": "promstack-dockerswarm-services-endpoints",
     "version": 1,
     "weekStart": ""
 }

@@ -2330,7 +2330,7 @@
     },
     "timezone": "",
     "title": "Docker Swarm Nodes",
-    "uid": "docker-swarm-nodes",
+    "uid": "promstack-dockerswarm-nodes",
     "version": 2,
     "weekStart": ""
 }

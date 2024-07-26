@@ -23892,8 +23892,8 @@
     ]
   },
   "timezone": "browser",
-  "title": "Node Exporter Full",
-  "uid": "rYdddlPWk",
+  "title": "Node Exporter",
+  "uid": "promstack-node-exporter",
   "version": 92,
   "weekStart": ""
 }
