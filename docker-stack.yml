@@ -508,7 +508,7 @@ services:
       PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.local
       RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
       RELOADER_RELOAD_TIMEOUT: 10s
-      RELOADER_WATCH_DIR: /prometheus-configs.d/scrape-configs
+      RELOADER_WATCH_DIR: /prometheus-configs.d
       RELOADER_WATCH_INTERVAL: 15s
     image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
     logging:
@@ -528,10 +528,11 @@ services:
     - --prometheus-scrape-config-label=io.prometheus.rule
     configs:
     - source: prometheus-dockerswarm-nodes-rule
+    - source: prometheus-dockerswarm-tasks-rule
     deploy:
       mode: global
       labels:
-        io.prometheus.role: prometheus-rule-provider
+        io.prometheus.role: prometheus-config-provider
       update_config:
         parallelism: 1
         delay: 15s
@@ -580,7 +581,7 @@ services:
     deploy:
       mode: global
       labels:
-        io.prometheus.role: prometheus-scrape-config-provider
+        io.prometheus.role: prometheus-config-provider
       update_config:
         parallelism: 1
         delay: 15s
@@ -858,6 +859,11 @@ configs:
     file: ./prometheus/prometheus/scrape-configs/dockerswarm-tasks.yaml
     labels:
       io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-tasks-rule:
+    name: prometheus-dockerswarm-tasks-rule-v1
+    file: ./prometheus/prometheus/rules/dockerswarm-tasks.yaml
+    labels:
+      io.prometheus.rule: "true"
   prometheus-node-exporter:
     name: prometheus-node-exporter-v1
     file: ./node-exporter/prometheus/node_exporter.yml

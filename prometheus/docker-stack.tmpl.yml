@@ -123,7 +123,7 @@ services:
         source: prometheus-configs
         target: /prometheus-configs.d
 
-  prometheus-scrape-config-provider:
+  prometheus-scrape-config-provider: &prometheus-config-provider-service
     image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
@@ -145,7 +145,7 @@ services:
       <<: *x-prometheus-helpers-deploy
       resources: *x-prometheus-helpers-resources-constraints
       labels:
-        io.prometheus.role: "prometheus-scrape-config-provider"
+        io.prometheus.role: "prometheus-config-provider"
       restart_policy:
         condition: any
         max_attempts: 15
@@ -165,50 +165,20 @@ services:
         max_failure_ratio: 0.1
     
   prometheus-rule-provider:
-    image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
+    <<: *prometheus-config-provider-service
     command:
       - --output-dir=/prometheus-configs.d/rules
       - --prometheus-scrape-config-label=io.prometheus.rule
     configs:
       - source: prometheus-dockerswarm-nodes-rule
-    volumes:
-      - type: volume
-        source: prometheus-configs
-        target: /prometheus-configs.d
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
-    logging: *x-default-logging
-    deploy:
-      <<: *x-prometheus-helpers-deploy
-      resources: *x-prometheus-helpers-resources-constraints
-      labels:
-        io.prometheus.role: "prometheus-rule-provider"
-      restart_policy:
-        condition: any
-        max_attempts: 15
-        delay: 15s
-        window: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-      update_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
+      - source: prometheus-dockerswarm-tasks-rule
 
   prometheus-config-reloader:
     image: ${PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
       - RELOADER_CONFIG_FILE=/prometheus-configs.d/prometheus.yaml
-      - RELOADER_WATCH_DIR=/prometheus-configs.d/scrape-configs
+      - RELOADER_WATCH_DIR=/prometheus-configs.d
       - RELOADER_WATCH_INTERVAL=15s
       - RELOADER_RELOAD_TIMEOUT=10s
       - PROMETHEUS_HOST=replica-{{.Node.ID}}.prometheus.local
@@ -289,6 +259,11 @@ configs:
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
     file: ./prometheus/rules/dockerswarm-nodes.yaml
+    labels:
+      - "io.prometheus.rule=true"
+  prometheus-dockerswarm-tasks-rule:
+    name: prometheus-dockerswarm-tasks-rule-v1
+    file: ./prometheus/rules/dockerswarm-tasks.yaml
     labels:
       - "io.prometheus.rule=true"
 
