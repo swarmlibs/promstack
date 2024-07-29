@@ -149,7 +149,7 @@ services:
       - grafana-provisioning-datasource-provider
 
   # Grafana dashboards provider
-  grafana-dashboard-provider:
+  grafana-dashboard-provider: &grafana-config-provider
     image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
     command:
       - --output-ext=json
@@ -196,7 +196,7 @@ services:
 
   # Grafana provisioning config for datasources and dashboards
   grafana-provisioning-dashboard-provider:
-    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
+    <<: *grafana-config-provider
     command:
       - --output-dir=/grafana-provisioning-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
@@ -210,30 +210,9 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
-    logging: *x-default-logging
-    deploy:
-      <<: *x-grafana-helpers-deploy
-      resources: *x-grafana-helpers-resources-constraints
-      restart_policy:
-        condition: any
-        max_attempts: 15
-        delay: 15s
-        window: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-      update_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
 
   grafana-provisioning-datasource-provider:
-    image: ${PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION}
+    <<: *grafana-config-provider
     command:
       - --output-dir=/grafana-provisioning-datasources.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.datasource
@@ -247,27 +226,6 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
-    logging: *x-default-logging
-    deploy:
-      <<: *x-grafana-helpers-deploy
-      resources: *x-grafana-helpers-resources-constraints
-      restart_policy:
-        condition: any
-        max_attempts: 15
-        delay: 15s
-        window: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
-      update_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.1
 
 volumes:
   grafana-data:
