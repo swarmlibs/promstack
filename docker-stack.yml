@@ -175,6 +175,9 @@ services:
       source: grafana-dashboards
       target: /etc/grafana/dashboards
     - type: volume
+      source: grafana-provisioning-alerting
+      target: /etc/grafana/provisioning/alerting
+    - type: volume
       source: grafana-provisioning-dashboards
       target: /etc/grafana/provisioning/dashboards
     - type: volume
@@ -234,6 +237,59 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+  grafana-provisioning-alerting-provider:
+    command:
+    - --output-dir=/grafana-provisioning-alerting.d
+    - --prometheus-scrape-config-label=io.grafana.provisioning.alerting
+    configs:
+    - source: gf-dashboard-promstack-grafana-metrics
+    - source: gf-dashboard-promstack-prometheus-stats
+    - source: gf-dashboard-promstack-prometheus-stats-v2
+    - source: gf-dashboard-promstack-dockerswarm-nodes
+    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
+    - source: gf-dashboard-promstack-dockerswarm-services
+    - source: gf-dashboard-promstack-cadvisor
+    - source: gf-dashboard-promstack-node-exporter
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      resources:
+        limits:
+          memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
+      placement:
+        constraints:
+        - node.labels.services.promstack_grafana == true
+        max_replicas_per_node: 1
+    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: volume
+      source: grafana-provisioning-alerting
+      target: /grafana-provisioning-alerting.d
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
   grafana-provisioning-config-reloader:
     depends_on:
     - grafana
@@ -271,7 +327,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
       GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
-    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
+    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.2
     logging:
       driver: json-file
       options:
@@ -283,6 +339,9 @@ services:
     - type: volume
       source: grafana-provisioning-config-reloader
       target: /data
+    - type: volume
+      source: grafana-provisioning-alerting
+      target: /etc/grafana/provisioning/alerting
     - type: volume
       source: grafana-provisioning-dashboards
       target: /etc/grafana/provisioning/dashboards
@@ -759,6 +818,7 @@ volumes:
   grafana-dashboards: {}
   grafana-data: {}
   grafana-logs: {}
+  grafana-provisioning-alerting: {}
   grafana-provisioning-config-reloader: {}
   grafana-provisioning-dashboards: {}
   grafana-provisioning-datasources: {}

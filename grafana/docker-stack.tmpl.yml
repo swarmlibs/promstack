@@ -66,6 +66,9 @@ services:
         source: grafana-dashboards
         target: /etc/grafana/dashboards
       - type: volume
+        source: grafana-provisioning-alerting
+        target: /etc/grafana/provisioning/alerting
+      - type: volume
         source: grafana-provisioning-dashboards
         target: /etc/grafana/provisioning/dashboards
       - type: volume
@@ -114,6 +117,9 @@ services:
       - type: volume
         source: grafana-provisioning-config-reloader
         target: /data
+      - type: volume
+        source: grafana-provisioning-alerting
+        target: /etc/grafana/provisioning/alerting
       - type: volume
         source: grafana-provisioning-dashboards
         target: /etc/grafana/provisioning/dashboards
@@ -194,7 +200,21 @@ services:
         monitor: 15s
         max_failure_ratio: 0.1
 
-  # Grafana provisioning config for datasources and dashboards
+  # Grafana provisioning config for alerting, datasources and dashboards
+  grafana-provisioning-alerting-provider:
+    <<: *grafana-config-provider
+    command:
+      - --output-dir=/grafana-provisioning-alerting.d
+      - --prometheus-scrape-config-label=io.grafana.provisioning.alerting
+    volumes:
+      - type: volume
+        source: grafana-provisioning-alerting
+        target: /grafana-provisioning-alerting.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+
   grafana-provisioning-dashboard-provider:
     <<: *grafana-config-provider
     command:
@@ -231,6 +251,7 @@ volumes:
   grafana-data:
   grafana-logs:
   grafana-dashboards:
+  grafana-provisioning-alerting:
   grafana-provisioning-dashboards:
   grafana-provisioning-datasources:
   grafana-provisioning-config-reloader:

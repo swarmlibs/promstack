@@ -7,7 +7,7 @@ PROMSTACK_CADVISOR_VERSION=gcr.io/cadvisor/cadvisor:v0.49.1
 # grafana
 PROMSTACK_GRAFANA_VERSION=grafana/grafana:11.1.0
 PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION=swarmlibs/prometheus-config-provider:0.1.0-rc.1
-PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION=swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
+PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION=swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.2
 
 # node-exporter
 PROMSTACK_NODE_EXPORTER_VERSION=prom/node-exporter:v1.8.1
