@@ -82,12 +82,6 @@ scrape_configs:
         separator: ';'
         regex: (\d+);(?:[^:]+)(?::(\d+))?
         replacement: $1
-      # - source_labels:
-      #   - __address__
-      #   - __meta_dockerswarm_service_label_io_prometheus_scrape_port
-      #   target_label: __address__
-      #   regex: ([^:]+)(?::\d+)?;(\d+)
-      #   replacement: $1:$2
 
       # io.prometheus.metrics_path=<path>
       - source_labels:
