@@ -206,7 +206,8 @@ configs:
   gf-dashboard-grafana-metrics:
     name: gf-dashboard-grafana-metrics-v1
     file: ./dashboards/grafana-metrics.json
-    labels: [ "io.grafana.dashboard=true" ]
+    labels:
+      - "io.grafana.dashboard=true"
 ```
 
 #### Injecting Grafana Provisioning configurations
@@ -224,7 +225,8 @@ configs:
   gf-provisioning-dashboards:
     name: gf-provisioning-dashboards-v1
     file: ./provisioning/dashboards/grafana-dashboards.yml
-    labels: [ "io.grafana.provisioning.dashboard=true" ]
+    labels:
+      - "io.grafana.provisioning.dashboard=true"
 
   # Grafana datasources provisioning config
   gf-provisioning-datasource-prometheus:
