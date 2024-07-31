@@ -1,3 +1,4 @@
+DOCKER_STACK_NAMESPACE := promstack
 DOCKER_STACK_CONFIG := docker stack config
 DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
 DOCKER_STACK_DEPLOY_ARGS := --detach --prune --with-registry-auth
@@ -64,8 +65,8 @@ stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
 stack-deploy:
-	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) -c docker-stack.yml promstack
+	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
-	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) --resolve-image always -c docker-stack.yml promstack
+	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-remove:
-	docker stack rm promstack
+	docker stack rm $(DOCKER_STACK_NAMESPACE)
