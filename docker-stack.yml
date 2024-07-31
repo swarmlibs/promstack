@@ -149,6 +149,8 @@ services:
       GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME}
       GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL}
       GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
+    extra_hosts:
+    - host.docker.internal:host-gateway
     hostname: replica-{{.Task.Slot}}.grafana.local
     image: grafana/grafana:11.1.0
     logging:

@@ -54,6 +54,8 @@ services:
         aliases:
           - grafana.svc.cluster.local
       prometheus_gwnetwork:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     hostname: replica-{{.Task.Slot}}.grafana.local
     configs:
       - source: gf-server-entrypoint
