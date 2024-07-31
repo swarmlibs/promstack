@@ -35,10 +35,14 @@ services:
     image: ${PROMSTACK_GRAFANA_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
-      GF_DATABASE_WAL: "true"
+      # Default admin credentials
       GF_SECURITY_ADMIN_USER: $${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: $${GF_SECURITY_ADMIN_PASSWORD}
-      GF_USERS_ALLOW_SIGN_UP: $${GF_USERS_ALLOW_SIGN_UP}
+      # SQlite database mode
+      GF_DATABASE_WAL: "true"
+      # Snapshot service
+      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL: $${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL}
+      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME: $${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME}
       # docker-entrypoint-shim.sh
       GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
     networks:
