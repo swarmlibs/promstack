@@ -3,9 +3,9 @@ providers:
   - name: 'dashboards'
     orgId: 1
     type: file
-    disableDeletion: true
-    allowUiUpdates: false
-    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    disableDeletion: false
+    updateIntervalSeconds: 15
     options:
       path: /etc/grafana/dashboards
       foldersFromFilesStructure: true
