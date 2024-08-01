@@ -41,10 +41,10 @@ services:
       - --web.enable-lifecycle
       - --log.level=info
     user: "0:0"
-    # ports:
-    #   - published: 9090
-    #     target: 9090
-    #     mode: host
+    ports:
+      - published: 9090
+        target: 9090
+        mode: host
     networks:
       public:
         aliases:

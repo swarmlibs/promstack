@@ -251,6 +251,10 @@ services:
       public:
         aliases:
         - prometheus.svc.cluster.local
+    ports:
+    - mode: host
+      target: 9090
+      published: 9090
     user: "0:0"
     volumes:
     - type: bind
