@@ -5,6 +5,8 @@ services:
     - source: gf-server-entrypoint
       target: /docker-entrypoint-shim.sh
       mode: 365
+    - source: gf-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
     deploy:
       replicas: 1
       labels:
@@ -249,7 +251,14 @@ services:
     - --output-dir=/grafana-provisioning-dashboards.d
     - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
     configs:
-    - source: gf-provisioning-dashboards
+    - source: gf-dashboard-promstack-grafana-metrics
+    - source: gf-dashboard-promstack-prometheus-stats
+    - source: gf-dashboard-promstack-prometheus-stats-v2
+    - source: gf-dashboard-promstack-dockerswarm-nodes
+    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
+    - source: gf-dashboard-promstack-dockerswarm-services
+    - source: gf-dashboard-promstack-cadvisor
+    - source: gf-dashboard-promstack-node-exporter
     deploy:
       replicas: 1
       update_config:
@@ -399,8 +408,6 @@ configs:
   gf-provisioning-dashboards:
     name: gf-provisioning-dashboards-v1
     file: ./grafana/provisioning/dashboards/grafana-dashboards.yml
-    labels:
-      io.grafana.provisioning.dashboard: "true"
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
     file: ./grafana/provisioning/datasources/prometheus.yaml

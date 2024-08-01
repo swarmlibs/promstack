@@ -61,6 +61,8 @@ services:
       - source: gf-server-entrypoint
         target: /docker-entrypoint-shim.sh
         mode: 0555
+      - source: gf-provisioning-dashboards
+        target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
     volumes:
       - type: volume
         source: grafana-data
@@ -226,8 +228,6 @@ services:
     command:
       - --output-dir=/grafana-provisioning-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
-    configs:
-      - source: gf-provisioning-dashboards
     volumes:
       - type: volume
         source: grafana-provisioning-dashboards
@@ -283,10 +283,11 @@ configs:
 
   # Grafana dashboards provisioning config
   gf-provisioning-dashboards:
+    # Note: The dashboards provisioning config does not need to be labeled,
+    #       instead we mount the file directly into the Grafana container.
     name: gf-provisioning-dashboards-v1
     file: ./grafana/provisioning/dashboards/grafana-dashboards.yml
-    labels:
-      - "io.grafana.provisioning.dashboard=true"
+
   # Grafana datasources provisioning config
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
