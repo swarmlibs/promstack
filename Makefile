@@ -5,6 +5,7 @@ DOCKER_STACK_DEPLOY_ARGS := --detach --with-registry-auth
 
 .EXPORT_ALL_VARIABLES:
 include .dockerenv
+-include .env
 
 make:
 	@echo "Usage: make [deploy|remove|clean]"
