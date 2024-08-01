@@ -1,7 +1,7 @@
 DOCKER_STACK_NAMESPACE := promstack
 DOCKER_STACK_CONFIG := docker stack config
 DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
-DOCKER_STACK_DEPLOY_ARGS := --detach --prune --with-registry-auth
+DOCKER_STACK_DEPLOY_ARGS := --detach --with-registry-auth
 
 .EXPORT_ALL_VARIABLES:
 include .dockerenv
@@ -16,6 +16,12 @@ define docker-stack-config
 $(1)/docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) -c $1/docker-stack.tmpl.yml > $1/docker-stack-config.yml
 	@sed "s|$(PWD)/$1/|./|g" $1/docker-stack-config.yml > $1/docker-stack.yml
+$(1)/compile: $(1)/docker-stack.yml
+	cat $(1)/docker-stack.yml
+$(1)/deploy:
+	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+$(1)/upgrade:
+	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) --resolve-image always -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 endef
 
 $(eval $(call docker-stack-config,blackbox-exporter))
@@ -65,8 +71,8 @@ stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
 stack-deploy:
-	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
-	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	docker stack deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-remove:
 	docker stack rm $(DOCKER_STACK_NAMESPACE)
