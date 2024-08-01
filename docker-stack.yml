@@ -169,6 +169,10 @@ services:
       public:
         aliases:
         - grafana.svc.cluster.local
+    ports:
+    - target: 3000
+      published: 3000
+      protocol: tcp
     volumes:
     - type: volume
       source: grafana-data
