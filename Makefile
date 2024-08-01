@@ -16,12 +16,12 @@ make:
 
 define docker-stack-config
 $(1)/compile: $(1)/docker-stack.yml
+	@rm $1/docker-stack-config.yml
 $(1)/config:
 	cat $(1)/docker-stack.yml
 $(1)/docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) -c $1/docker-stack.tmpl.yml > $1/docker-stack-config.yml
 	@sed "s|$(PWD)/$1/|./|g" $1/docker-stack-config.yml > $1/docker-stack.yml
-	@rm $1/docker-stack-config.yml
 $(1)/deploy:
 	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 $(1)/upgrade: $(1)/clean $(1)/compile
