@@ -119,6 +119,7 @@ services:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_USER: $${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: $${GF_SECURITY_ADMIN_PASSWORD}
+      GRAFANA_PROVISIONING_CONFIG_RELOADER_DASHBOARD_ENABLED: "false"
     networks:
       grafana:
     volumes:
