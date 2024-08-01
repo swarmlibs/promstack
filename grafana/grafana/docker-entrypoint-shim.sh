@@ -39,5 +39,8 @@ export GF_SUPPORT_BUNDLES_ENABLED=${GF_SUPPORT_BUNDLES_ENABLED:-"false"}
 # Enable feature toggles
 export GF_FEATURE_TOGGLES_ENABLE=${GF_FEATURE_TOGGLES_ENABLE:-"true"}
 
+# Plugins
+export GF_INSTALL_PLUGINS="${GF_INSTALL_PLUGINS:+$GF_INSTALL_PLUGINS,}grafana-oncall-app,grafana-lokiexplore-app,grafana-pyroscope-app,grafana-resourcesexporter-app"
+
 echo "==> Grafana started! Log data will be stream in below:"
 exec /run.sh "$@"
