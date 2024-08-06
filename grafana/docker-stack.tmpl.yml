@@ -273,6 +273,7 @@ networks:
     external: true
   grafana:
     # Internal network for Grafana services
+    attachable: true
   prometheus:
     name: prometheus
     external: true

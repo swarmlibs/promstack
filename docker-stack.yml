@@ -823,7 +823,8 @@ services:
         aliases:
         - pushgateway.local
 networks:
-  grafana: {}
+  grafana:
+    attachable: true
   prometheus:
     name: prometheus
     external: true

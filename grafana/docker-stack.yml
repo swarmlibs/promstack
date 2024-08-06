@@ -351,7 +351,8 @@ services:
       target: /var/run/docker.sock
       read_only: true
 networks:
-  grafana: {}
+  grafana:
+    attachable: true
   prometheus:
     name: prometheus
     external: true
