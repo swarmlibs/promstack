@@ -228,7 +228,6 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
       GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
-      GRAFANA_PROVISIONING_CONFIG_RELOADER_DASHBOARD_ENABLED: "false"
     image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
     logging:
       driver: json-file
