@@ -1,5 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
+x-healthcheck: &x-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
+
 x-exporter-resources-constraints: &x-exporter-resources-constraints
   limits:
     memory: 128M
@@ -44,6 +50,9 @@ services:
         source: /
         target: /rootfs
         read_only: true
+    healthcheck:
+      <<: *x-healthcheck
+      test: wget -qO - --tries=1 --spider http://127.0.0.1:9100 || exit 1
     logging: *x-default-logging
     deploy:
       mode: global

@@ -46,6 +46,14 @@ services:
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Task.Slot}}.grafana.local
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
     image: grafana/grafana:11.1.0
     logging:
       driver: json-file
@@ -441,3 +449,8 @@ x-grafana-helpers-deploy:
 x-grafana-helpers-resources-constraints:
   limits:
     memory: 64M
+x-healthcheck:
+  interval: 30s
+  retries: 3
+  start_period: 30s
+  timeout: 10s

@@ -1,5 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
+x-healthcheck: &x-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
+
 x-deploy: &x-deploy
   replicas: 1
   placement:
@@ -86,6 +92,9 @@ services:
       - type: volume
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
+    healthcheck:
+      <<: *x-healthcheck
+      test: wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
     logging: *x-default-logging
     deploy:
       <<: *x-deploy

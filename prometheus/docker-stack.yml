@@ -232,6 +232,14 @@ services:
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Node.ID}}.prometheus.local
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
     image: prom/prometheus:v2.53.1
     logging:
       driver: json-file
@@ -334,6 +342,11 @@ x-deploy:
     - node.role == manager
     max_replicas_per_node: 1
   replicas: 1
+x-healthcheck:
+  interval: 30s
+  retries: 3
+  start_period: 30s
+  timeout: 10s
 x-prometheus-helpers-deploy:
   mode: global
   placement:
