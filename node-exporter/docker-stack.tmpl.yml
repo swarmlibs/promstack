@@ -32,10 +32,10 @@ services:
       # since it double dollar sign we need to escape it twice
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$$$|/)
       - --no-collector.ipvs
-    # ports:
-    #   - published: 9100
-    #     target: 9100
-    #     mode: host
+    ports:
+      - published: 9100
+        target: 9100
+        mode: host
     hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     networks:
       prometheus_gwnetwork:

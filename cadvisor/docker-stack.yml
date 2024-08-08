@@ -44,6 +44,10 @@ services:
       prometheus_gwnetwork:
         aliases:
         - cadvisor.local
+    ports:
+    - mode: host
+      target: 8080
+      published: 8080
     volumes:
     - type: bind
       source: /

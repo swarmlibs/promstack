@@ -55,6 +55,10 @@ services:
       prometheus_gwnetwork:
         aliases:
         - node-exporter.local
+    ports:
+    - mode: host
+      target: 9100
+      published: 9100
     volumes:
     - type: bind
       source: /
