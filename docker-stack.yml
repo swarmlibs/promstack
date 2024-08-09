@@ -32,7 +32,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
-    image: prom/blackbox-exporter:v0.25.0
+    image: docker.io/prom/blackbox-exporter:v0.25.0
     logging:
       driver: json-file
       options:
@@ -171,7 +171,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: grafana/grafana:11.1.0
+    image: docker.io/grafana/grafana:11.1.0
     logging:
       driver: json-file
       options:
@@ -249,7 +249,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -302,7 +302,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -353,7 +353,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
       GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.internal
-    image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
+    image: docker.io/swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
     logging:
       driver: json-file
       options:
@@ -414,7 +414,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -460,7 +460,7 @@ services:
         constraints:
         - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -519,7 +519,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: prom/node-exporter:v1.8.1
+    image: docker.io/prom/node-exporter:v1.8.1
     logging:
       driver: json-file
       options:
@@ -558,7 +558,7 @@ services:
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: swarmlibs/genconfig:0.1.0-rc.1
+    image: docker.io/swarmlibs/genconfig:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -661,7 +661,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -710,7 +710,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -776,7 +776,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: prom/prometheus:v2.53.1
+    image: docker.io/prom/prometheus:v2.53.1
     logging:
       driver: json-file
       options:
@@ -846,7 +846,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
-    image: prom/pushgateway:v1.9.0
+    image: docker.io/prom/pushgateway:v1.9.0
     logging:
       driver: json-file
       options:

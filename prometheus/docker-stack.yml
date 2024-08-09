@@ -22,7 +22,7 @@ services:
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    image: swarmlibs/genconfig:0.1.0-rc.1
+    image: docker.io/swarmlibs/genconfig:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -125,7 +125,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -174,7 +174,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
-    image: swarmlibs/prometheus-config-provider:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -240,7 +240,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: prom/prometheus:v2.53.1
+    image: docker.io/prom/prometheus:v2.53.1
     logging:
       driver: json-file
       options:

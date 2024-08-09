@@ -45,7 +45,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: prom/node-exporter:v1.8.1
+    image: docker.io/prom/node-exporter:v1.8.1
     logging:
       driver: json-file
       options:
