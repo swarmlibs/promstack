@@ -1,8 +1,10 @@
+detach := true
+
 DOCKER_STACK_NAMESPACE := promstack
 DOCKER_STACK_CONFIG := docker stack config
 DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
 DOCKER_STACK_DEPLOY := docker stack deploy
-DOCKER_STACK_DEPLOY_ARGS := --detach --with-registry-auth
+DOCKER_STACK_DEPLOY_ARGS := --detach=$(detach) --with-registry-auth
 
 .EXPORT_ALL_VARIABLES:
 include .dockerenv
