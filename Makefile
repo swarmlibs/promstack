@@ -6,6 +6,13 @@ DOCKER_STACK_CONFIG := docker stack config
 DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
 DOCKER_STACK_DEPLOY_ARGS := --detach=$(detach) --with-registry-auth
 
+# The stack files to include
+# if docker-stack.override.yml file exists, include it
+DOCKER_STACK_FILES := -c docker-stack.yml
+ifneq ("$(wildcard docker-stack.override.yml)","")
+	DOCKER_STACK_FILES += -c docker-stack.override.yml
+endif
+
 .EXPORT_ALL_VARIABLES:
 include .dockerenv
 -include .env
@@ -65,7 +72,7 @@ compile: \
 	docker-stack.yml
 
 print:
-	$(DOCKER_STACK_CONFIG) -c docker-stack.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_FILES)
 
 clean:
 	@rm -rf docker-stack.yml || true
@@ -89,8 +96,8 @@ stack-deploy:
 	@echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
 	@echo '                                                       '
 	@echo "==> Deploying promstack stack:"
-	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
-	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-remove:
 	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
