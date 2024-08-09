@@ -88,7 +88,7 @@ stack-deploy:
 	@echo ' / ____/ /  / /_/ / / / / / (__  ) /_/ /_/ / /__/ ,<   '
 	@echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
 	@echo '                                                       '
-	@echo "Deploying promstack stack:"
+	@echo "==> Deploying promstack stack:"
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
