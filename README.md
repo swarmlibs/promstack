@@ -27,6 +27,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configure Prometheus](#configure-prometheus)
     - [Environment variables](#environment-variables)
+- [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
 - [License](#license)
@@ -309,6 +310,19 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 - `PROMETHEUS_CLUSTER_REPLICA`: The cluster replica for Prometheus, default is `1`
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
+
+## Services and Ports
+
+The following services and ports are exposed by the stack:
+
+| Service           | Port    | Ingress DNS                           |
+| ----------------- | ------- | ------------------------------------- |
+| Grafana           | `3000`  | `grafana.svc.cluster.local`           |
+| Prometheus        | `9090`  | `prometheus.svc.cluster.local`        |
+| Pushgateway       |         | `pushgateway.svc.cluster.local`       |
+| Blackbox exporter |         | `blackbox-exporter.svc.cluster.local` |
+| cAdvisor          | `18080` |                                       |
+| Node exporter     | `19100` |                                       |
 
 ## Troubleshooting
 

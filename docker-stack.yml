@@ -91,7 +91,7 @@ services:
     ports:
     - mode: host
       target: 8080
-      published: 8080
+      published: 18080
     volumes:
     - type: bind
       source: /
@@ -526,7 +526,7 @@ services:
     ports:
     - mode: host
       target: 9100
-      published: 9100
+      published: 19100
     volumes:
     - type: bind
       source: /

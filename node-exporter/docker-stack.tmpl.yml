@@ -33,7 +33,7 @@ services:
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$$$|/)
       - --no-collector.ipvs
     ports:
-      - published: 9100
+      - published: 19100
         target: 9100
         mode: host
     networks:

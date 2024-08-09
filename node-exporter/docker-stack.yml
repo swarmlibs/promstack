@@ -56,7 +56,7 @@ services:
     ports:
     - mode: host
       target: 9100
-      published: 9100
+      published: 19100
     volumes:
     - type: bind
       source: /
