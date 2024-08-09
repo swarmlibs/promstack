@@ -1,9 +1,9 @@
 detach := true
 
+DOCKER_STACK := docker stack
 DOCKER_STACK_NAMESPACE := promstack
 DOCKER_STACK_CONFIG := docker stack config
 DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
-DOCKER_STACK_DEPLOY := docker stack deploy
 DOCKER_STACK_DEPLOY_ARGS := --detach=$(detach) --with-registry-auth
 
 .EXPORT_ALL_VARIABLES:
@@ -25,9 +25,9 @@ $(1)/docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) -c $1/docker-stack.tmpl.yml > $1/docker-stack-config.yml
 	@sed "s|$(PWD)/$1/|./|g" $1/docker-stack-config.yml > $1/docker-stack.yml
 $(1)/deploy:
-	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 $(1)/upgrade: $(1)/clean $(1)/compile
-	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --resolve-image always -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --resolve-image always -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 $(1)/remove:
 	yq '.services[]|key' $(1)/docker-stack.yml | xargs -I {} docker service rm $(DOCKER_STACK_NAMESPACE)_{}
 $(1)/clean:
@@ -89,8 +89,8 @@ stack-deploy:
 	@echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
 	@echo '                                                       '
 	@echo "Deploying promstack stack:"
-	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
-	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-remove:
-	docker stack rm $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
