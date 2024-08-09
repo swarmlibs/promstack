@@ -55,7 +55,7 @@ services:
       prometheus: # eth1
       grafana: # eth2
         aliases:
-          - grafana.local
+          - grafana.internal
       public: # eth3
         aliases:
           - grafana.svc.cluster.local
@@ -66,7 +66,7 @@ services:
       - target: 3000
         published: 3000
         protocol: tcp
-    hostname: replica-{{.Task.Slot}}.grafana.local
+    hostname: replica-{{.Task.Slot}}.grafana.internal
     configs:
       - source: gf-server-entrypoint
         target: /docker-entrypoint-shim.sh
@@ -128,7 +128,7 @@ services:
   grafana-provisioning-config-reloader:
     image: ${PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION}
     environment:
-      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
+      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.internal
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_USER: $${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: $${GF_SECURITY_ADMIN_PASSWORD}

@@ -31,7 +31,7 @@ services:
         window: 15s
       placement:
         max_replicas_per_node: 1
-    hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
+    hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
     image: prom/blackbox-exporter:v0.25.0
     logging:
       driver: json-file
@@ -41,7 +41,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - blackbox-exporter.local
+        - blackbox-exporter.internal
       public: null
 networks:
   prometheus_gwnetwork:

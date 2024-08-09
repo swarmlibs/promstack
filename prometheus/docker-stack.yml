@@ -74,7 +74,7 @@ services:
     entrypoint:
     - /docker-entrypoint-shim.sh
     environment:
-      PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.local
+      PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.internal
       RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d
@@ -231,7 +231,7 @@ services:
         max_replicas_per_node: 1
     extra_hosts:
     - host.docker.internal:host-gateway
-    hostname: replica-{{.Node.ID}}.prometheus.local
+    hostname: replica-{{.Node.ID}}.prometheus.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -247,12 +247,15 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
+      grafana:
+        aliases:
+        - prometheus.svc.cluster.local
       prometheus:
         aliases:
-        - prometheus.local
+        - prometheus.internal
       prometheus_gwnetwork:
         aliases:
-        - prometheus.local
+        - prometheus.internal
       prometheus_internal:
         aliases:
         - prometheus.internal
@@ -276,6 +279,7 @@ services:
       source: prometheus-configs
       target: /prometheus-configs.d
 networks:
+  grafana: {}
   prometheus:
     name: prometheus
     external: true

@@ -45,7 +45,7 @@ services:
       GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
     extra_hosts:
     - host.docker.internal:host-gateway
-    hostname: replica-{{.Task.Slot}}.grafana.local
+    hostname: replica-{{.Task.Slot}}.grafana.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -63,7 +63,7 @@ services:
     networks:
       grafana:
         aliases:
-        - grafana.local
+        - grafana.internal
       prometheus: null
       prometheus_gwnetwork: null
       public:
@@ -235,7 +235,7 @@ services:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
+      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.internal
     image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
     logging:
       driver: json-file

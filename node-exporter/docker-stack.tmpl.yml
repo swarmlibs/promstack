@@ -36,11 +36,11 @@ services:
       - published: 9100
         target: 9100
         mode: host
-    hostname: "replica-{{.Task.Slot}}.node-exporter.local"
     networks:
       prometheus_gwnetwork:
         aliases:
-          - node-exporter.local
+          - node-exporter.internal
+    hostname: "replica-{{.Task.Slot}}.node-exporter.internal"
     configs:
       - source: node-exporter-node-meta
         target: /etc/node-exporter/node_meta.prom

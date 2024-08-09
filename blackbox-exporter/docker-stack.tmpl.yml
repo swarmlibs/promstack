@@ -24,8 +24,8 @@ services:
       public:
       prometheus_gwnetwork:
         aliases:
-          - blackbox-exporter.local
-    hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
+          - blackbox-exporter.internal
+    hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
     configs:
       - source: prometheus-blackbox-exporter
     logging: *x-default-logging

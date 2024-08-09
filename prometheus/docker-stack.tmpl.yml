@@ -55,18 +55,21 @@ services:
       public:
         aliases:
           - prometheus.svc.cluster.local
+      grafana:
+        aliases:
+          - prometheus.svc.cluster.local
       prometheus:
         aliases:
-          - prometheus.local
+          - prometheus.internal
       prometheus_gwnetwork:
         aliases:
-          - prometheus.local
+          - prometheus.internal
       prometheus_internal:
         aliases:
           - prometheus.internal
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    hostname: replica-{{.Node.ID}}.prometheus.local
+    hostname: replica-{{.Node.ID}}.prometheus.internal
     configs:
       - source: prometheus-prometheus
         target: /etc/prometheus/scrape-configs/prometheus.yaml
@@ -194,7 +197,7 @@ services:
       - RELOADER_WATCH_DIR=/prometheus-configs.d
       - RELOADER_WATCH_INTERVAL=15s
       - RELOADER_RELOAD_TIMEOUT=10s
-      - PROMETHEUS_HOST=replica-{{.Node.ID}}.prometheus.local
+      - PROMETHEUS_HOST=replica-{{.Node.ID}}.prometheus.internal
     networks:
       prometheus_internal:
     configs:
@@ -244,6 +247,8 @@ networks:
   public: # The 3rd-party ingress network
     name: public
     external: true
+  grafana:
+    # Internal network for Grafana services
   prometheus:
     name: prometheus
     external: true

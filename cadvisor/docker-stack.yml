@@ -33,7 +33,7 @@ services:
         delay: 30s
         max_attempts: 15
         window: 15s
-    hostname: replica-{{.Task.Slot}}.cadvisor.local
+    hostname: replica-{{.Task.Slot}}.cadvisor.internal
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     logging:
       driver: json-file
@@ -43,7 +43,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - cadvisor.local
+        - cadvisor.internal
     ports:
     - mode: host
       target: 8080

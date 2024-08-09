@@ -31,7 +31,7 @@ services:
         window: 15s
       placement:
         max_replicas_per_node: 1
-    hostname: replica-{{.Task.Slot}}.blackbox-exporter.local
+    hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
     image: prom/blackbox-exporter:v0.25.0
     logging:
       driver: json-file
@@ -41,7 +41,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - blackbox-exporter.local
+        - blackbox-exporter.internal
       public: null
   cadvisor:
     cap_add:
@@ -76,7 +76,7 @@ services:
         delay: 30s
         max_attempts: 15
         window: 15s
-    hostname: replica-{{.Task.Slot}}.cadvisor.local
+    hostname: replica-{{.Task.Slot}}.cadvisor.internal
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     logging:
       driver: json-file
@@ -86,7 +86,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - cadvisor.local
+        - cadvisor.internal
     ports:
     - mode: host
       target: 8080
@@ -157,7 +157,7 @@ services:
       GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
     extra_hosts:
     - host.docker.internal:host-gateway
-    hostname: replica-{{.Task.Slot}}.grafana.local
+    hostname: replica-{{.Task.Slot}}.grafana.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -175,7 +175,7 @@ services:
     networks:
       grafana:
         aliases:
-        - grafana.local
+        - grafana.internal
       prometheus: null
       prometheus_gwnetwork: null
       public:
@@ -347,7 +347,7 @@ services:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.local
+      GF_SERVER_DOMAIN: replica-{{.Task.Slot}}.grafana.internal
     image: swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
     logging:
       driver: json-file
@@ -505,7 +505,7 @@ services:
         delay: 30s
         max_attempts: 15
         window: 15s
-    hostname: replica-{{.Task.Slot}}.node-exporter.local
+    hostname: replica-{{.Task.Slot}}.node-exporter.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -523,7 +523,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - node-exporter.local
+        - node-exporter.internal
     ports:
     - mode: host
       target: 9100
@@ -607,7 +607,7 @@ services:
     entrypoint:
     - /docker-entrypoint-shim.sh
     environment:
-      PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.local
+      PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.internal
       RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d
@@ -764,7 +764,7 @@ services:
         max_replicas_per_node: 1
     extra_hosts:
     - host.docker.internal:host-gateway
-    hostname: replica-{{.Node.ID}}.prometheus.local
+    hostname: replica-{{.Node.ID}}.prometheus.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -780,12 +780,15 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
+      grafana:
+        aliases:
+        - prometheus.svc.cluster.local
       prometheus:
         aliases:
-        - prometheus.local
+        - prometheus.internal
       prometheus_gwnetwork:
         aliases:
-        - prometheus.local
+        - prometheus.internal
       prometheus_internal:
         aliases:
         - prometheus.internal
@@ -839,7 +842,7 @@ services:
         window: 15s
       placement:
         max_replicas_per_node: 1
-    hostname: replica-{{.Task.Slot}}.pushgateway.local
+    hostname: replica-{{.Task.Slot}}.pushgateway.internal
     image: prom/pushgateway:v1.9.0
     logging:
       driver: json-file
@@ -852,10 +855,9 @@ services:
         - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
-        - pushgateway.local
+        - pushgateway.internal
 networks:
-  grafana:
-    attachable: true
+  grafana: {}
   prometheus:
     name: prometheus
     external: true

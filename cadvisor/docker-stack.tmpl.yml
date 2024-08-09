@@ -27,8 +27,8 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-          - cadvisor.local
-    hostname: replica-{{.Task.Slot}}.cadvisor.local
+          - cadvisor.internal
+    hostname: replica-{{.Task.Slot}}.cadvisor.internal
     configs:
       - source: prometheus-cadvisor
     volumes:

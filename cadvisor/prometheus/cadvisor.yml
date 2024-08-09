@@ -18,7 +18,7 @@ scrape_configs:
       - source_labels:
         - __meta_dockerswarm_node_id
         target_label: __address__
-        replacement: replica-$1.cadvisor.local:8080
+        replacement: replica-$1.cadvisor.internal:8080
 
       - source_labels:
         - __meta_dockerswarm_node_address

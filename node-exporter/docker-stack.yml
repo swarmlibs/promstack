@@ -36,7 +36,7 @@ services:
         delay: 30s
         max_attempts: 15
         window: 15s
-    hostname: replica-{{.Task.Slot}}.node-exporter.local
+    hostname: replica-{{.Task.Slot}}.node-exporter.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -54,7 +54,7 @@ services:
     networks:
       prometheus_gwnetwork:
         aliases:
-        - node-exporter.local
+        - node-exporter.internal
     ports:
     - mode: host
       target: 9100

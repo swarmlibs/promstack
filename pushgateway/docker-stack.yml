@@ -31,7 +31,7 @@ services:
         window: 15s
       placement:
         max_replicas_per_node: 1
-    hostname: replica-{{.Task.Slot}}.pushgateway.local
+    hostname: replica-{{.Task.Slot}}.pushgateway.internal
     image: prom/pushgateway:v1.9.0
     logging:
       driver: json-file
@@ -44,7 +44,7 @@ services:
         - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
-        - pushgateway.local
+        - pushgateway.internal
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork

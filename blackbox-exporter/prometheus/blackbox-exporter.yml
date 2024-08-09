@@ -7,7 +7,7 @@ scrape_configs:
   - job_name: 'blackbox_exporter'
     dns_sd_configs:
       - names:
-          - tasks.blackbox-exporter.local
+          - tasks.blackbox-exporter.internal
         type: A
         port: 9115
         refresh_interval: "30s"
