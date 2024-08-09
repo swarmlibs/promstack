@@ -38,8 +38,6 @@ services:
         mode: host
     networks:
       prometheus_gwnetwork:
-        aliases:
-          - node-exporter.internal
     hostname: "replica-{{.Task.Slot}}.node-exporter.internal"
     configs:
       - source: node-exporter-node-meta

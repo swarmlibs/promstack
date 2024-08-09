@@ -42,7 +42,10 @@ services:
       prometheus_gwnetwork:
         aliases:
         - blackbox-exporter.internal
-      public: null
+        - blackbox-exporter.svc.promstack.local
+      public:
+        aliases:
+        - blackbox-exporter.svc.promstack.local
   cadvisor:
     cap_add:
     - SYSLOG
@@ -84,9 +87,7 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus_gwnetwork:
-        aliases:
-        - cadvisor.internal
+      prometheus_gwnetwork: null
     ports:
     - mode: host
       target: 8080
@@ -521,9 +522,7 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus_gwnetwork:
-        aliases:
-        - node-exporter.internal
+      prometheus_gwnetwork: null
     ports:
     - mode: host
       target: 9100
@@ -852,10 +851,11 @@ services:
     networks:
       prometheus:
         aliases:
-        - pushgateway.svc.cluster.local
+        - pushgateway.svc.promstack.local
       prometheus_gwnetwork:
         aliases:
         - pushgateway.internal
+        - pushgateway.svc.promstack.local
 networks:
   grafana: {}
   prometheus:

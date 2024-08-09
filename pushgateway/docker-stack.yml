@@ -41,10 +41,11 @@ services:
     networks:
       prometheus:
         aliases:
-        - pushgateway.svc.cluster.local
+        - pushgateway.svc.promstack.local
       prometheus_gwnetwork:
         aliases:
         - pushgateway.internal
+        - pushgateway.svc.promstack.local
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork

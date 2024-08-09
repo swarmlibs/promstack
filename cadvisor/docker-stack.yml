@@ -41,9 +41,7 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus_gwnetwork:
-        aliases:
-        - cadvisor.internal
+      prometheus_gwnetwork: null
     ports:
     - mode: host
       target: 8080

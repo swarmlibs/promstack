@@ -22,9 +22,12 @@ services:
     image: ${PROMSTACK_BLACKBOX_EXPORTER_VERSION}
     networks:
       public:
+        aliases:
+          - blackbox-exporter.svc.promstack.local
       prometheus_gwnetwork:
         aliases:
           - blackbox-exporter.internal
+          - blackbox-exporter.svc.promstack.local
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
     configs:
       - source: prometheus-blackbox-exporter

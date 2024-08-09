@@ -52,9 +52,7 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      prometheus_gwnetwork:
-        aliases:
-        - node-exporter.internal
+      prometheus_gwnetwork: null
     ports:
     - mode: host
       target: 9100
