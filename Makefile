@@ -82,6 +82,13 @@ stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
 stack-deploy:
+	@echo '    ____                            __             __  '
+	@echo '   / __ \_________  ____ ___  _____/ /_____ ______/ /__'
+	@echo '  / /_/ / ___/ __ \/ __ `__ \/ ___/ __/ __ `/ ___/ //_/'
+	@echo ' / ____/ /  / /_/ / / / / / (__  ) /_/ /_/ / /__/ ,<   '
+	@echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
+	@echo '                                                       '
+	@echo "Deploying promstack stack:"
 	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
 	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
