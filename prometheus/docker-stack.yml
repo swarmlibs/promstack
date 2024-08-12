@@ -255,9 +255,11 @@ services:
       prometheus:
         aliases:
         - prometheus.internal
+        - prometheus.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
         - prometheus.internal
+        - prometheus.svc.cluster.local
       prometheus_internal:
         aliases:
         - prometheus.internal
