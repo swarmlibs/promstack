@@ -42,9 +42,9 @@ This section covers some concepts that are important to understand for day to da
 By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/f1dd0df8-f6c8-4a9b-8398-5bb445cb197f">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/e57e363c-371a-46a8-9a10-96632639f17f">
-  <img src="https://github.com/user-attachments/assets/e57e363c-371a-46a8-9a10-96632639f17f">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/a75d6d2e-1a34-4a46-b115-b2b5886465eb">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/11ac1025-ec99-4f9c-b219-7e30294251c3">
+  <img src="https://github.com/user-attachments/assets/11ac1025-ec99-4f9c-b219-7e30294251c3">
 </picture>
 
 **Prometheus Kubernetes compatible labels**
