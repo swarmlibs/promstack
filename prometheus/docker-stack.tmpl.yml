@@ -40,13 +40,13 @@ services:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
       - --config.file=/prometheus-configs.d/prometheus.yaml
-      - --web.enable-remote-write-receiver
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=182d
       - --web.page-title=Promstack Prometheus - Server
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
       - --web.enable-lifecycle
+      - --web.enable-remote-write-receiver
       - --log.level=info
     user: "0:0"
     ports:
