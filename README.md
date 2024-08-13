@@ -55,7 +55,7 @@ Here is a list of Docker Service/Task labels that are mapped to Kubernetes label
 | ------------ | ------------------------------------------------------------- | -------------------------------- |
 | `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
 | `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
-| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/tasks`              |
+| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/services`           |
 | `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
 
 * The **dockerswarm_task_name** is a combination of the service name, slot and task id.

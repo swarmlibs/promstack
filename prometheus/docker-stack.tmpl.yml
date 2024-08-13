@@ -151,7 +151,7 @@ services:
       - source: prometheus-dockerswarm-nodes
       - source: prometheus-dockerswarm-services-endpoints-host
       - source: prometheus-dockerswarm-services-endpoints-ingress
-      - source: prometheus-dockerswarm-tasks
+      - source: prometheus-dockerswarm-services
     volumes:
       - type: volume
         source: prometheus-configs
@@ -191,7 +191,7 @@ services:
       - --prometheus-scrape-config-label=io.prometheus.rule
     configs:
       - source: prometheus-dockerswarm-nodes-rule
-      - source: prometheus-dockerswarm-tasks-rule
+      - source: prometheus-dockerswarm-services-rule
 
   prometheus-config-reloader:
     image: ${PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION}
@@ -283,8 +283,8 @@ configs:
     file: ./prometheus/rules/dockerswarm-nodes.yaml
     labels:
       - "io.prometheus.rule=true"
-  prometheus-dockerswarm-tasks-rule:
-    name: prometheus-dockerswarm-tasks-rule-v1
+  prometheus-dockerswarm-services-rule:
+    name: prometheus-dockerswarm-services-rule-v1
     file: ./prometheus/rules/dockerswarm-tasks.yaml
     labels:
       - "io.prometheus.rule=true"
@@ -305,8 +305,8 @@ configs:
     file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
     labels:
       - "io.prometheus.scrape_config=true"
-  prometheus-dockerswarm-tasks:
-    name: prometheus-dockerswarm-tasks-v1
-    file: ./prometheus/scrape-configs/dockerswarm-tasks.yaml
+  prometheus-dockerswarm-services:
+    name: prometheus-dockerswarm-services-v1
+    file: ./prometheus/scrape-configs/dockerswarm-services.yaml
     labels:
       - "io.prometheus.scrape_config=true"
