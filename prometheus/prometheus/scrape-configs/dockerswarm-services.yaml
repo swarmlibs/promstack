@@ -99,6 +99,8 @@ scrape_configs:
       - regex: __meta_dockerswarm_service_label_io_prometheus_param_(.+)
         action: labelmap
         replacement: __param_$1
+      - regex: __meta_dockerswarm_service_label_io_prometheus_label_(.+)
+        action: labelmap
 
       # If service is replicated, set "job_id" label to "<job>/<service_name>/<task_slot>"
       - source_labels:
