@@ -10,9 +10,26 @@ services:
       target: /run/configs/prometheus.yaml.tmpl
     deploy:
       mode: global
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
       resources:
         limits:
           memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 15s
+        max_attempts: 15
+        window: 10s
       placement:
         constraints:
         - node.labels.services.promstack_prometheus_server == true

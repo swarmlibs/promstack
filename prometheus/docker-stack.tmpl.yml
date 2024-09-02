@@ -131,10 +131,6 @@ services:
       # Prometheus cluster settings
       - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    deploy:
-      <<: *x-prometheus-helpers-deploy
-      resources: *x-prometheus-helpers-resources-constraints
-    logging: *x-default-logging
     configs:
       - source: prometheus.yaml.tmpl
         target: /run/configs/prometheus.yaml.tmpl
@@ -142,6 +138,27 @@ services:
       - type: volume
         source: prometheus-configs
         target: /prometheus-configs.d
+    logging: *x-default-logging
+    deploy:
+      <<: *x-prometheus-helpers-deploy
+      resources: *x-prometheus-helpers-resources-constraints
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
 
   prometheus-scrape-config-provider: &prometheus-config-provider-service
     image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
