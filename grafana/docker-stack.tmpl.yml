@@ -54,6 +54,14 @@ services:
       # SQlite database mode
       GF_DATABASE_WAL: "true"
       GF_DATABASE_CACHE_MODE: "shared"
+      # SMTP configuration placeholders
+      GF_SMTP_ENABLED:
+      GF_SMTP_HOST:
+      GF_SMTP_USER:
+      GF_SMTP_PASSWORD:
+      GF_SMTP_FROM_ADDRESS:
+      GF_SMTP_FROM_NAME:
+      GF_SMTP_SKIP_VERIFY:
       # docker-entrypoint-shim.sh
       GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
     networks:
