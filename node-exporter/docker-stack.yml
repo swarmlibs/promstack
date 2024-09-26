@@ -1,4 +1,3 @@
-version: "3.12"
 services:
   node-exporter:
     command:
