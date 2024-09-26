@@ -31,7 +31,7 @@ $(1)/config:
 $(1)/docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) -c $1/docker-stack.tmpl.yml > $1/docker-stack-config.yml
 	@sed 's|$(PWD)/$1/|./|g' $1/docker-stack-config.yml > $1/docker-stack.yml
-	@hacks/patch-docker-stack.sh $1/docker-stack.yml
+	@hacks/docker-stack-sanitize.sh $1/docker-stack.yml
 $(1)/deploy:
 	$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 $(1)/upgrade: $(1)/clean $(1)/compile
@@ -58,10 +58,10 @@ docker-stack.yml:
 		-c node-exporter/docker-stack-config.yml \
 		-c prometheus/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
-	> docker-stack.yml.tmp
-	@sed 's|$(PWD)/|./|g' docker-stack.yml.tmp > docker-stack.yml
-	@hacks/patch-docker-stack.sh docker-stack.yml
-	@rm docker-stack.yml.tmp
+	> docker-stack-config.yml
+	@sed 's|$(PWD)/|./|g' docker-stack-config.yml > docker-stack.yml
+	@hacks/docker-stack-sanitize.sh docker-stack.yml
+	@rm docker-stack-config.yml
 	@rm **/docker-stack-config.yml
 
 compile: \
