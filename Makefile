@@ -78,7 +78,7 @@ print:
 
 clean:
 	@rm -rf docker-stack.yml || true
-	@rm -rf docker-stack.yml.tmp || true
+	@rm -rf docker-stack-config.yml || true
 	@rm -rf **/docker-stack.yml || true
 	@rm -rf **/docker-stack-config.yml || true
 
