@@ -126,8 +126,8 @@ services:
       - --out=/prometheus-configs.d/prometheus.yaml
     environment:
       # Grafana unified alerting
-      - PROMETHEUS_ALERTMANAGER_ADDR=tasks.grafana.svc.cluster.local
-      - PROMETHEUS_ALERTMANAGER_PORT=9094
+      - PROMETHEUS_ALERTMANAGER_ADDR=$${PROMETHEUS_ALERTMANAGER_ADDR:-tasks.grafana.svc.cluster.local}
+      - PROMETHEUS_ALERTMANAGER_PORT=$${PROMETHEUS_ALERTMANAGER_PORT:-9094}
       # Prometheus cluster settings
       - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
