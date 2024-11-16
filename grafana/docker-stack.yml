@@ -64,7 +64,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/grafana/grafana:11.1.0
+    image: docker.io/grafana/grafana:11.3.0
     logging:
       driver: json-file
       options:
