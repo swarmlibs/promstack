@@ -13,7 +13,7 @@ PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION=docker.io/swarmlibs/grafana-provisioni
 PROMSTACK_NODE_EXPORTER_VERSION=docker.io/prom/node-exporter:v1.8.1
 
 # prometheus
-PROMSTACK_PROMETHEUS_VERSION=docker.io/prom/prometheus:v2.53.1
+PROMSTACK_PROMETHEUS_VERSION=docker.io/prom/prometheus:v3.0.0
 PROMSTACK_PROMETHEUS_GENCONFIG_VERSION=docker.io/swarmlibs/genconfig:0.1.0-rc.1
 PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
 PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION=quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
