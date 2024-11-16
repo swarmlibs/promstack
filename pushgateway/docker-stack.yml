@@ -31,7 +31,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
-    image: docker.io/prom/pushgateway:v1.9.0
+    image: docker.io/prom/pushgateway:v1.10.0
     logging:
       driver: json-file
       options:

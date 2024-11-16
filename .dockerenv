@@ -20,4 +20,5 @@ PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-conf
 PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION=quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
 
 # pushgateway
-PROMSTACK_PUSHGATEWAY_VERSION=docker.io/prom/pushgateway:v1.9.0
+# https://github.com/prometheus/pushgateway
+PROMSTACK_PUSHGATEWAY_VERSION=docker.io/prom/pushgateway:v1.10.0
