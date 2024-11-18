@@ -43,8 +43,8 @@ services:
         target: /var/lib/docker
         read_only: true
       - type: bind
-        source: /var/run
-        target: /var/run
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
         read_only: true
       # If you are running Docker Desktop on macOS,
       # You'll need to comment out the following bind mounts
