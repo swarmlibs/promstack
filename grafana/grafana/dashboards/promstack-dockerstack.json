@@ -18,7 +18,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 17,
+    "id": 11,
     "links": [],
     "panels": [
         {
@@ -275,6 +275,7 @@
                     "editorMode": "code",
                     "expr": "sum(container_memory_usage_bytes{namespace=~\"$namespace\", dockerswarm_service_name=~\"$service\"}) by (dockerswarm_service_name) ",
                     "format": "time_series",
+                    "hide": true,
                     "intervalFactor": 2,
                     "legendFormat": "Used {{dockerswarm_service_name}}",
                     "range": true,
@@ -294,6 +295,21 @@
                     "legendFormat": "Cached {{dockerswarm_service_name}}",
                     "range": true,
                     "refId": "B",
+                    "step": 2
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(container_memory_usage_bytes{namespace=~\"$namespace\", dockerswarm_service_name=~\"$service\"}) by (dockerswarm_service_name) ",
+                    "format": "time_series",
+                    "hide": false,
+                    "intervalFactor": 2,
+                    "legendFormat": "{{dockerswarm_service_name}}",
+                    "range": true,
+                    "refId": "C",
                     "step": 2
                 }
             ],
@@ -371,7 +387,7 @@
                         "uid": "promstack-prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "count(container_tasks_state{state=\"running\", dockerswarm_service_name=\"$service\"}) by (dockerswarm_service_name)",
+                    "expr": "count(sum(irate(container_cpu_usage_seconds_total{namespace=~\"$namespace\", dockerswarm_service_name=~\"$service\"}[1m])) by (task))",
                     "instant": false,
                     "legendFormat": "__auto",
                     "range": true,
@@ -604,7 +620,9 @@
                     ],
                     "displayMode": "table",
                     "placement": "bottom",
-                    "showLegend": true
+                    "showLegend": true,
+                    "sortBy": "Name",
+                    "sortDesc": true
                 },
                 "tooltip": {
                     "maxHeight": 600,
@@ -623,7 +641,7 @@
                     "expr": "sum(container_memory_usage_bytes{namespace=~\"$namespace\", dockerswarm_service_name=~\"$service\"}) by (task) ",
                     "format": "time_series",
                     "intervalFactor": 2,
-                    "legendFormat": "Used {{task}}",
+                    "legendFormat": "{{task}}",
                     "range": true,
                     "refId": "A",
                     "step": 2
@@ -728,7 +746,7 @@
                     "expr": "sum(container_memory_cache{namespace=~\"$namespace\", dockerswarm_service_name=~\"$service\"}) by (task) ",
                     "format": "time_series",
                     "intervalFactor": 2,
-                    "legendFormat": "Cached {{task}}",
+                    "legendFormat": "{{task}}",
                     "range": true,
                     "refId": "B",
                     "step": 2
@@ -811,6 +829,6 @@
     "timezone": "browser",
     "title": "Promstack - Docker Stack",
     "uid": "ce3tf412944cgd",
-    "version": 11,
+    "version": 8,
     "weekStart": ""
 }
