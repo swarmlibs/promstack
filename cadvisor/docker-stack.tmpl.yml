@@ -19,9 +19,7 @@ services:
 
   cadvisor:
     image: ${PROMSTACK_CADVISOR_VERSION}
-    command:
-      - -docker_only=true
-      - -housekeeping_interval=10s
+    command: -docker_only
     ports:
       - published: 18080
         target: 8080

@@ -49,8 +49,7 @@ services:
     cap_add:
     - SYSLOG
     command:
-    - -docker_only=true
-    - -housekeeping_interval=10s
+    - -docker_only
     configs:
     - source: prometheus-cadvisor
     deploy:
