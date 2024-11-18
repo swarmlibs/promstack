@@ -49,8 +49,7 @@ services:
     cap_add:
     - SYSLOG
     command:
-    - --docker_only
-    - --enable_load_reader=true
+    - -docker_only
     configs:
     - source: prometheus-cadvisor
     deploy:
