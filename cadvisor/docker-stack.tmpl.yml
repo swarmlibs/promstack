@@ -21,7 +21,7 @@ services:
     image: ${PROMSTACK_CADVISOR_VERSION}
     command:
       - -docker_only=true
-      - -housekeeping_interval=5s
+      - -allow_dynamic_housekeeping=true
     ports:
       - published: 18080
         target: 8080

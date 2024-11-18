@@ -50,7 +50,7 @@ services:
     - SYSLOG
     command:
     - -docker_only=true
-    - -housekeeping_interval=5s
+    - -allow_dynamic_housekeeping=true
     configs:
     - source: prometheus-cadvisor
     deploy:
