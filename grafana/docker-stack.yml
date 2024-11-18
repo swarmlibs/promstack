@@ -393,6 +393,11 @@ configs:
     file: ./grafana/dashboards/promstack-cadvisor.json
     labels:
       io.grafana.dashboard: "true"
+  gf-dashboard-promstack-dockerstack:
+    name: gf-dashboard-promstack-dockerstack-v1
+    file: ./grafana/dashboards/promstack-dockerstack.json
+    labels:
+      io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-nodes:
     name: gf-dashboard-promstack-dockerswarm-nodes-v1
     file: ./grafana/dashboards/promstack-dockerswarm-nodes.json
