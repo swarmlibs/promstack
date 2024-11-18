@@ -19,7 +19,9 @@ services:
 
   cadvisor:
     image: ${PROMSTACK_CADVISOR_VERSION}
-    command: -docker_only
+    command:
+      - --docker_only
+      - --enable_load_reader=true
     ports:
       - published: 18080
         target: 8080
