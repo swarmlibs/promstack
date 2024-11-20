@@ -59,9 +59,6 @@ services:
         max_failure_ratio: 0.1
 
 configs:
-  prometheus:
-    name: prometheus
-    external: true
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./prometheus/pushgateway.yml

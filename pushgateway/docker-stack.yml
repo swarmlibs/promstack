@@ -50,9 +50,6 @@ networks:
     name: prometheus_gwnetwork
     external: true
 configs:
-  prometheus:
-    name: prometheus
-    external: true
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./prometheus/pushgateway.yml

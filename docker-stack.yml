@@ -970,9 +970,6 @@ configs:
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
     file: ./node-exporter/node_meta.prom
-  prometheus:
-    name: prometheus
-    external: true
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
     file: ./blackbox-exporter/prometheus/blackbox-exporter.yml
