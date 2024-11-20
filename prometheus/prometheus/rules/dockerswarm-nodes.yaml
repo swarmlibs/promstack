@@ -7,6 +7,7 @@ groups:
       node_meta * 100) BY (node_name)) > 50
     for: 1m
     labels:
+      datasource: promstack-prometheus
       severity: warning
     annotations:
       description: Swarm node {{ $labels.node_name }} CPU usage is at {{ humanize
@@ -17,6 +18,7 @@ groups:
       * ON(instance) GROUP_LEFT(node_name) node_meta * 100) BY (node_name) > 80
     for: 1m
     labels:
+      datasource: promstack-prometheus
       severity: warning
     annotations:
       description: Swarm node {{ $labels.node_name }} memory usage is at {{ humanize
@@ -28,6 +30,7 @@ groups:
       node_meta > 85
     for: 1m
     labels:
+      datasource: promstack-prometheus
       severity: warning
     annotations:
       description: Swarm node {{ $labels.node_name }} disk usage is at {{ humanize
@@ -38,6 +41,7 @@ groups:
       GROUP_LEFT(node_name) node_meta < 0
     for: 1h
     labels:
+      datasource: promstack-prometheus
       severity: critical
     annotations:
       description: Swarm node {{ $labels.node_name }} disk is going to fill up in
