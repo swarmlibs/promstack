@@ -299,31 +299,31 @@ configs:
     name: prometheus-dockerswarm-nodes-rule-v1
     file: ./prometheus/rules/dockerswarm-nodes.yaml
     labels:
-      - "io.prometheus.rule=true"
+      io.prometheus.rule: "true"
   prometheus-dockerswarm-services-rule:
     name: prometheus-dockerswarm-services-rule-v1
     file: ./prometheus/rules/dockerswarm-tasks.yaml
     labels:
-      - "io.prometheus.rule=true"
+      io.prometheus.rule: "true"
 
   # Prometheus's scrape config files
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
     file: ./prometheus/scrape-configs/dockerswarm-nodes.yaml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
     file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-ingress:
     name: prometheus-dockerswarm-services-endpoints-ingress-v1
     file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services:
     name: prometheus-dockerswarm-services-v1
     file: ./prometheus/scrape-configs/dockerswarm-services.yaml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"

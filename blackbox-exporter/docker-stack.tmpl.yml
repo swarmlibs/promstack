@@ -64,7 +64,7 @@ configs:
     name: prometheus-blackbox-exporter-v1
     file: ./prometheus/blackbox-exporter.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
 
 networks:
   public: # The 3rd-party ingress network

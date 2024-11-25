@@ -321,56 +321,56 @@ configs:
     name: gf-provisioning-datasource-prometheus-v1
     file: ./grafana/provisioning/datasources/prometheus.yaml
     labels:
-      - "io.grafana.provisioning.datasource=true"
+      io.grafana.provisioning.datasource: "true"
 
   # Grafana & Prometheus dashboards
   gf-dashboard-promstack-grafana-metrics:
     name: gf-dashboard-promstack-grafana-metrics-v1
     file: ./grafana/dashboards/promstack-grafana-metrics.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
   gf-dashboard-promstack-prometheus-stats:
     name: gf-dashboard-promstack-prometheus-stats-v1
     file: ./grafana/dashboards/promstack-prometheus-stats.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
   gf-dashboard-promstack-prometheus-stats-v2:
     name: gf-dashboard-promstack-prometheus-stats-v2
     file: ./grafana/dashboards/promstack-prometheus-2-0-stats.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
 
   # Docker Swarm specific dashboards
   gf-dashboard-promstack-dockerstack:
     name: gf-dashboard-promstack-dockerstack-v1
     file: ./grafana/dashboards/promstack-dockerstack.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-nodes:
     name: gf-dashboard-promstack-dockerswarm-nodes-v1
     file: ./grafana/dashboards/promstack-dockerswarm-nodes.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-services-endpoints:
     name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
     file: ./grafana/dashboards/promstack-dockerswarm-services-endpoints.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-services:
     name: gf-dashboard-promstack-dockerswarm-services-v1
     file: ./grafana/dashboards/promstack-dockerswarm-services.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
 
   # cAdvisor
   gf-dashboard-promstack-cadvisor:
     name: gf-dashboard-promstack-cadvisor-v1
     file: ./grafana/dashboards/promstack-cadvisor.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
   # Node Exporter
   gf-dashboard-promstack-node-exporter:
     name: gf-dashboard-promstack-node-exporter-v1
     file: ./grafana/dashboards/promstack-node-exporter.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"

@@ -208,7 +208,7 @@ configs:
     name: gf-dashboard-grafana-metrics-v1
     file: ./dashboards/grafana-metrics.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
 ```
 
 #### Injecting Grafana Provisioning configurations
@@ -227,14 +227,14 @@ configs:
     name: gf-provisioning-dashboards-v1
     file: ./provisioning/dashboards/grafana-dashboards.yml
     labels:
-      - "io.grafana.provisioning.dashboard=true"
+      io.grafana.provisioning.dashboard: "true"
 
   # Grafana datasources provisioning config
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
     file: ./provisioning/datasources/prometheus.yaml
     labels:
-      - "io.grafana.provisioning.datasource=true"
+      io.grafana.provisioning.datasource: "true"
 ```
 
 ## Prometheus
@@ -287,7 +287,7 @@ configs:
     name: prometheus-cadvisor-v1
     file: ./prometheus/cadvisor.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
 ```
 
 ### Configure Prometheus

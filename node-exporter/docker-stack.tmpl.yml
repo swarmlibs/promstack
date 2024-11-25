@@ -88,7 +88,7 @@ configs:
     name: prometheus-node-exporter-v1
     file: ./prometheus/node_exporter.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
 
 networks:
   prometheus_gwnetwork:

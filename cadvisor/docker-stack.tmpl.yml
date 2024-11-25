@@ -90,4 +90,4 @@ configs:
     name: prometheus-cadvisor-v1
     file: ./prometheus/cadvisor.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
