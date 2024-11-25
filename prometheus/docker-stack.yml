@@ -14,13 +14,13 @@ services:
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       rollback_config:
         parallelism: 1
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       resources:
         limits:
           memory: "67108864"
@@ -69,13 +69,13 @@ services:
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       rollback_config:
         parallelism: 1
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       resources:
         limits:
           memory: "67108864"
@@ -122,13 +122,13 @@ services:
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       rollback_config:
         parallelism: 1
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       resources:
         limits:
           memory: "67108864"
@@ -170,13 +170,13 @@ services:
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       rollback_config:
         parallelism: 1
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       resources:
         limits:
           memory: "67108864"
@@ -228,13 +228,13 @@ services:
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       rollback_config:
         parallelism: 1
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       restart_policy:
         condition: any
         delay: 30s

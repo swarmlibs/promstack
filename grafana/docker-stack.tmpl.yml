@@ -125,13 +125,13 @@ services:
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       update_config:
         parallelism: 1
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
 
   # ====================================================
   # Grafana provisioning config provider & reloader
@@ -176,13 +176,13 @@ services:
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       update_config:
         parallelism: 1
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
     depends_on:
       - grafana
       - grafana-dashboard-provider
@@ -227,13 +227,13 @@ services:
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       update_config:
         parallelism: 1
         delay: 15s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
 
   # Grafana provisioning config for alerting, datasources and dashboards
   grafana-provisioning-alerting-provider:

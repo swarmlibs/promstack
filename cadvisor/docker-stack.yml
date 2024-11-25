@@ -17,13 +17,13 @@ services:
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       rollback_config:
         parallelism: 1
         delay: 30s
         failure_action: rollback
         monitor: 15s
-        max_failure_ratio: 0.1
+        max_failure_ratio: 0.2
       resources:
         limits:
           memory: "268435456"
