@@ -230,7 +230,7 @@ services:
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
     deploy:
-      replicas: 1
+      mode: global
       update_config:
         parallelism: 1
         delay: 15s
@@ -253,7 +253,6 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
-        max_replicas_per_node: 1
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -282,7 +281,7 @@ services:
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
     deploy:
-      replicas: 1
+      mode: global
       update_config:
         parallelism: 1
         delay: 15s
@@ -305,7 +304,6 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
-        max_replicas_per_node: 1
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -327,7 +325,7 @@ services:
     - grafana-provisioning-dashboard-provider
     - grafana-provisioning-datasource-provider
     deploy:
-      replicas: 1
+      mode: global
       update_config:
         parallelism: 1
         delay: 15s
@@ -352,7 +350,6 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
-        max_replicas_per_node: 1
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
@@ -394,7 +391,7 @@ services:
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
     deploy:
-      replicas: 1
+      mode: global
       update_config:
         parallelism: 1
         delay: 15s
@@ -417,7 +414,6 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
-        max_replicas_per_node: 1
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -439,7 +435,7 @@ services:
     configs:
     - source: gf-provisioning-datasource-prometheus
     deploy:
-      replicas: 1
+      mode: global
       update_config:
         parallelism: 1
         delay: 15s
@@ -462,7 +458,6 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
-        max_replicas_per_node: 1
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file

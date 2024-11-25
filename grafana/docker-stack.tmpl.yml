@@ -14,9 +14,8 @@ x-deploy: &x-deploy
       - node.role == manager
 
 x-grafana-helpers-deploy: &x-grafana-helpers-deploy
-  replicas: 1
+  mode: global
   placement:
-    max_replicas_per_node: 1
     constraints:
       - node.labels.services.promstack_grafana == true
 
