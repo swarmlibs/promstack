@@ -52,7 +52,7 @@ services:
     ports:
       - published: 9090
         target: 9090
-        mode: host
+        protocol: tcp
     networks:
       public:
         aliases:
