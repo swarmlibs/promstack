@@ -22,11 +22,11 @@ services:
     networks:
       prometheus:
         aliases:
-          - pushgateway.svc.promstack.local
+          - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
           - pushgateway.internal
-          - pushgateway.svc.promstack.local
+          - pushgateway.svc.cluster.local
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
     configs:
       - source: prometheus-pushgateway
