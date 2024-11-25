@@ -16,9 +16,11 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
-  - [Deploy stack](#deploy-stack)
-  - [Remove stack](#remove-stack)
-  - [Verify deployment](#verify-deployment)
+  - [Unattented deployment](#unattented-deployment)
+  - [Manually deploy `promstack` stack](#manually-deploy-promstack-stack)
+    - [Deploy stack](#deploy-stack)
+    - [Remove stack](#remove-stack)
+    - [Verify deployment](#verify-deployment)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
@@ -100,6 +102,28 @@ These are the services that are part of the stack:
 
 ## Getting Started
 
+There are two ways to deploy the `promstack` stack:
+- Unattented deployment
+- Manually deploy `promstack` stack
+
+The unattented deployment is the recommended way to deploy the stack. It will automatically create the necessary networks and deploy the stack to the Docker Swarm cluster.
+The manual deployment is useful for debugging and troubleshooting the stack.
+
+### Unattented deployment
+
+To deploy the stack, you can use the following command:
+
+```sh
+$ docker run -it --rm \
+    --name promstack \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    swarmlibs/promstack install
+```
+
+For more documentation, visit [here](https://github.com/swarmlibs/docker-promstack).
+
+### Manually deploy `promstack` stack
+
 To get started, clone this repository to your local machine:
 
 ```sh
@@ -134,7 +158,7 @@ The `grafana` and `prometheus` service requires extra services to operate, mainl
 
 See https://github.com/swarmlibs/swarmlibs for more information.
 
-### Deploy stack
+#### Deploy stack
 
 This will deploy the stack to the Docker Swarm cluster. Please ensure you have the necessary permissions to deploy the stack and the `swarmlibs` stack is deployed. See [Pre-requisites](#pre-requisites) for more information.
 
@@ -146,7 +170,7 @@ This will deploy the stack to the Docker Swarm cluster. Please ensure you have t
 make deploy
 ```
 
-### Remove stack
+#### Remove stack
 
 > [!WARNING]
 > This will remove the stack and all the services associated with it. Use with caution.
@@ -155,7 +179,7 @@ make deploy
 make remove
 ```
 
-### Verify deployment
+#### Verify deployment
 
 To verify the deployment, you can use the following commands:
 
