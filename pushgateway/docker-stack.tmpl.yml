@@ -63,7 +63,7 @@ configs:
     name: prometheus-pushgateway-v1
     file: ./prometheus/pushgateway.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
 
 networks:
   prometheus_gwnetwork:
