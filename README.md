@@ -339,7 +339,7 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 
 The following services and ports are exposed by the stack:
 
-| Service           | Port    | Mode   | Internal DNS                          |
+| Service           | Port    | Mode   | Cluster DNS                           |
 | ----------------- | ------- | ------ | ------------------------------------- |
 | Grafana           | `3000`  |        | `grafana.svc.cluster.local`           |
 | Prometheus        | `9090`  |        | `prometheus.svc.cluster.local`        |
