@@ -221,12 +221,14 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.2
+        order: start-first
       rollback_config:
         parallelism: 1
         delay: 15s
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.2
+        order: start-first
       resources:
         limits:
           memory: "67108864"
