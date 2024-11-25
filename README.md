@@ -16,8 +16,10 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
-  - [Deploy stack](#deploy-stack)
-  - [Remove stack](#remove-stack)
+  - [Unattented deployment](#unattented-deployment)
+  - [Manually deploy `promstack` stack](#manually-deploy-promstack-stack)
+    - [Deploy stack](#deploy-stack)
+    - [Remove stack](#remove-stack)
   - [Verify deployment](#verify-deployment)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
@@ -30,6 +32,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
+  - [Promethues targets are not present](#promethues-targets-are-not-present)
 - [License](#license)
 
 
@@ -100,6 +103,28 @@ These are the services that are part of the stack:
 
 ## Getting Started
 
+There are two ways to deploy the `promstack` stack:
+- Unattented deployment
+- Manually deploy `promstack` stack
+
+The unattented deployment is the recommended way to deploy the stack. It will automatically create the necessary networks and deploy the stack to the Docker Swarm cluster.
+The manual deployment is useful for debugging and troubleshooting the stack.
+
+### Unattented deployment
+
+To deploy the stack, you can use the following command:
+
+```sh
+$ docker run -it --rm \
+    --name promstack \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    swarmlibs/promstack install
+```
+
+For more documentation, visit https://github.com/swarmlibs/docker-promstack.
+
+### Manually deploy `promstack` stack
+
 To get started, clone this repository to your local machine:
 
 ```sh
@@ -134,7 +159,7 @@ The `grafana` and `prometheus` service requires extra services to operate, mainl
 
 See https://github.com/swarmlibs/swarmlibs for more information.
 
-### Deploy stack
+#### Deploy stack
 
 This will deploy the stack to the Docker Swarm cluster. Please ensure you have the necessary permissions to deploy the stack and the `swarmlibs` stack is deployed. See [Pre-requisites](#pre-requisites) for more information.
 
@@ -146,7 +171,7 @@ This will deploy the stack to the Docker Swarm cluster. Please ensure you have t
 make deploy
 ```
 
-### Remove stack
+#### Remove stack
 
 > [!WARNING]
 > This will remove the stack and all the services associated with it. Use with caution.
@@ -208,7 +233,7 @@ configs:
     name: gf-dashboard-grafana-metrics-v1
     file: ./dashboards/grafana-metrics.json
     labels:
-      - "io.grafana.dashboard=true"
+      io.grafana.dashboard: "true"
 ```
 
 #### Injecting Grafana Provisioning configurations
@@ -227,14 +252,14 @@ configs:
     name: gf-provisioning-dashboards-v1
     file: ./provisioning/dashboards/grafana-dashboards.yml
     labels:
-      - "io.grafana.provisioning.dashboard=true"
+      io.grafana.provisioning.dashboard: "true"
 
   # Grafana datasources provisioning config
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
     file: ./provisioning/datasources/prometheus.yaml
     labels:
-      - "io.grafana.provisioning.datasource=true"
+      io.grafana.provisioning.datasource: "true"
 ```
 
 ## Prometheus
@@ -287,7 +312,7 @@ configs:
     name: prometheus-cadvisor-v1
     file: ./prometheus/cadvisor.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
 ```
 
 ### Configure Prometheus
@@ -315,7 +340,7 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 
 The following services and ports are exposed by the stack:
 
-| Service           | Port    | Mode   | Internal DNS                          |
+| Service           | Port    | Mode   | Cluster DNS                           |
 | ----------------- | ------- | ------ | ------------------------------------- |
 | Grafana           | `3000`  |        | `grafana.svc.cluster.local`           |
 | Prometheus        | `9090`  |        | `prometheus.svc.cluster.local`        |
@@ -331,7 +356,33 @@ The following services and ports are exposed by the stack:
 If the Grafana dashboards are not present, please restart `grafana` service to reload the dashboards.
 
 ```sh
+# By force updating the service, it will restart the service and reload the dashboards.
 docker service update --force promstack_grafana
+```
+
+### Promethues targets are not present
+Please ensure the services are attached to the `prometheus` network. This is required to allow the Prometheus server to scrape the metrics.
+
+```yaml
+# Annotations:
+services:
+  my-app:
+    # ...
+    networks:
+      prometheus:
+    deploy:
+      # ...
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: "my-app"
+        io.prometheus.scrape_port: "8080"
+
+# As limitations of the Docker Swarm, you need to attach the service to the prometheus network.
+# This is required to allow the Prometheus server to scrape the metrics.
+networks:
+  prometheus:
+    name: prometheus
+    external: true
 ```
 
 ## License

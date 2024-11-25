@@ -41,16 +41,15 @@ services:
       prometheus_gwnetwork:
         aliases:
         - blackbox-exporter.internal
-        - blackbox-exporter.svc.promstack.local
+        - blackbox-exporter.svc.cluster.local
       public:
         aliases:
-        - blackbox-exporter.svc.promstack.local
+        - blackbox-exporter.svc.cluster.local
   cadvisor:
     cap_add:
     - SYSLOG
     command:
-    - -docker_only=true
-    - -housekeeping_interval=10s
+    - -docker_only
     configs:
     - source: prometheus-cadvisor
     deploy:
@@ -178,7 +177,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/grafana/grafana:11.1.0
+    image: docker.io/grafana/grafana:11.3.0
     logging:
       driver: json-file
       options:
@@ -577,7 +576,7 @@ services:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
     environment:
-      PROMETHEUS_ALERTMANAGER_ADDR: ${PROMETHEUS_ALERTMANAGER_ADDR:-tasks.grafana.svc.cluster.local}
+      PROMETHEUS_ALERTMANAGER_ADDR: ${PROMETHEUS_ALERTMANAGER_ADDR:-tasks.grafana.internal}
       PROMETHEUS_ALERTMANAGER_PORT: ${PROMETHEUS_ALERTMANAGER_PORT:-9094}
       PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
         "com.docker.stack.namespace"}}}
@@ -802,7 +801,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v2.53.1
+    image: docker.io/prom/prometheus:v3.0.0
     logging:
       driver: json-file
       options:
@@ -874,7 +873,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
-    image: docker.io/prom/pushgateway:v1.9.0
+    image: docker.io/prom/pushgateway:v1.10.0
     logging:
       driver: json-file
       options:
@@ -883,11 +882,11 @@ services:
     networks:
       prometheus:
         aliases:
-        - pushgateway.svc.promstack.local
+        - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
         - pushgateway.internal
-        - pushgateway.svc.promstack.local
+        - pushgateway.svc.cluster.local
 networks:
   grafana: {}
   prometheus:
@@ -915,6 +914,11 @@ configs:
   gf-dashboard-promstack-cadvisor:
     name: gf-dashboard-promstack-cadvisor-v1
     file: ./grafana/grafana/dashboards/promstack-cadvisor.json
+    labels:
+      io.grafana.dashboard: "true"
+  gf-dashboard-promstack-dockerstack:
+    name: gf-dashboard-promstack-dockerstack-v1
+    file: ./grafana/grafana/dashboards/promstack-dockerstack.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-nodes:
@@ -966,9 +970,6 @@ configs:
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
     file: ./node-exporter/node_meta.prom
-  prometheus:
-    name: prometheus
-    external: true
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
     file: ./blackbox-exporter/prometheus/blackbox-exporter.yml

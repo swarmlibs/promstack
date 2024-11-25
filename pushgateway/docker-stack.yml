@@ -31,7 +31,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
-    image: docker.io/prom/pushgateway:v1.9.0
+    image: docker.io/prom/pushgateway:v1.10.0
     logging:
       driver: json-file
       options:
@@ -40,19 +40,16 @@ services:
     networks:
       prometheus:
         aliases:
-        - pushgateway.svc.promstack.local
+        - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
         - pushgateway.internal
-        - pushgateway.svc.promstack.local
+        - pushgateway.svc.cluster.local
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
 configs:
-  prometheus:
-    name: prometheus
-    external: true
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./prometheus/pushgateway.yml

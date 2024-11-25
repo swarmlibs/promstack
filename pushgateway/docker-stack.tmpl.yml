@@ -22,11 +22,11 @@ services:
     networks:
       prometheus:
         aliases:
-          - pushgateway.svc.promstack.local
+          - pushgateway.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
           - pushgateway.internal
-          - pushgateway.svc.promstack.local
+          - pushgateway.svc.cluster.local
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
     configs:
       - source: prometheus-pushgateway
@@ -59,14 +59,11 @@ services:
         max_failure_ratio: 0.1
 
 configs:
-  prometheus:
-    name: prometheus
-    external: true
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./prometheus/pushgateway.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"
 
 networks:
   prometheus_gwnetwork:

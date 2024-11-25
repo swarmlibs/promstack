@@ -19,9 +19,7 @@ services:
 
   cadvisor:
     image: ${PROMSTACK_CADVISOR_VERSION}
-    command:
-      - -docker_only=true
-      - -housekeeping_interval=10s
+    command: -docker_only
     ports:
       - published: 18080
         target: 8080
@@ -92,4 +90,4 @@ configs:
     name: prometheus-cadvisor-v1
     file: ./prometheus/cadvisor.yml
     labels:
-      - "io.prometheus.scrape_config=true"
+      io.prometheus.scrape_config: "true"

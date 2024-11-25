@@ -41,10 +41,10 @@ services:
       prometheus_gwnetwork:
         aliases:
         - blackbox-exporter.internal
-        - blackbox-exporter.svc.promstack.local
+        - blackbox-exporter.svc.cluster.local
       public:
         aliases:
-        - blackbox-exporter.svc.promstack.local
+        - blackbox-exporter.svc.cluster.local
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
