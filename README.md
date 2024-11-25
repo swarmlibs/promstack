@@ -20,7 +20,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
   - [Manually deploy `promstack` stack](#manually-deploy-promstack-stack)
     - [Deploy stack](#deploy-stack)
     - [Remove stack](#remove-stack)
-    - [Verify deployment](#verify-deployment)
+  - [Verify deployment](#verify-deployment)
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
@@ -179,7 +179,7 @@ make deploy
 make remove
 ```
 
-#### Verify deployment
+### Verify deployment
 
 To verify the deployment, you can use the following commands:
 
