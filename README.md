@@ -120,7 +120,7 @@ $ docker run -it --rm \
     swarmlibs/promstack install
 ```
 
-For more documentation, visit [here](https://github.com/swarmlibs/docker-promstack).
+For more documentation, visit https://github.com/swarmlibs/docker-promstack.
 
 ### Manually deploy `promstack` stack
 
