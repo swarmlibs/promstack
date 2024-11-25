@@ -32,6 +32,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
+  - [Promethues targets are not present](#promethues-targets-are-not-present)
 - [License](#license)
 
 
@@ -355,7 +356,33 @@ The following services and ports are exposed by the stack:
 If the Grafana dashboards are not present, please restart `grafana` service to reload the dashboards.
 
 ```sh
+# By force updating the service, it will restart the service and reload the dashboards.
 docker service update --force promstack_grafana
+```
+
+### Promethues targets are not present
+Please ensure the services are attached to the `prometheus` network. This is required to allow the Prometheus server to scrape the metrics.
+
+```yaml
+# Annotations:
+services:
+  my-app:
+    # ...
+    networks:
+      prometheus:
+    deploy:
+      # ...
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: "my-app"
+        io.prometheus.scrape_port: "8080"
+
+# As limitations of the Docker Swarm, you need to attach the service to the prometheus network.
+# This is required to allow the Prometheus server to scrape the metrics.
+networks:
+  prometheus:
+    name: prometheus
+    external: true
 ```
 
 ## License
