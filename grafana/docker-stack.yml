@@ -136,7 +136,6 @@ services:
       restart_policy:
         condition: any
         delay: 15s
-        max_attempts: 15
         window: 10s
       placement:
         constraints:
@@ -189,7 +188,6 @@ services:
       restart_policy:
         condition: any
         delay: 15s
-        max_attempts: 15
         window: 10s
       placement:
         constraints:
@@ -235,7 +233,6 @@ services:
       restart_policy:
         condition: any
         delay: 15s
-        max_attempts: 15
         window: 10s
       placement:
         constraints:
@@ -301,7 +298,6 @@ services:
       restart_policy:
         condition: any
         delay: 15s
-        max_attempts: 15
         window: 10s
       placement:
         constraints:
@@ -347,7 +343,6 @@ services:
       restart_policy:
         condition: any
         delay: 15s
-        max_attempts: 15
         window: 10s
       placement:
         constraints:

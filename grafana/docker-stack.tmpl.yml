@@ -168,7 +168,7 @@ services:
       resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
-        max_attempts: 15
+        # max_attempts: 15
         delay: 15s
         window: 10s
       rollback_config:
@@ -219,7 +219,7 @@ services:
       resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
-        max_attempts: 15
+        # max_attempts: 15
         delay: 15s
         window: 10s
       rollback_config:

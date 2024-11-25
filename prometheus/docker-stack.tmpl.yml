@@ -144,7 +144,7 @@ services:
       resources: *x-prometheus-helpers-resources-constraints
       restart_policy:
         condition: any
-        max_attempts: 15
+        # max_attempts: 15
         delay: 15s
         window: 10s
       rollback_config:
@@ -185,7 +185,7 @@ services:
         io.prometheus.role: "prometheus-config-provider"
       restart_policy:
         condition: any
-        max_attempts: 15
+        # max_attempts: 15
         delay: 15s
         window: 10s
       rollback_config:
