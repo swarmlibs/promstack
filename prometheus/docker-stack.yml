@@ -2,11 +2,11 @@ services:
   prometheus:
     command:
     - --verbose
-    - --file=/run/configs/prometheus.yaml.tmpl
-    - --out=/prometheus-configs.d/prometheus.yaml
+    - --file=/run/configs/prometheus.yml.tmpl
+    - --out=/prometheus-configs.d/prometheus.yml
     configs:
-    - source: prometheus.yaml.tmpl
-      target: /run/configs/prometheus.yaml.tmpl
+    - source: prometheus.yml.tmpl
+      target: /run/configs/prometheus.yml.tmpl
     deploy:
       mode: global
       update_config:
@@ -90,7 +90,7 @@ services:
     - /docker-entrypoint-shim.sh
     environment:
       PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.internal
-      RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
+      RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yml
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d
       RELOADER_WATCH_INTERVAL: 15s
@@ -203,7 +203,7 @@ services:
       read_only: true
   prometheus-server:
     command:
-    - --config.file=/prometheus-configs.d/prometheus.yaml
+    - --config.file=/prometheus-configs.d/prometheus.yml
     - --storage.tsdb.path=/prometheus
     - --storage.tsdb.retention.time=182d
     - --web.page-title=Promstack Prometheus - Server
@@ -214,7 +214,7 @@ services:
     - --log.level=info
     configs:
     - source: prometheus-prometheus
-      target: /etc/prometheus/scrape-configs/prometheus.yaml
+      target: /etc/prometheus/scrape-configs/prometheus.yml
     depends_on:
     - prometheus
     deploy:
@@ -317,41 +317,41 @@ configs:
     file: ./prometheus-config-reloader/docker-entrypoint-shim.sh
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
-    file: ./prometheus/scrape-configs/dockerswarm-nodes.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-nodes.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
-    file: ./prometheus/rules/dockerswarm-nodes.yaml
+    file: ./prometheus/rules/dockerswarm-nodes.yml
     labels:
       io.prometheus.rule: "true"
   prometheus-dockerswarm-services:
     name: prometheus-dockerswarm-services-v1
-    file: ./prometheus/scrape-configs/dockerswarm-services.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-services.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-host.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-ingress:
     name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
+    file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-rule:
     name: prometheus-dockerswarm-services-rule-v1
-    file: ./prometheus/rules/dockerswarm-tasks.yaml
+    file: ./prometheus/rules/dockerswarm-tasks.yml
     labels:
       io.prometheus.rule: "true"
   prometheus-prometheus:
     name: prometheus-prometheus-v1
-    file: ./prometheus/scrape-configs/prometheus.yaml
+    file: ./prometheus/scrape-configs/prometheus.yml
     template_driver: golang
-  prometheus.yaml.tmpl:
-    name: prometheus.yaml.tmpl-v1
-    file: ./prometheus/prometheus.yaml.tmpl
+  prometheus.yml.tmpl:
+    name: prometheus.yml.tmpl-v1
+    file: ./prometheus/prometheus.yml.tmpl
 x-default-logging:
   driver: json-file
   options:

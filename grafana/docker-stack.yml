@@ -430,7 +430,7 @@ configs:
     file: ./grafana/provisioning/dashboards/grafana-dashboards.yml
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: ./grafana/provisioning/datasources/prometheus.yaml
+    file: ./grafana/provisioning/datasources/prometheus.yml
     labels:
       io.grafana.provisioning.datasource: "true"
   gf-server-entrypoint:
