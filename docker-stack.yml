@@ -581,11 +581,9 @@ services:
       target: /prometheus-configs.d
   prometheus-agent:
     command:
-    - --agent
     - --config.file=/etc/prometheus/prometheus.yml
-    - --storage.agent.path=/prometheus
-    - --storage.agent.retention.min-time=1d
-    - --storage.agent.retention.max-time=15d
+    - --storage.tsdb.path=/prometheus
+    - --storage.tsdb.retention.time=30d
     - --web.page-title=Promstack Prometheus Agent - Server
     - --web.console.libraries=/usr/share/prometheus/console_libraries
     - --web.console.templates=/usr/share/prometheus/consoles
@@ -761,6 +759,7 @@ services:
     - source: prometheus-dockerswarm-services-endpoints-host
     - source: prometheus-dockerswarm-services-endpoints-ingress
     - source: prometheus-dockerswarm-services
+    - source: prometheus-prometheus-agent
     deploy:
       mode: global
       labels:
@@ -803,6 +802,7 @@ services:
       read_only: true
   prometheus-server:
     command:
+    - --enable-feature=native-histograms
     - --config.file=/prometheus-configs.d/prometheus.yml
     - --storage.tsdb.path=/prometheus
     - --storage.tsdb.retention.time=182d
@@ -1071,6 +1071,11 @@ configs:
     name: prometheus-prometheus-v1
     file: ./prometheus/prometheus/scrape-configs/prometheus.yml
     template_driver: golang
+  prometheus-prometheus-agent:
+    name: prometheus-prometheus-agent-v1
+    file: ./prometheus/prometheus/scrape-configs/prometheus-agent.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./pushgateway/prometheus/pushgateway.yml

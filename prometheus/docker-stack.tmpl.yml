@@ -39,6 +39,7 @@ services:
   prometheus-server:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
+      - --enable-feature=native-histograms
       - --config.file=/prometheus-configs.d/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=182d
@@ -169,6 +170,7 @@ services:
       - source: prometheus-dockerswarm-services-endpoints-host
       - source: prometheus-dockerswarm-services-endpoints-ingress
       - source: prometheus-dockerswarm-services
+      - source: prometheus-prometheus-agent
     volumes:
       - type: volume
         source: prometheus-configs
@@ -307,6 +309,11 @@ configs:
       io.prometheus.rule: "true"
 
   # Prometheus's scrape config files
+  prometheus-prometheus-agent:
+    name: prometheus-prometheus-agent-v1
+    file: ./prometheus/scrape-configs/prometheus-agent.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-nodes:
     name: prometheus-dockerswarm-nodes-v1
     file: ./prometheus/scrape-configs/dockerswarm-nodes.yml

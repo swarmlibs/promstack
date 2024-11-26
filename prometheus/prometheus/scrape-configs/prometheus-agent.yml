@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
+#
+# Scrape config for Docker Swarm Nodes
+# 
+# The Docker Engine metrics are required to be configured in the daemon.json file for Prometheus to scrape them.
+# This configuration also includes a job to scrape the Node Exporter metrics that run on each node.
+scrape_configs:
+  - job_name: 'dockerswarm/prometheus'
+
+    honor_labels: false
+    metrics_path: '/federate'
+
+    params:
+      'match[]':
+        - '{job="cadvisor"}'
+        - '{job="node_exporter"}'
+        - '{job="prometheus"}'
+
+    dockerswarm_sd_configs:
+      - host: unix:///var/run/docker.sock
+        role: nodes
+
+    relabel_configs:
+      # ================================================================================
+      # Override prometheus internal labels
+      # ================================================================================
+      - source_labels:
+        - __meta_dockerswarm_node_id
+        target_label: __address__
+        replacement: replica-$1.prometheus-agent.internal:9090
+
+      - source_labels:
+        - __meta_dockerswarm_node_address
+        target_label: instance
+        replacement: $1:9090
+
+      # ================================================================================
+      # Label mapping
+      # ================================================================================
+      - action: labelmap
+        regex: __meta_(dockerswarm_node_.+)
+      - action: labeldrop
+        regex: dockerswarm_node_(label_.+)

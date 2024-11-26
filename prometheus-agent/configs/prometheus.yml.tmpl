@@ -11,31 +11,19 @@ global:
   evaluation_interval: '1m'
   # keep_dropped_targets: 50
 
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
-  external_labels:
-    __replica__: '{{ .Service.Name }}_{{ .Task.Slot }}'
-    dockerswarm_node_id: '{{ env "DOCKERSWARM_NODE_ID" }}'
-    dockerswarm_node_hostname: '{{ env "DOCKERSWARM_NODE_HOSTNAME" }}'
-
-# Remote write configuration
-remote_write:
-  # Push metrics to the Promstack Prometheus server.
-  - url: http://prometheus.svc.cluster.local:9090/api/v1/write
-
 # ====================================================
 # Scrape configuration
 # ====================================================
 
 scrape_configs:
-  - job_name: prometheus
-    static_configs:
-      - targets: ["host.docker.internal:19090"]
-
   - job_name: 'cadvisor'
     static_configs:
-      - targets: ["host.docker.internal:18080"]
+      - targets: ['replica-{{.Task.Slot}}.cadvisor.internal:8080']
 
   - job_name: 'node_exporter'
     static_configs:
-      - targets: ["host.docker.internal:19100"]
+      - targets: ['replica-{{.Task.Slot}}.node-exporter.internal:9100']
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['127.0.0.1:9090']

@@ -161,6 +161,7 @@ services:
     - source: prometheus-dockerswarm-services-endpoints-host
     - source: prometheus-dockerswarm-services-endpoints-ingress
     - source: prometheus-dockerswarm-services
+    - source: prometheus-prometheus-agent
     deploy:
       mode: global
       labels:
@@ -203,6 +204,7 @@ services:
       read_only: true
   prometheus-server:
     command:
+    - --enable-feature=native-histograms
     - --config.file=/prometheus-configs.d/prometheus.yml
     - --storage.tsdb.path=/prometheus
     - --storage.tsdb.retention.time=182d
@@ -349,6 +351,11 @@ configs:
     name: prometheus-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
     template_driver: golang
+  prometheus-prometheus-agent:
+    name: prometheus-prometheus-agent-v1
+    file: ./prometheus/scrape-configs/prometheus-agent.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus.yml.tmpl:
     name: prometheus.yml.tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
