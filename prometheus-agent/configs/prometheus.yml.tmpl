@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
+
+# A scrape configuration for running Prometheus on a Docker Swarm cluster.
+# This uses separate scrape configs for cluster components (i.e. nodes, services, tasks).
+# 
+# Keep at most 50 sets of details of targets dropped by relabeling.
+# This information is used to display in the UI for troubleshooting.
+global:
+  scrape_interval: '10s'
+  scrape_timeout: '5s'
+  evaluation_interval: '1m'
+  # keep_dropped_targets: 50
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    __replica__: '{{ .Service.Name }}_{{ .Task.Slot }}'
+    dockerswarm_node_id: '{{ env "DOCKERSWARM_NODE_ID" }}'
+    dockerswarm_node_hostname: '{{ env "DOCKERSWARM_NODE_HOSTNAME" }}'
+
+# Remote write configuration
+remote_write:
+  # Push metrics to the Promstack Prometheus server.
+  - url: http://prometheus.svc.cluster.local:9090/api/v1/write
+
+# ====================================================
+# Scrape configuration
+# ====================================================
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["host.docker.internal:19090"]
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ["host.docker.internal:18080"]
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ["host.docker.internal:19100"]

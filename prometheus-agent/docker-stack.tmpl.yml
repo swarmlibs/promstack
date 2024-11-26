@@ -1,0 +1,106 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+x-healthcheck: &x-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
+
+x-deploy: &x-deploy
+  mode: global
+  resources:
+    limits:
+      memory: 1G
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+services:
+
+  # ====================================================
+  # Prometheus
+  # https://github.com/prometheus/prometheus
+  # ====================================================
+
+  prometheus-agent:
+    image: ${PROMSTACK_PROMETHEUS_VERSION}
+    command:
+      - --agent
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.agent.path=/prometheus
+      - --storage.agent.retention.min-time=1d
+      - --storage.agent.retention.max-time=15d
+      - --web.page-title=Promstack Prometheus Agent - Server
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+      - --log.level=info
+    environment:
+      - DOCKERSWARM_NODE_ID={{.Node.ID}}
+      - DOCKERSWARM_NODE_HOSTNAME={{.Node.Hostname}}
+      - PROMETHEUS_AGENT_CLUSTER_REPLICA={{ index .Service.Labels "com.docker.stack.namespace"}}
+    user: "0:0"
+    ports:
+      - published: 19090
+        target: 9090
+        mode: host
+    networks:
+      prometheus_gwnetwork:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    hostname: replica-{{.Task.Slot}}.prometheus-agent.internal
+    configs:
+      - source: prometheus-agent.yml.tmpl
+        target: /etc/prometheus/prometheus.yml
+    # volumes:
+    #   - type: bind
+    #     source: /var/run/docker.sock
+    #     target: /var/run/docker.sock
+    #     read_only: true
+    #   - type: volume
+    #     source: prometheus-agent-data
+    #     target: /prometheus
+    healthcheck:
+      <<: *x-healthcheck
+      test: wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
+    logging: *x-default-logging
+    deploy:
+      <<: *x-deploy
+      labels:
+        io.prometheus.role: "prometheus-agent"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+
+networks:
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
+
+volumes:
+  prometheus-agent-data:
+
+configs:
+  # Prometheus config files
+  prometheus-agent.yml.tmpl:
+    name: prometheus-agent.yml.tmpl-v1
+    file: ./configs/prometheus.yml.tmpl
+    template_driver: golang
