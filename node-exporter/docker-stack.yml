@@ -8,7 +8,6 @@ services:
     configs:
     - source: node-exporter-node-meta
       target: /etc/node-exporter/node_meta.prom
-    - source: prometheus-node-exporter
     deploy:
       mode: global
       labels:
@@ -69,11 +68,6 @@ configs:
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
     file: ./node_meta.prom
-  prometheus-node-exporter:
-    name: prometheus-node-exporter-v1
-    file: ./prometheus/node_exporter.yml
-    labels:
-      io.prometheus.scrape_config: "true"
 x-default-logging:
   driver: json-file
   options:

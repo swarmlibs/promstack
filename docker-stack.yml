@@ -50,8 +50,6 @@ services:
     - SYSLOG
     command:
     - -docker_only
-    configs:
-    - source: prometheus-cadvisor
     deploy:
       mode: global
       labels:
@@ -481,7 +479,6 @@ services:
     configs:
     - source: node-exporter-node-meta
       target: /etc/node-exporter/node_meta.prom
-    - source: prometheus-node-exporter
     deploy:
       mode: global
       labels:
@@ -964,11 +961,6 @@ configs:
     file: ./blackbox-exporter/prometheus/blackbox-exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-cadvisor:
-    name: prometheus-cadvisor-v1
-    file: ./cadvisor/prometheus/cadvisor.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
     file: ./prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
@@ -1002,11 +994,6 @@ configs:
     file: ./prometheus/prometheus/rules/dockerswarm-tasks.yml
     labels:
       io.prometheus.rule: "true"
-  prometheus-node-exporter:
-    name: prometheus-node-exporter-v1
-    file: ./node-exporter/prometheus/node_exporter.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/prometheus/scrape-configs/prometheus.yml

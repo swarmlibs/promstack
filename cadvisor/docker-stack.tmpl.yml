@@ -27,8 +27,8 @@ services:
     networks:
       prometheus_gwnetwork:
     hostname: replica-{{.Task.Slot}}.cadvisor.internal
-    configs:
-      - source: prometheus-cadvisor
+    # configs:
+    #   - source: prometheus-cadvisor
     volumes:
       - type: bind
         source: /
@@ -85,9 +85,9 @@ networks:
     name: prometheus_gwnetwork
     external: true
 
-configs:
-  prometheus-cadvisor:
-    name: prometheus-cadvisor-v1
-    file: ./prometheus/cadvisor.yml
-    labels:
-      io.prometheus.scrape_config: "true"
+# configs:
+#   prometheus-cadvisor:
+#     name: prometheus-cadvisor-v1
+#     file: ./prometheus/cadvisor.yml
+#     labels:
+#       io.prometheus.scrape_config: "true"
