@@ -7,7 +7,7 @@
 scrape_configs:
   - job_name: prometheus-federated
 
-    honor_labels: false
+    honor_labels: true
     metrics_path: /federate
 
     params:
@@ -45,10 +45,12 @@ scrape_configs:
       - action: labeldrop
         regex: dockerswarm_node_(label_.+)
 
-    # Rename the job label to the value of the exported_job label
     metric_relabel_configs:
+
+      # Replace the instance label with the node address
       - source_labels:
-        - exported_job
-        target_label: job
-      - action: labeldrop
-        regex: ^exported_job$
+        - dockerswarm_node_address
+        - instance
+        target_label: instance
+        regex: (.*);.*:(.*)
+        replacement: $1:$2
