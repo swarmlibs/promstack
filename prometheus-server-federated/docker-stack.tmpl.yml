@@ -25,13 +25,13 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
-  prometheus-server-agent:
+  prometheus-server-federated:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=15d
-      - --web.page-title=Promstack Prometheus Agent - Server
+      - --web.page-title=Prometheus Server Federated - Promstack
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
       - --log.level=info

@@ -43,7 +43,7 @@ services:
       - --config.file=/prometheus-configs.d/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=182d
-      - --web.page-title=Promstack Prometheus - Server
+      - --web.page-title=Prometheus Server - Promstack
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
       - --web.enable-lifecycle
