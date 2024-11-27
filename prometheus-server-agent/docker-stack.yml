@@ -1,5 +1,5 @@
 services:
-  prometheus-agent:
+  prometheus-server-agent:
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - --storage.tsdb.path=/prometheus

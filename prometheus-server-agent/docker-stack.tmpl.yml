@@ -25,7 +25,7 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
-  prometheus-agent:
+  prometheus-server-agent:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
       - --config.file=/etc/prometheus/prometheus.yml
