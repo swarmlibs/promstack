@@ -52,6 +52,14 @@ services:
     configs:
       - source: prometheus-agent.yml.tmpl
         target: /etc/prometheus/prometheus.yml
+      - source: prometheus-agent-cadvisor
+        target: /etc/prometheus/scrape-configs/cadvisor.yml
+      - source: prometheus-agent-docker
+        target: /etc/prometheus/scrape-configs/docker.yml
+      - source: prometheus-agent-node_exporter
+        target: /etc/prometheus/scrape-configs/node_exporter.yml
+      - source: prometheus-agent-prometheus
+        target: /etc/prometheus/scrape-configs/prometheus.yml
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -101,3 +109,19 @@ configs:
     name: prometheus-agent.yml.tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
     template_driver: golang
+
+  # Prometheus's scrape config files
+  prometheus-agent-docker:
+    name: prometheus-agent-docker-v1
+    file: ./prometheus/scrape-configs/docker.yml
+  prometheus-agent-cadvisor:
+    name: prometheus-agent-cadvisor-v1
+    file: ./prometheus/scrape-configs/cadvisor.yml
+    template_driver: golang
+  prometheus-agent-node_exporter:
+    name: prometheus-agent-node_exporter-v1
+    file: ./prometheus/scrape-configs/node_exporter.yml
+    template_driver: golang
+  prometheus-agent-prometheus:
+    name: prometheus-agent-prometheus-v1
+    file: ./prometheus/scrape-configs/prometheus.yml

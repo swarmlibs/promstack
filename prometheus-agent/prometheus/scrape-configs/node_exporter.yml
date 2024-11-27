@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
+#
+# Scrape config for Docker Swarm Nodes
+# https://docs.docker.com/config/daemon/prometheus/
+# 
+# The Docker Engine metrics are required to be configured in the daemon.json file for Prometheus to scrape them.
+# This configuration also includes a job to scrape the Node Exporter metrics that run on each node.
+scrape_configs:
+
+  - job_name: 'node_exporter'
+
+    static_configs:
+      - targets:
+          - 'replica-{{.Task.Slot}}.node-exporter.internal:9100'
