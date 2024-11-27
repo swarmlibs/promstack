@@ -44,3 +44,11 @@ scrape_configs:
         regex: __meta_(dockerswarm_node_.+)
       - action: labeldrop
         regex: dockerswarm_node_(label_.+)
+
+    # Rename the job label to the value of the exported_job label
+    metric_relabel_configs:
+      - source_labels:
+        - exported_job
+        target_label: job
+      - action: labeldrop
+        regex: ^exported_job$
