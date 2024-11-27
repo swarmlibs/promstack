@@ -695,8 +695,6 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-    - source: prometheus-dockerswarm-services-endpoints-host
-    - source: prometheus-dockerswarm-services-endpoints-ingress
     - source: prometheus-dockerswarm-services
     - source: prometheus-server-federated
     deploy:
@@ -1080,16 +1078,6 @@ configs:
   prometheus-dockerswarm-services:
     name: prometheus-dockerswarm-services-v1
     file: ./prometheus/prometheus/scrape-configs/dockerswarm-services.yml
-    labels:
-      io.prometheus.scrape_config: "true"
-  prometheus-dockerswarm-services-endpoints-host:
-    name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-host.yml
-    labels:
-      io.prometheus.scrape_config: "true"
-  prometheus-dockerswarm-services-endpoints-ingress:
-    name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-rule:
