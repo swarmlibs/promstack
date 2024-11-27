@@ -1088,7 +1088,7 @@ configs:
       io.prometheus.scrape_config: "true"
   prometheus-server-federated:
     name: prometheus-server-federated-v1
-    file: ./prometheus/prometheus/scrape-configs/prometheus-agent.yml
+    file: ./prometheus/prometheus/scrape-configs/prometheus-server-federated.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus.yml.tmpl:
