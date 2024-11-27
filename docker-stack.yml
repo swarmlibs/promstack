@@ -698,7 +698,7 @@ services:
     - source: prometheus-dockerswarm-services-endpoints-host
     - source: prometheus-dockerswarm-services-endpoints-ingress
     - source: prometheus-dockerswarm-services
-    - source: prometheus-prometheus-agent
+    - source: prometheus-server-federated
     deploy:
       mode: global
       labels:
@@ -1101,14 +1101,14 @@ configs:
     name: prometheus-prometheus-v1
     file: ./prometheus/prometheus/scrape-configs/prometheus.yml
     template_driver: golang
-  prometheus-prometheus-agent:
-    name: prometheus-prometheus-agent-v1
-    file: ./prometheus/prometheus/scrape-configs/prometheus-agent.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./pushgateway/prometheus/pushgateway.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-server-federated:
+    name: prometheus-server-federated-v1
+    file: ./prometheus/prometheus/scrape-configs/prometheus-agent.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus.yml.tmpl:
