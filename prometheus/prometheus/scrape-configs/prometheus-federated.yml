@@ -37,6 +37,11 @@ scrape_configs:
         regex: (.*);.*:(.*)
         replacement: $1:$2
 
+      # The scrape_instance is temporary and will be removed in the metric_relabel_configs
+      - source_labels:
+        - instance
+        target_label: scrape_instance
+
       # ================================================================================
       # Label mapping
       # ================================================================================
@@ -44,13 +49,18 @@ scrape_configs:
         regex: __meta_(dockerswarm_node_.+)
       - action: labeldrop
         regex: dockerswarm_node_(label_.+)
+      - action: labelmap
+        regex: __meta_dockerswarm_(node_(?:id|hostname))
 
     metric_relabel_configs:
 
-      # Replace the instance label with the node address
+      # Override the instance label with the scrape_instance label
+      # And drop scrape_instance label
       - source_labels:
-        - dockerswarm_node_address
         - instance
+        target_label: exported_instance
+      - source_labels:
+        - scrape_instance
         target_label: instance
-        regex: (.*);.*:(.*)
-        replacement: $1:$2
+      - action: labeldrop
+        regex: scrape_instance
