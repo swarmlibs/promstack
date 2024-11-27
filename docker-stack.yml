@@ -228,7 +228,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -279,7 +278,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -390,7 +388,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -1003,11 +1000,6 @@ configs:
   gf-dashboard-promstack-dockerswarm-services:
     name: gf-dashboard-promstack-dockerswarm-services-v1
     file: ./grafana/grafana/dashboards/promstack-dockerswarm-services.json
-    labels:
-      io.grafana.dashboard: "true"
-  gf-dashboard-promstack-dockerswarm-services-endpoints:
-    name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
-    file: ./grafana/grafana/dashboards/promstack-dockerswarm-services-endpoints.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-promstack-grafana-metrics:
