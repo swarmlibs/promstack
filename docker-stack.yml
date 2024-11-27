@@ -118,7 +118,7 @@ services:
     - source: gf-provisioning-dashboards
       target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
     deploy:
-      replicas: 1
+      mode: global
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: grafana
@@ -142,8 +142,13 @@ services:
         window: 15s
       placement:
         constraints:
-        - node.role == manager
-        max_replicas_per_node: 1
+        - node.labels.services.promstack_grafana_dashboard_provider == true
+        - node.labels.services.promstack_grafana_provisioning_alerting_provider ==
+          true
+        - node.labels.services.promstack_grafana_provisioning_dashboard_provider ==
+          true
+        - node.labels.services.promstack_grafana_provisioning_datasource_provider
+          == true
     entrypoint:
     - /docker-entrypoint-shim.sh
     environment:
@@ -250,7 +255,6 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
         - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
@@ -302,7 +306,6 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
         - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
@@ -325,7 +328,7 @@ services:
     - grafana-provisioning-dashboard-provider
     - grafana-provisioning-datasource-provider
     deploy:
-      mode: global
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 15s
@@ -349,7 +352,8 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
+        - node.role == manager
+        max_replicas_per_node: 1
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
@@ -413,7 +417,6 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
         - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
@@ -458,7 +461,6 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
         - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
