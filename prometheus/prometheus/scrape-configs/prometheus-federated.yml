@@ -58,8 +58,8 @@ scrape_configs:
     metric_relabel_configs:
 
       - source_labels:
-        - dockerswarm_node_address
-        - instance
+          - instance
+        target_label: exported_instance
+      - source_labels:
+          - federated_instance
         target_label: instance
-        regex: (.*);.*:(.*)
-        replacement: $1:$2
