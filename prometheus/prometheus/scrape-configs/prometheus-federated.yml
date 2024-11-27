@@ -7,7 +7,7 @@
 scrape_configs:
   - job_name: prometheus-federated
 
-    honor_labels: false
+    honor_labels: true
     metrics_path: /federate
 
     params:
@@ -36,6 +36,15 @@ scrape_configs:
         target_label: instance
         replacement: $1:19090
 
+
+      # Add the federated_job and federated_instance labels to the metrics
+      - source_labels:
+        - job
+        target_label: federated_job
+      - source_labels:
+        - instance
+        target_label: federated_instance
+
       # ================================================================================
       # Label mapping
       # ================================================================================
@@ -48,13 +57,9 @@ scrape_configs:
 
     metric_relabel_configs:
 
-      # Similar to honor_labels, we preserve the job label for federated metrics
-      # Remapping job, federated_job and exported_job labels
       - source_labels:
-        - job
-        target_label: federated_job
-      - source_labels:
-        - exported_job
-        target_label: job
-      - action: labeldrop
-        regex: ^exported_job$
+        - dockerswarm_node_address
+        - instance
+        target_label: instance
+        regex: (.*);.*:(.*)
+        replacement: $1:$2
