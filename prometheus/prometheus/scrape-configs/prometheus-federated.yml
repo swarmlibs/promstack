@@ -28,14 +28,12 @@ scrape_configs:
       - source_labels:
         - __meta_dockerswarm_node_id
         target_label: __address__
-        replacement: replica-$1.prometheus-agent.internal:9090
+        replacement: replica-$1.federated.prometheus.internal:9090
 
       - source_labels:
         - __meta_dockerswarm_node_address
-        - __address__
         target_label: instance
-        regex: (.*);.*:(.*)
-        replacement: $1:$2
+        replacement: $1:19090
 
       # The scrape_instance is temporary and will be removed in the metric_relabel_configs
       - source_labels:

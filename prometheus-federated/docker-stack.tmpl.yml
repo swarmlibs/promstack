@@ -48,7 +48,7 @@ services:
       prometheus_gwnetwork:
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    hostname: replica-{{.Task.Slot}}.prometheus-agent.internal
+    hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
     configs:
       - source: prometheus-agent.yml.tmpl
         target: /etc/prometheus/prometheus.yml

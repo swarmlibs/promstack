@@ -693,7 +693,7 @@ services:
       PROMETHEUS_AGENT_CLUSTER_REPLICA: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
     extra_hosts:
     - host.docker.internal:host-gateway
-    hostname: replica-{{.Task.Slot}}.prometheus-agent.internal
+    hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
     healthcheck:
       test:
       - CMD-SHELL
