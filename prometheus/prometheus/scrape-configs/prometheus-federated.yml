@@ -7,7 +7,7 @@
 scrape_configs:
   - job_name: prometheus-federated
 
-    honor_labels: true
+    honor_labels: false
     metrics_path: /federate
 
     params:
@@ -35,11 +35,6 @@ scrape_configs:
         target_label: instance
         replacement: $1:19090
 
-      # The scrape_instance is temporary and will be removed in the metric_relabel_configs
-      - source_labels:
-        - instance
-        target_label: scrape_instance
-
       # ================================================================================
       # Label mapping
       # ================================================================================
@@ -52,13 +47,10 @@ scrape_configs:
 
     metric_relabel_configs:
 
-      # Override the instance label with the scrape_instance label
-      # And drop scrape_instance label
+      # Replace the instance label with the node address
       - source_labels:
+        - dockerswarm_node_address
         - instance
-        target_label: exported_instance
-      - source_labels:
-        - scrape_instance
         target_label: instance
-      - action: labeldrop
-        regex: scrape_instance
+        regex: (.*);.*:(.*)
+        replacement: $1:$2
