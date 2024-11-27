@@ -11,16 +11,6 @@ global:
   evaluation_interval: '1m'
   # keep_dropped_targets: 50
 
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
-  external_labels:
-    node_id: '{{ env "DOCKERSWARM_NODE_ID" }}'
-    node_hostname: '{{ env "DOCKERSWARM_NODE_HOSTNAME" }}'
-
-# ====================================================
-# Scrape configuration
-# ====================================================
-
 # ====================================================
 # Scrape configuration
 # ====================================================
