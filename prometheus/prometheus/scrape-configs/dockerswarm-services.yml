@@ -14,7 +14,7 @@
 # 
 # - io.prometheus.dockerswarm-tasks.should_be_scraped=<true|false>
 scrape_configs:
-  - job_name: 'dockerswarm/services'
+  - job_name: dockerswarm/services
 
     dockerswarm_sd_configs:
       - host: unix:///var/run/docker.sock
