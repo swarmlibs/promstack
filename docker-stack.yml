@@ -251,6 +251,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -302,6 +303,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -412,6 +414,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -456,6 +459,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file

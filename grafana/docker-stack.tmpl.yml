@@ -13,11 +13,22 @@ x-deploy: &x-deploy
     constraints:
       - node.role == manager
 
-x-grafana-helpers-deploy: &x-grafana-helpers-deploy
+x-grafana-provider-deploy: &x-grafana-provider-deploy
   mode: global
   placement:
     constraints:
       - node.labels.services.promstack_grafana == true
+      - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+
+x-grafana-reloader-deploy: &x-grafana-reloader-deploy
+  mode: global
+  placement:
+    constraints:
+      - node.labels.services.promstack_grafana == true
+      # - node.labels.services.promstack_grafana_dashboard_provider == true
+      # - node.labels.services.promstack_grafana_provisioning_alerting_provider == true
+      # - node.labels.services.promstack_grafana_provisioning_dashboard_provider == true
+      # - node.labels.services.promstack_grafana_provisioning_datasource_provider == true
 
 x-grafana-helpers-resources-constraints: &x-grafana-helpers-resources-constraints
   limits:
@@ -163,7 +174,7 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-helpers-deploy
+      <<: *x-grafana-reloader-deploy
       resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any
@@ -216,7 +227,7 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-helpers-deploy
+      <<: *x-grafana-provider-deploy
       resources: *x-grafana-helpers-resources-constraints
       restart_policy:
         condition: any

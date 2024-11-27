@@ -140,6 +140,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -191,6 +192,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -301,6 +303,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -345,6 +348,7 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -447,14 +451,20 @@ x-deploy:
     - node.role == manager
     max_replicas_per_node: 1
   replicas: 1
-x-grafana-helpers-deploy:
+x-grafana-helpers-resources-constraints:
+  limits:
+    memory: 64M
+x-grafana-provider-deploy:
   mode: global
   placement:
     constraints:
     - node.labels.services.promstack_grafana == true
-x-grafana-helpers-resources-constraints:
-  limits:
-    memory: 64M
+    - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+x-grafana-reloader-deploy:
+  mode: global
+  placement:
+    constraints:
+    - node.labels.services.promstack_grafana == true
 x-healthcheck:
   interval: 30s
   retries: 3
