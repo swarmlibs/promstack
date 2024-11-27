@@ -12,6 +12,19 @@ scrape_configs:
           - 'replica-{{.Task.Slot}}.cadvisor.internal:8080'
 
     metric_relabel_configs:
+      # ================================================================================
+      # Label mapping
+      # ================================================================================
+      - action: labelmap
+        regex: container_label_com_(docker_.*)
+
+      # Rename labels docker_swarm_(.+) to dockerswarm_$1
+      # This is useful for compatibility with "dockerswarm-tasks.yml" relabeling
+      - action: labelmap
+        regex: container_label_com_docker_swarm_(.+)
+        replacement: dockerswarm_$1
+      - action: labeldrop
+        regex: (^docker_swarm_.+)
 
       # ================================================================================
       # Docker Swarm compatible relabeling
