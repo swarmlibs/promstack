@@ -170,7 +170,7 @@ services:
       # - source: prometheus-dockerswarm-services-endpoints-host
       # - source: prometheus-dockerswarm-services-endpoints-ingress
       - source: prometheus-dockerswarm-services
-      - source: prometheus-server-federated
+      - source: prometheus-federated
     volumes:
       - type: volume
         source: prometheus-configs
@@ -309,9 +309,9 @@ configs:
       io.prometheus.rule: "true"
 
   # Prometheus's scrape config files
-  prometheus-server-federated:
-    name: prometheus-server-federated-v1
-    file: ./prometheus/scrape-configs/prometheus-server-federated.yml
+  prometheus-federated:
+    name: prometheus-federated-v1
+    file: ./prometheus/scrape-configs/prometheus-federated.yml
     labels:
       io.prometheus.scrape_config: "true"
   # prometheus-dockerswarm-nodes:

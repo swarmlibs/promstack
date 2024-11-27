@@ -48,7 +48,7 @@ $(eval $(call docker-stack-config,cadvisor))
 $(eval $(call docker-stack-config,grafana))
 $(eval $(call docker-stack-config,node-exporter))
 $(eval $(call docker-stack-config,prometheus))
-$(eval $(call docker-stack-config,prometheus-server-federated))
+$(eval $(call docker-stack-config,prometheus-federated))
 $(eval $(call docker-stack-config,pushgateway))
 
 docker-stack.yml:
@@ -58,7 +58,7 @@ docker-stack.yml:
 		-c grafana/docker-stack-config.yml \
 		-c node-exporter/docker-stack-config.yml \
 		-c prometheus/docker-stack-config.yml \
-		-c prometheus-server-federated/docker-stack-config.yml \
+		-c prometheus-federated/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
 	> docker-stack-config.yml
 	@sed 's|$(PWD)/|./|g' docker-stack-config.yml > docker-stack.yml
@@ -72,7 +72,7 @@ compile: \
 	grafana/docker-stack.yml \
 	node-exporter/docker-stack.yml \
 	prometheus/docker-stack.yml \
-	prometheus-server-federated/docker-stack.yml \
+	prometheus-federated/docker-stack.yml \
 	pushgateway/docker-stack.yml \
 	docker-stack.yml
 

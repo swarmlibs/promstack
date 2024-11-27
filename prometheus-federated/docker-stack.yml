@@ -1,5 +1,5 @@
 services:
-  prometheus-server-federated:
+  prometheus-federated:
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - --storage.tsdb.path=/prometheus

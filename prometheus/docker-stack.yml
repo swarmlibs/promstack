@@ -158,7 +158,7 @@ services:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
     - source: prometheus-dockerswarm-services
-    - source: prometheus-server-federated
+    - source: prometheus-federated
     deploy:
       mode: global
       labels:
@@ -329,15 +329,15 @@ configs:
     file: ./prometheus/rules/dockerswarm-tasks.yml
     labels:
       io.prometheus.rule: "true"
+  prometheus-federated:
+    name: prometheus-federated-v1
+    file: ./prometheus/scrape-configs/prometheus-federated.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
     template_driver: golang
-  prometheus-server-federated:
-    name: prometheus-server-federated-v1
-    file: ./prometheus/scrape-configs/prometheus-server-federated.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus.yml.tmpl:
     name: prometheus.yml.tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl

@@ -641,6 +641,88 @@ services:
     - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
+  prometheus-federated:
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --storage.tsdb.path=/prometheus
+    - --storage.tsdb.retention.time=15d
+    - --web.page-title=Prometheus Server Federated - Promstack
+    - --web.console.libraries=/usr/share/prometheus/console_libraries
+    - --web.console.templates=/usr/share/prometheus/consoles
+    - --log.level=info
+    configs:
+    - source: prometheus-agent.yml.tmpl
+      target: /etc/prometheus/prometheus.yml
+    - source: prometheus-agent-cadvisor
+      target: /etc/prometheus/scrape-configs/cadvisor.yml
+    - source: prometheus-agent-docker
+      target: /etc/prometheus/scrape-configs/docker.yml
+    - source: prometheus-agent-node_exporter
+      target: /etc/prometheus/scrape-configs/node_exporter.yml
+    - source: prometheus-agent-prometheus
+      target: /etc/prometheus/scrape-configs/prometheus.yml
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: prometheus-agent
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      resources:
+        limits:
+          memory: "1073741824"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+    environment:
+      DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
+      DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
+      PROMETHEUS_AGENT_CLUSTER_REPLICA: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    hostname: replica-{{.Task.Slot}}.prometheus-agent.internal
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
+    image: docker.io/prom/prometheus:v3.0.0
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_gwnetwork: null
+    ports:
+    - mode: host
+      target: 9090
+      published: 19090
+    user: "0:0"
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    - type: volume
+      source: prometheus-agent-data
+      target: /prometheus
   prometheus-rule-provider:
     command:
     - --output-dir=/prometheus-configs.d/rules
@@ -693,7 +775,7 @@ services:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
     - source: prometheus-dockerswarm-services
-    - source: prometheus-server-federated
+    - source: prometheus-federated
     deploy:
       mode: global
       labels:
@@ -829,88 +911,6 @@ services:
     - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
-  prometheus-server-federated:
-    command:
-    - --config.file=/etc/prometheus/prometheus.yml
-    - --storage.tsdb.path=/prometheus
-    - --storage.tsdb.retention.time=15d
-    - --web.page-title=Prometheus Server Federated - Promstack
-    - --web.console.libraries=/usr/share/prometheus/console_libraries
-    - --web.console.templates=/usr/share/prometheus/consoles
-    - --log.level=info
-    configs:
-    - source: prometheus-agent.yml.tmpl
-      target: /etc/prometheus/prometheus.yml
-    - source: prometheus-agent-cadvisor
-      target: /etc/prometheus/scrape-configs/cadvisor.yml
-    - source: prometheus-agent-docker
-      target: /etc/prometheus/scrape-configs/docker.yml
-    - source: prometheus-agent-node_exporter
-      target: /etc/prometheus/scrape-configs/node_exporter.yml
-    - source: prometheus-agent-prometheus
-      target: /etc/prometheus/scrape-configs/prometheus.yml
-    deploy:
-      mode: global
-      labels:
-        io.prometheus.dockerswarm-services.should_be_probed: "false"
-        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.role: prometheus-agent
-      update_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      rollback_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      resources:
-        limits:
-          memory: "1073741824"
-      restart_policy:
-        condition: any
-        delay: 30s
-        max_attempts: 15
-        window: 15s
-    environment:
-      DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
-      DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
-      PROMETHEUS_AGENT_CLUSTER_REPLICA: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
-    extra_hosts:
-    - host.docker.internal:host-gateway
-    hostname: replica-{{.Task.Slot}}.prometheus-agent.internal
-    healthcheck:
-      test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.0
-    logging:
-      driver: json-file
-      options:
-        max-file: "5"
-        max-size: 12m
-    networks:
-      prometheus_gwnetwork: null
-    ports:
-    - mode: host
-      target: 9090
-      published: 19090
-    user: "0:0"
-    volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
-    - type: volume
-      source: prometheus-agent-data
-      target: /prometheus
   pushgateway:
     configs:
     - source: prometheus-pushgateway
@@ -1038,21 +1038,21 @@ configs:
     file: ./node-exporter/node_meta.prom
   prometheus-agent-cadvisor:
     name: prometheus-agent-cadvisor-v1
-    file: ./prometheus-server-federated/prometheus/scrape-configs/cadvisor.yml
+    file: ./prometheus-federated/prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
   prometheus-agent-docker:
     name: prometheus-agent-docker-v1
-    file: ./prometheus-server-federated/prometheus/scrape-configs/docker.yml
+    file: ./prometheus-federated/prometheus/scrape-configs/docker.yml
   prometheus-agent-node_exporter:
     name: prometheus-agent-node_exporter-v1
-    file: ./prometheus-server-federated/prometheus/scrape-configs/node_exporter.yml
+    file: ./prometheus-federated/prometheus/scrape-configs/node_exporter.yml
     template_driver: golang
   prometheus-agent-prometheus:
     name: prometheus-agent-prometheus-v1
-    file: ./prometheus-server-federated/prometheus/scrape-configs/prometheus.yml
+    file: ./prometheus-federated/prometheus/scrape-configs/prometheus.yml
   prometheus-agent.yml.tmpl:
     name: prometheus-agent.yml.tmpl-v1
-    file: ./prometheus-server-federated/prometheus/prometheus.yml.tmpl
+    file: ./prometheus-federated/prometheus/prometheus.yml.tmpl
     template_driver: golang
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
@@ -1077,6 +1077,11 @@ configs:
     file: ./prometheus/prometheus/rules/dockerswarm-tasks.yml
     labels:
       io.prometheus.rule: "true"
+  prometheus-federated:
+    name: prometheus-federated-v1
+    file: ./prometheus/prometheus/scrape-configs/prometheus-federated.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/prometheus/scrape-configs/prometheus.yml
@@ -1084,11 +1089,6 @@ configs:
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./pushgateway/prometheus/pushgateway.yml
-    labels:
-      io.prometheus.scrape_config: "true"
-  prometheus-server-federated:
-    name: prometheus-server-federated-v1
-    file: ./prometheus/prometheus/scrape-configs/prometheus-server-federated.yml
     labels:
       io.prometheus.scrape_config: "true"
   prometheus.yml.tmpl:
