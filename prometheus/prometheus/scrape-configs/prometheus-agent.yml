@@ -12,6 +12,7 @@ scrape_configs:
 
     params:
       'match[]':
+        - '{job="docker"}'
         - '{job="cadvisor"}'
         - '{job="node_exporter"}'
         - '{job="prometheus"}'
@@ -31,8 +32,10 @@ scrape_configs:
 
       - source_labels:
         - __meta_dockerswarm_node_address
+        - __address__
         target_label: instance
-        replacement: $1:9090
+        regex: (.*);.*:(.*)
+        replacement: $1:$2
 
       # ================================================================================
       # Label mapping

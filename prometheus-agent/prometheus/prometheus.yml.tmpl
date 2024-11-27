@@ -16,6 +16,10 @@ global:
 # ====================================================
 
 scrape_configs:
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['host.docker.internal:9323']
+
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['replica-{{.Task.Slot}}.cadvisor.internal:8080']

@@ -166,7 +166,7 @@ services:
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-      - source: prometheus-dockerswarm-nodes
+      # - source: prometheus-dockerswarm-nodes
       - source: prometheus-dockerswarm-services-endpoints-host
       - source: prometheus-dockerswarm-services-endpoints-ingress
       - source: prometheus-dockerswarm-services
@@ -314,11 +314,11 @@ configs:
     file: ./prometheus/scrape-configs/prometheus-agent.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-dockerswarm-nodes:
-    name: prometheus-dockerswarm-nodes-v1
-    file: ./prometheus/scrape-configs/dockerswarm-nodes.yml
-    labels:
-      io.prometheus.scrape_config: "true"
+  # prometheus-dockerswarm-nodes:
+  #   name: prometheus-dockerswarm-nodes-v1
+  #   file: ./prometheus/scrape-configs/dockerswarm-nodes.yml
+  #   labels:
+  #     io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-endpoints-host:
     name: prometheus-dockerswarm-services-endpoints-host-v1
     file: ./prometheus/scrape-configs/dockerswarm-services-endpoints-host.yml

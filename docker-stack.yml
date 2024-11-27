@@ -583,7 +583,7 @@ services:
     command:
     - --config.file=/etc/prometheus/prometheus.yml
     - --storage.tsdb.path=/prometheus
-    - --storage.tsdb.retention.time=30d
+    - --storage.tsdb.retention.time=15d
     - --web.page-title=Promstack Prometheus Agent - Server
     - --web.console.libraries=/usr/share/prometheus/console_libraries
     - --web.console.templates=/usr/share/prometheus/consoles
@@ -645,6 +645,11 @@ services:
       target: 9090
       published: 19090
     user: "0:0"
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
   prometheus-config-reloader:
     configs:
     - source: prometheus-config-reloader-entrypoint
@@ -755,7 +760,6 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-    - source: prometheus-dockerswarm-nodes
     - source: prometheus-dockerswarm-services-endpoints-host
     - source: prometheus-dockerswarm-services-endpoints-ingress
     - source: prometheus-dockerswarm-services
@@ -1027,7 +1031,7 @@ configs:
     file: ./node-exporter/node_meta.prom
   prometheus-agent.yml.tmpl:
     name: prometheus-agent.yml.tmpl-v1
-    file: ./prometheus-agent/configs/prometheus.yml.tmpl
+    file: ./prometheus-agent/prometheus/prometheus.yml.tmpl
     template_driver: golang
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
@@ -1037,11 +1041,6 @@ configs:
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
     file: ./prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
-  prometheus-dockerswarm-nodes:
-    name: prometheus-dockerswarm-nodes-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-nodes.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
     file: ./prometheus/prometheus/rules/dockerswarm-nodes.yml

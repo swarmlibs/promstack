@@ -157,7 +157,6 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-    - source: prometheus-dockerswarm-nodes
     - source: prometheus-dockerswarm-services-endpoints-host
     - source: prometheus-dockerswarm-services-endpoints-ingress
     - source: prometheus-dockerswarm-services
@@ -317,11 +316,6 @@ configs:
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
     file: ./prometheus-config-reloader/docker-entrypoint-shim.sh
-  prometheus-dockerswarm-nodes:
-    name: prometheus-dockerswarm-nodes-v1
-    file: ./prometheus/scrape-configs/dockerswarm-nodes.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
     file: ./prometheus/rules/dockerswarm-nodes.yml

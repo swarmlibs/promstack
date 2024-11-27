@@ -30,7 +30,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
-      - --storage.tsdb.retention.time=30d
+      - --storage.tsdb.retention.time=15d
       - --web.page-title=Promstack Prometheus Agent - Server
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
@@ -52,11 +52,11 @@ services:
     configs:
       - source: prometheus-agent.yml.tmpl
         target: /etc/prometheus/prometheus.yml
-    # volumes:
-    #   - type: bind
-    #     source: /var/run/docker.sock
-    #     target: /var/run/docker.sock
-    #     read_only: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
     #   - type: volume
     #     source: prometheus-agent-data
     #     target: /prometheus
@@ -97,8 +97,7 @@ volumes:
   prometheus-agent-data:
 
 configs:
-  # Prometheus config files
   prometheus-agent.yml.tmpl:
     name: prometheus-agent.yml.tmpl-v1
-    file: ./configs/prometheus.yml.tmpl
+    file: ./prometheus/prometheus.yml.tmpl
     template_driver: golang
