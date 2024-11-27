@@ -91,8 +91,8 @@ remove: stack-remove
 
 stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable public || true
-	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
-	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
+	docker network create --scope=swarm --driver=overlay --attachable --label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) prometheus || true
+	docker network create --scope=swarm --driver=overlay --attachable --label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) prometheus_gwnetwork || true
 stack-deploy:
 	@echo '    ____                            __             __  '
 	@echo '   / __ \_________  ____ ___  _____/ /_____ ______/ /__'
