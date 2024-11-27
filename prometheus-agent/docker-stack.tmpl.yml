@@ -57,9 +57,9 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
-    #   - type: volume
-    #     source: prometheus-agent-data
-    #     target: /prometheus
+      - type: volume
+        source: prometheus-agent-data
+        target: /prometheus
     healthcheck:
       <<: *x-healthcheck
       test: wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
