@@ -22,6 +22,7 @@ scrape_configs:
         role: nodes
 
     relabel_configs:
+
       # ================================================================================
       # Override prometheus internal labels
       # ================================================================================
@@ -47,10 +48,13 @@ scrape_configs:
 
     metric_relabel_configs:
 
-      # Replace the instance label with the node address
+      # Similar to honor_labels, we preserve the job label for federated metrics
+      # Remapping job, federated_job and exported_job labels
       - source_labels:
-        - dockerswarm_node_address
-        - instance
-        target_label: instance
-        regex: (.*);.*:(.*)
-        replacement: $1:$2
+        - job
+        target_label: federated_job
+      - source_labels:
+        - exported_job
+        target_label: job
+      - action: labeldrop
+        regex: ^exported_job$
