@@ -89,6 +89,7 @@ clean:
 	@rm -rf **/docker-stack-config.yml || true
 
 deploy: compile stack-networks stack-deploy
+redeploy: compile stack-networks stack-redeploy
 upgrade: compile stack-upgrade
 remove: stack-remove
 
@@ -105,7 +106,10 @@ stack-deploy:
 	@echo '                                                       '
 	@echo "==> Deploying promstack stack:"
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
+stack-redeploy:
+	@echo "==> Re-eploying promstack stack:"
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image=changed $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
-	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image=always $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-remove:
 	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
