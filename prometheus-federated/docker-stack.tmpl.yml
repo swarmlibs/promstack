@@ -58,7 +58,7 @@ services:
         target: /etc/prometheus/scrape-configs/docker.yml
       - source: prometheus-federated-dockerswarm-services
         target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
-      - source: prometheus-federated-node_exporter
+      - source: prometheus-federated-node-exporter
         target: /etc/prometheus/scrape-configs/node_exporter.yml
       - source: prometheus-federated-prometheus
         target: /etc/prometheus/scrape-configs/prometheus.yml
@@ -124,9 +124,9 @@ configs:
     name: prometheus-federated-cadvisor-v1
     file: ./prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
-  prometheus-federated-node_exporter:
-    name: prometheus-federated-node_exporter-v1
-    file: ./prometheus/scrape-configs/node_exporter.yml
+  prometheus-federated-node-exporter:
+    name: prometheus-federated-node-exporter-v1
+    file: ./prometheus/scrape-configs/node-exporter.yml
     template_driver: golang
   prometheus-federated-prometheus:
     name: prometheus-federated-prometheus-v1

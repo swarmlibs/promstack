@@ -4,11 +4,14 @@
 # https://github.com/prometheus/pushgateway
 #
 scrape_configs:
-  - job_name: 'pushgateway'
+
+  - job_name: promstack/pushgateway
+
+    honor_labels: true
+
     dns_sd_configs:
       - names:
           - tasks.pushgateway.internal
         type: A
         port: 9091
         refresh_interval: "30s"
-    honor_labels: true
