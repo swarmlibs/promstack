@@ -8,8 +8,6 @@ x-healthcheck: &x-healthcheck
 
 x-grafana-deploy: &x-grafana-deploy
   replicas: 1
-  restart_policy:
-    condition: none
   placement:
     max_replicas_per_node: 1
     constraints:
@@ -55,8 +53,8 @@ services:
   # ====================================================
 
   grafana:
-    image: alpine:latest
-    command: echo "Initializing Grafana"
+    image: busybox:latest
+    command: sleep infinity
     deploy: *x-grafana-deploy
 
   grafana-server:

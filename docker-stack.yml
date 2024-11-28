@@ -112,17 +112,15 @@ services:
       read_only: true
   grafana:
     command:
-    - echo
-    - Initializing Grafana
+    - sleep
+    - infinity
     deploy:
       replicas: 1
-      restart_policy:
-        condition: none
       placement:
         constraints:
         - node.role == manager
         max_replicas_per_node: 1
-    image: alpine:latest
+    image: busybox:latest
   grafana-dashboard-provider:
     command:
     - --output-ext=json
