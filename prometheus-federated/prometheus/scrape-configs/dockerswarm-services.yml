@@ -101,25 +101,6 @@ scrape_configs:
       - regex: __meta_dockerswarm_service_label_io_prometheus_label_(.+)
         action: labelmap
 
-      # # If service is replicated, set "job_id" label to "<job>/<service_name>/<task_slot>"
-      # - source_labels:
-      #   - job
-      #   - __meta_dockerswarm_service_mode
-      #   - __meta_dockerswarm_service_name
-      #   - __meta_dockerswarm_task_slot
-      #   target_label: id
-      #   separator: '/'
-      #   regex: (.*\/replicated\/.+\/.+)
-      # # If service is global, set "job_id" label to "<job>/<service_name>/<node_id>"
-      # - source_labels:
-      #   - job
-      #   - __meta_dockerswarm_service_mode
-      #   - __meta_dockerswarm_service_name
-      #   - __meta_dockerswarm_node_id
-      #   target_label: id
-      #   separator: '/'
-      #   regex: (.*\/global\/.+\/.+)
-
       # Override "job" label to Docker Swarm's Service Name combined with "namespace" labels
       # e.g. <com.docker.stack.namespace>/<io.prometheus.job_name>
       - source_labels:
@@ -157,61 +138,58 @@ scrape_configs:
       - action: labeldrop
         regex: __meta_(dockerswarm_service_label_io_prometheus_.+)
 
-      # # ================================================================================
-      # # Label mapping
-      # # ================================================================================
+      # ================================================================================
+      # Label mapping
+      # ================================================================================
 
-      # - action: labelmap
-      #   regex: __meta_dockerswarm_service_label_com_(docker_stack_.+)
-      # - action: labelmap
-      #   regex: __meta_(dockerswarm_node_(id|hostname))
-      # - action: labelmap
-      #   regex: __meta_(dockerswarm_service_.+)
-      # - action: labelmap
-      #   regex: __meta_(dockerswarm_task_(id|name|slot))
+      - action: labelmap
+        regex: __meta_(dockerswarm_service_.+)
+      - action: labelmap
+        regex: __meta_(dockerswarm_task_(?:id|name|slot))
 
-      # # Drop extra labels
-      # - action: labeldrop
-      #   regex: dockerswarm_service_label_com_(docker_stack_.+)
+      - action: labelmap
+        regex: __meta_dockerswarm_service_label_com_(docker_stack_.+)
+      - action: labeldrop
+        regex: dockerswarm_service_label_com_(docker_stack_.+)
 
-      # # ================================================================================
-      # # Docker Swarm compatible relabeling
-      # # - dockerswarm_task_name
-      # # ================================================================================
+      # ================================================================================
+      # Docker Swarm compatible relabeling
+      # - dockerswarm_task_name
+      # ================================================================================
 
-      # # Set "task" label to "<service_name>_<task_slot>"
-      # - source_labels:
-      #   - __meta_dockerswarm_service_name
-      #   - __meta_dockerswarm_task_slot
-      #   target_label: task
-      #   separator: '.'
+      # Set "task" label to "<service_name>_<task_slot>"
+      - source_labels:
+        - __meta_dockerswarm_service_name
+        - __meta_dockerswarm_task_slot
+        target_label: task
+        separator: '.'
 
-      # # Set "dockerswarm_task_name" label to "<service_name>.<task_slot>.<task_id>"
-      # - source_labels:
-      #   - __meta_dockerswarm_service_name
-      #   - __meta_dockerswarm_task_slot
-      #   - __meta_dockerswarm_task_id
-      #   target_label: dockerswarm_task_name
-      #   separator: '.'
+      # Set "dockerswarm_task_name" label to "<service_name>.<task_slot>.<task_id>"
+      - source_labels:
+        - __meta_dockerswarm_service_name
+        - __meta_dockerswarm_task_slot
+        - __meta_dockerswarm_task_id
+        target_label: dockerswarm_task_name
+        separator: '.'
 
-      # # ================================================================================
-      # # Kubernetes compatible relabeling
-      # # - namespace
-      # # - deployment
-      # # - pod
-      # # ================================================================================
+      # ================================================================================
+      # Kubernetes compatible relabeling
+      # - namespace
+      # - deployment
+      # - pod
+      # ================================================================================
 
-      # # Set Kubernetes's Namespace with "com.docker.stack.namespace" label
-      # - source_labels:
-      #   - __meta_dockerswarm_service_label_com_docker_stack_namespace
-      #   target_label: namespace
+      # Set Kubernetes's Namespace with "com.docker.stack.namespace" label
+      - source_labels:
+        - __meta_dockerswarm_service_label_com_docker_stack_namespace
+        target_label: namespace
 
-      # # Set Kubernetes's Deployment with "com.docker.stack.namespace" label
-      # - source_labels:
-      #   - __meta_dockerswarm_service_name
-      #   target_label: deployment
+      # Set Kubernetes's Deployment with "com.docker.stack.namespace" label
+      - source_labels:
+        - __meta_dockerswarm_service_name
+        target_label: deployment
 
-      # # Set Kubernetes's Pod Name with Docker Swarm's Service Name
-      # - source_labels:
-      #   - dockerswarm_task_name
-      #   target_label: pod
+      # Set Kubernetes's Pod Name with Docker Swarm's Service Name
+      - source_labels:
+        - dockerswarm_task_name
+        target_label: pod
