@@ -81,11 +81,11 @@ services:
         target: /var/run/docker.sock
         read_only: true
       - type: volume
-        source: prometheus
-        target: /prometheus
-      - type: volume
         source: prometheus-configs
         target: /prometheus-configs.d
+      - type: volume
+        source: prometheus
+        target: /prometheus
     healthcheck:
       <<: *x-healthcheck
       test: wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1

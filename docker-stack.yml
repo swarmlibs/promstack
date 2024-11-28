@@ -971,11 +971,11 @@ services:
       target: /var/run/docker.sock
       read_only: true
     - type: volume
-      source: prometheus
-      target: /prometheus
-    - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
+    - type: volume
+      source: prometheus
+      target: /prometheus
   pushgateway:
     configs:
     - source: prometheus-pushgateway
