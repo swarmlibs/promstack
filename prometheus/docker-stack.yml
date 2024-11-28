@@ -5,7 +5,7 @@ services:
     - --file=/run/configs/prometheus.yml.tmpl
     - --out=/prometheus-configs.d/prometheus.yml
     configs:
-    - source: prometheus.yml.tmpl
+    - source: prometheus-config-tmpl
       target: /run/configs/prometheus.yml.tmpl
     deploy:
       mode: global
@@ -313,6 +313,9 @@ configs:
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
     file: ./prometheus-config-reloader/docker-entrypoint-shim.sh
+  prometheus-config-tmpl:
+    name: prometheus-config-tmpl-v1
+    file: ./prometheus/prometheus.yml.tmpl
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
     file: ./prometheus/rules/dockerswarm-nodes.yml
@@ -332,9 +335,6 @@ configs:
     name: prometheus-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
     template_driver: golang
-  prometheus.yml.tmpl:
-    name: prometheus.yml.tmpl-v1
-    file: ./prometheus/prometheus.yml.tmpl
 x-default-logging:
   driver: json-file
   options:

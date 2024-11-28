@@ -133,7 +133,7 @@ services:
       - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
       - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     configs:
-      - source: prometheus.yml.tmpl
+      - source: prometheus-config-tmpl
         target: /run/configs/prometheus.yml.tmpl
     volumes:
       - type: volume
@@ -279,8 +279,8 @@ networks:
 
 configs:
   # Prometheus config files
-  prometheus.yml.tmpl:
-    name: prometheus.yml.tmpl-v1
+  prometheus-config-tmpl:
+    name: prometheus-config-tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
   prometheus-prometheus:
     name: prometheus-prometheus-v1

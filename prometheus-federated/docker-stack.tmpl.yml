@@ -50,7 +50,7 @@ services:
       - "host.docker.internal:host-gateway"
     hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
     configs:
-      - source: prometheus-federated.yml.tmpl
+      - source: prometheus-federated-config-tmpl
         target: /etc/prometheus/prometheus.yml
       - source: prometheus-federated-cadvisor
         target: /etc/prometheus/scrape-configs/cadvisor.yml
@@ -105,8 +105,8 @@ volumes:
   prometheus-federated-data:
 
 configs:
-  prometheus-federated.yml.tmpl:
-    name: prometheus-federated.yml.tmpl-v1
+  prometheus-federated-config-tmpl:
+    name: prometheus-federated-config-tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
     template_driver: golang
 

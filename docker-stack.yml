@@ -540,7 +540,7 @@ services:
     - --file=/run/configs/prometheus.yml.tmpl
     - --out=/prometheus-configs.d/prometheus.yml
     configs:
-    - source: prometheus.yml.tmpl
+    - source: prometheus-config-tmpl
       target: /run/configs/prometheus.yml.tmpl
     deploy:
       mode: global
@@ -651,7 +651,7 @@ services:
     - --web.console.templates=/usr/share/prometheus/consoles
     - --log.level=info
     configs:
-    - source: prometheus-federated.yml.tmpl
+    - source: prometheus-federated-config-tmpl
       target: /etc/prometheus/prometheus.yml
     - source: prometheus-federated-cadvisor
       target: /etc/prometheus/scrape-configs/cadvisor.yml
@@ -1043,6 +1043,9 @@ configs:
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
     file: ./prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
+  prometheus-config-tmpl:
+    name: prometheus-config-tmpl-v1
+    file: ./prometheus/prometheus/prometheus.yml.tmpl
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
     file: ./prometheus/prometheus/rules/dockerswarm-nodes.yml
@@ -1062,6 +1065,10 @@ configs:
     name: prometheus-federated-cadvisor-v1
     file: ./prometheus-federated/prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
+  prometheus-federated-config-tmpl:
+    name: prometheus-federated-config-tmpl-v1
+    file: ./prometheus-federated/prometheus/prometheus.yml.tmpl
+    template_driver: golang
   prometheus-federated-docker:
     name: prometheus-federated-docker-v1
     file: ./prometheus-federated/prometheus/scrape-configs/docker.yml
@@ -1072,10 +1079,6 @@ configs:
   prometheus-federated-prometheus:
     name: prometheus-federated-prometheus-v1
     file: ./prometheus-federated/prometheus/scrape-configs/prometheus.yml
-  prometheus-federated.yml.tmpl:
-    name: prometheus-federated.yml.tmpl-v1
-    file: ./prometheus-federated/prometheus/prometheus.yml.tmpl
-    template_driver: golang
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/prometheus/scrape-configs/prometheus.yml
@@ -1085,9 +1088,6 @@ configs:
     file: ./pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus.yml.tmpl:
-    name: prometheus.yml.tmpl-v1
-    file: ./prometheus/prometheus/prometheus.yml.tmpl
 x-default-logging:
   driver: json-file
   options:

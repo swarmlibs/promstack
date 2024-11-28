@@ -9,7 +9,7 @@ services:
     - --web.console.templates=/usr/share/prometheus/consoles
     - --log.level=info
     configs:
-    - source: prometheus-federated.yml.tmpl
+    - source: prometheus-federated-config-tmpl
       target: /etc/prometheus/prometheus.yml
     - source: prometheus-federated-cadvisor
       target: /etc/prometheus/scrape-configs/cadvisor.yml
@@ -92,6 +92,10 @@ configs:
     name: prometheus-federated-cadvisor-v1
     file: ./prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
+  prometheus-federated-config-tmpl:
+    name: prometheus-federated-config-tmpl-v1
+    file: ./prometheus/prometheus.yml.tmpl
+    template_driver: golang
   prometheus-federated-docker:
     name: prometheus-federated-docker-v1
     file: ./prometheus/scrape-configs/docker.yml
@@ -102,10 +106,6 @@ configs:
   prometheus-federated-prometheus:
     name: prometheus-federated-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
-  prometheus-federated.yml.tmpl:
-    name: prometheus-federated.yml.tmpl-v1
-    file: ./prometheus/prometheus.yml.tmpl
-    template_driver: golang
 x-default-logging:
   driver: json-file
   options:
