@@ -22,9 +22,6 @@ scrape_configs:
     dockerswarm_sd_configs:
       - host: unix:///var/run/docker.sock
         role: nodes
-        filters:
-          - name: membership
-            values: [ 'accepted' ]
 
     relabel_configs:
 
