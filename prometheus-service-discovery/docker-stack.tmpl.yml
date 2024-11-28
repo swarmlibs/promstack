@@ -9,15 +9,14 @@ x-default-logging: &x-default-logging
 
 services:
 
-  manager-api-proxy:
+  prometheus-service-discovery:
     image: caddy:2.8-alpine
-    user: 0:0
     command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
-    hostname: manager-api-proxy.docker.internal
+    hostname: prometheus-service-discovery.internal
     networks:
       prometheus_gwnetwork:
     configs:
-      - source: manager-api-proxy-config
+      - source: prometheus-service-discovery-config
         target: /etc/caddy/Caddyfile
     volumes:
       - type: bind
@@ -34,7 +33,7 @@ services:
         limits:
           memory: 128M
       labels:
-        io.prometheus.role: "manager-api-proxy"
+        io.prometheus.role: "prometheus-service-discovery"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
       restart_policy:
@@ -56,8 +55,8 @@ services:
         max_failure_ratio: 0.2
 
 configs:
-  manager-api-proxy-config:
-    name: manager-api-proxy-config-v1
+  prometheus-service-discovery-config:
+    name: prometheus-service-discovery-config-v1
     file: ./configs/Caddyfile
 
 networks:

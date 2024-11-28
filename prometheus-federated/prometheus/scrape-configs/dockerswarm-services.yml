@@ -18,7 +18,7 @@ scrape_configs:
 
     dockerswarm_sd_configs:
       # - host: unix:///var/run/docker.sock
-      - host: http://manager-api-proxy.docker.internal:2379
+      - host: http://tasks.prometheus-service-discovery.internal:2379
         refresh_interval: 10s
         role: tasks
         filters:

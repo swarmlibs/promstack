@@ -1,19 +1,19 @@
 services:
-  manager-api-proxy:
+  prometheus-service-discovery:
     command:
     - caddy
     - run
     - --config
     - /etc/caddy/Caddyfile
     configs:
-    - source: manager-api-proxy-config
+    - source: prometheus-service-discovery-config
       target: /etc/caddy/Caddyfile
     deploy:
       mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.role: manager-api-proxy
+        io.prometheus.role: prometheus-service-discovery
       update_config:
         parallelism: 1
         delay: 30s
@@ -37,7 +37,7 @@ services:
       placement:
         constraints:
         - node.role == manager
-    hostname: manager-api-proxy.docker.internal
+    hostname: prometheus-service-discovery.internal
     image: caddy:2.8-alpine
     logging:
       driver: json-file
@@ -46,7 +46,6 @@ services:
         max-size: 12m
     networks:
       prometheus_gwnetwork: null
-    user: "0:0"
     volumes:
     - type: bind
       source: /var/run/docker.sock
@@ -57,8 +56,8 @@ networks:
     name: prometheus_gwnetwork
     external: true
 configs:
-  manager-api-proxy-config:
-    name: manager-api-proxy-config-v1
+  prometheus-service-discovery-config:
+    name: prometheus-service-discovery-config-v1
     file: ./configs/Caddyfile
 x-default-logging:
   driver: json-file
