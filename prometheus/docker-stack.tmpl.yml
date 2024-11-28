@@ -167,6 +167,10 @@ services:
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
+      # - source: prometheus-dockerswarm-nodes
+      # - source: prometheus-dockerswarm-services-endpoints-host
+      # - source: prometheus-dockerswarm-services-endpoints-ingress
+      - source: prometheus-dockerswarm-services
       - source: prometheus-federated
     volumes:
       - type: volume
@@ -309,5 +313,10 @@ configs:
   prometheus-federated:
     name: prometheus-federated-v1
     file: ./prometheus/scrape-configs/prometheus-federated.yml
+    labels:
+      io.prometheus.scrape_config: "true"
+  prometheus-dockerswarm-services:
+    name: prometheus-dockerswarm-services-v1
+    file: ./prometheus/scrape-configs/dockerswarm-services.yml
     labels:
       io.prometheus.scrape_config: "true"

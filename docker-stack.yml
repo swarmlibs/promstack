@@ -787,6 +787,7 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
+    - source: prometheus-dockerswarm-services
     - source: prometheus-federated
     deploy:
       mode: global
@@ -1064,6 +1065,11 @@ configs:
     file: ./prometheus/prometheus/rules/dockerswarm-nodes.yml
     labels:
       io.prometheus.rule: "true"
+  prometheus-dockerswarm-services:
+    name: prometheus-dockerswarm-services-v1
+    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-rule:
     name: prometheus-dockerswarm-services-rule-v1
     file: ./prometheus/prometheus/rules/dockerswarm-tasks.yml
