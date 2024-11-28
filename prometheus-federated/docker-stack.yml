@@ -69,6 +69,7 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
+      prometheus: null
       prometheus_gwnetwork: null
     ports:
     - mode: host
@@ -84,6 +85,9 @@ services:
       source: prometheus-federated-data
       target: /prometheus
 networks:
+  prometheus:
+    name: prometheus
+    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true

@@ -45,6 +45,7 @@ services:
         target: 9090
         mode: host
     networks:
+      prometheus:
       prometheus_gwnetwork:
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -99,6 +100,9 @@ services:
         max_failure_ratio: 0.2
 
 networks:
+  prometheus:
+    name: prometheus
+    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
