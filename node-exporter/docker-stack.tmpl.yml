@@ -42,7 +42,6 @@ services:
     configs:
       - source: node-exporter-node-meta
         target: /etc/node-exporter/node_meta.prom
-      # - source: prometheus-node-exporter
     volumes:
       - type: bind
         source: /
@@ -82,13 +81,6 @@ configs:
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
     file: ./node_meta.prom
-
-  # Prometheus node exporter scrape config
-  # prometheus-node-exporter:
-  #   name: prometheus-node-exporter-v1
-  #   file: ./prometheus/node_exporter.yml
-  #   labels:
-  #     io.prometheus.scrape_config: "true"
 
 networks:
   prometheus_gwnetwork:

@@ -123,11 +123,9 @@ configs:
   prometheus-federated-cadvisor:
     name: prometheus-federated-cadvisor-v1
     file: ./prometheus/scrape-configs/cadvisor.yml
-    template_driver: golang
   prometheus-federated-node_exporter:
     name: prometheus-federated-node_exporter-v1
     file: ./prometheus/scrape-configs/node_exporter.yml
-    template_driver: golang
   prometheus-federated-prometheus:
     name: prometheus-federated-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
