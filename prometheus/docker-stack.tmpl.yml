@@ -140,6 +140,7 @@ services:
         source: prometheus-configs
         target: /prometheus-configs.d
     logging: *x-default-logging
+    stop_grace_period: 5s
     deploy:
       <<: *x-prometheus-helpers-deploy
       resources: *x-prometheus-helpers-resources-constraints

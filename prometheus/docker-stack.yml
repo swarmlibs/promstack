@@ -43,6 +43,7 @@ services:
       options:
         max-file: "5"
         max-size: 12m
+    stop_grace_period: 5s
     volumes:
     - type: volume
       source: prometheus-configs
