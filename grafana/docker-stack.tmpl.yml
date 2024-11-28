@@ -6,15 +6,10 @@ x-healthcheck: &x-healthcheck
   retries: 3
   start_period: 30s
 
-x-deploy: &x-deploy
+x-grafana-init-deploy: &x-grafana-init-deploy
   replicas: 1
-  placement:
-    max_replicas_per_node: 1
-    constraints:
-      - node.role == manager
-
-x-grafana-reloader-deploy: &x-grafana-reloader-deploy
-  replicas: 1
+  restart_policy:
+    condition: none
   placement:
     max_replicas_per_node: 1
     constraints:
@@ -24,16 +19,24 @@ x-grafana-provider-deploy: &x-grafana-provider-deploy
   mode: global
   placement:
     constraints:
-      - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+      - node.labels.services.promstack_grafana_init == true
 
 x-grafana-deploy: &x-grafana-deploy
   mode: global
   placement:
     constraints:
-      - node.labels.services.promstack_grafana_dashboard_provider == true
+      # - node.labels.services.grafana_provisioning_config_reloader == true
+      # - node.labels.services.promstack_grafana_dashboard_provider == true
       - node.labels.services.promstack_grafana_provisioning_alerting_provider == true
       - node.labels.services.promstack_grafana_provisioning_dashboard_provider == true
       - node.labels.services.promstack_grafana_provisioning_datasource_provider == true
+
+x-grafana-reloader-deploy: &x-grafana-reloader-deploy
+  replicas: 1
+  placement:
+    max_replicas_per_node: 1
+    constraints:
+      - node.labels.services.promstack_grafana == true
 
 x-grafana-provider-resources-constraints: &x-grafana-provider-resources-constraints
   limits:
@@ -51,6 +54,11 @@ services:
   # Grafana Dashboard
   # https://github.com/grafana/grafana
   # ====================================================
+
+  grafana-init:
+    image: alpine:latest
+    command: echo "Initializing Grafana"
+    deploy: *x-grafana-init-deploy
 
   grafana:
     image: ${PROMSTACK_GRAFANA_VERSION}

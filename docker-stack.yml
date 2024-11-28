@@ -142,7 +142,6 @@ services:
         window: 15s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana_dashboard_provider == true
         - node.labels.services.promstack_grafana_provisioning_alerting_provider ==
           true
         - node.labels.services.promstack_grafana_provisioning_dashboard_provider ==
@@ -254,7 +253,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+        - node.labels.services.promstack_grafana_init == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -269,6 +268,19 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+  grafana-init:
+    command:
+    - echo
+    - Initializing Grafana
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+      placement:
+        constraints:
+        - node.role == manager
+        max_replicas_per_node: 1
+    image: alpine:latest
   grafana-provisioning-alerting-provider:
     command:
     - --output-dir=/grafana-provisioning-alerting.d
@@ -304,7 +316,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+        - node.labels.services.promstack_grafana_init == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -350,7 +362,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.role == manager
+        - node.labels.services.promstack_grafana == true
         max_replicas_per_node: 1
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
@@ -414,7 +426,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+        - node.labels.services.promstack_grafana_init == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
@@ -458,7 +470,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana_provisioning_config_reloader == true
+        - node.labels.services.promstack_grafana_init == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
     logging:
       driver: json-file
