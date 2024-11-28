@@ -15,7 +15,7 @@
 # - io.prometheus.dockerswarm-tasks.should_be_scraped=<true|false>
 scrape_configs:
 
-  - job_name: promstack/dockerswarm-services
+  - job_name: dockerswarm-services
 
     dockerswarm_sd_configs:
       - host: http://prometheus-service-discovery.internal:9093
