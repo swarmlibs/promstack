@@ -164,10 +164,6 @@ services:
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-      # - source: prometheus-dockerswarm-nodes
-      # - source: prometheus-dockerswarm-services-endpoints-host
-      # - source: prometheus-dockerswarm-services-endpoints-ingress
-      # - source: prometheus-dockerswarm-services
       - source: prometheus-federated
       - source: prometheus-prometheus
     volumes:
