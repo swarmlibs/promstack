@@ -75,9 +75,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     hostname: replica-{{.Node.ID}}.prometheus.internal
-    configs:
-      - source: prometheus-prometheus
-        target: /etc/prometheus/scrape-configs/prometheus.yml
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -170,8 +167,9 @@ services:
       # - source: prometheus-dockerswarm-nodes
       # - source: prometheus-dockerswarm-services-endpoints-host
       # - source: prometheus-dockerswarm-services-endpoints-ingress
-      - source: prometheus-dockerswarm-services
+      # - source: prometheus-dockerswarm-services
       - source: prometheus-federated
+      - source: prometheus-prometheus
     volumes:
       - type: volume
         source: prometheus-configs
@@ -287,10 +285,6 @@ configs:
   prometheus-config-tmpl:
     name: prometheus-config-tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
-  prometheus-prometheus:
-    name: prometheus-prometheus-v1
-    file: ./prometheus/scrape-configs/prometheus.yml
-    template_driver: golang
 
   # prometheus-config-reloader
   prometheus-config-reloader-entrypoint:
@@ -315,8 +309,8 @@ configs:
     file: ./prometheus/scrape-configs/prometheus-federated.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-dockerswarm-services:
-    name: prometheus-dockerswarm-services-v1
-    file: ./prometheus/scrape-configs/dockerswarm-services.yml
+  prometheus-prometheus:
+    name: prometheus-prometheus-v1
+    file: ./prometheus/scrape-configs/prometheus.yml
     labels:
       io.prometheus.scrape_config: "true"

@@ -158,8 +158,8 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-    - source: prometheus-dockerswarm-services
     - source: prometheus-federated
+    - source: prometheus-prometheus
     deploy:
       mode: global
       labels:
@@ -212,9 +212,6 @@ services:
     - --web.enable-lifecycle
     - --web.enable-remote-write-receiver
     - --log.level=info
-    configs:
-    - source: prometheus-prometheus
-      target: /etc/prometheus/scrape-configs/prometheus.yml
     depends_on:
     - prometheus
     deploy:
@@ -323,11 +320,6 @@ configs:
     file: ./prometheus/rules/dockerswarm-nodes.yml
     labels:
       io.prometheus.rule: "true"
-  prometheus-dockerswarm-services:
-    name: prometheus-dockerswarm-services-v1
-    file: ./prometheus/scrape-configs/dockerswarm-services.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-rule:
     name: prometheus-dockerswarm-services-rule-v1
     file: ./prometheus/rules/dockerswarm-tasks.yml
@@ -341,7 +333,8 @@ configs:
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
-    template_driver: golang
+    labels:
+      io.prometheus.scrape_config: "true"
 x-default-logging:
   driver: json-file
   options:

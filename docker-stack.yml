@@ -723,6 +723,8 @@ services:
       target: /etc/prometheus/scrape-configs/cadvisor.yml
     - source: prometheus-federated-docker
       target: /etc/prometheus/scrape-configs/docker.yml
+    - source: prometheus-federated-dockerswarm-services
+      target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
     - source: prometheus-federated-node_exporter
       target: /etc/prometheus/scrape-configs/node_exporter.yml
     - source: prometheus-federated-prometheus
@@ -840,8 +842,8 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-    - source: prometheus-dockerswarm-services
     - source: prometheus-federated
+    - source: prometheus-prometheus
     deploy:
       mode: global
       labels:
@@ -894,9 +896,6 @@ services:
     - --web.enable-lifecycle
     - --web.enable-remote-write-receiver
     - --log.level=info
-    configs:
-    - source: prometheus-prometheus
-      target: /etc/prometheus/scrape-configs/prometheus.yml
     depends_on:
     - prometheus
     deploy:
@@ -1121,11 +1120,6 @@ configs:
     file: ./prometheus/prometheus/rules/dockerswarm-nodes.yml
     labels:
       io.prometheus.rule: "true"
-  prometheus-dockerswarm-services:
-    name: prometheus-dockerswarm-services-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-rule:
     name: prometheus-dockerswarm-services-rule-v1
     file: ./prometheus/prometheus/rules/dockerswarm-tasks.yml
@@ -1147,6 +1141,10 @@ configs:
   prometheus-federated-docker:
     name: prometheus-federated-docker-v1
     file: ./prometheus-federated/prometheus/scrape-configs/docker.yml
+  prometheus-federated-dockerswarm-services:
+    name: prometheus-federated-dockerswarm-services-v1-2
+    file: ./prometheus-federated/prometheus/scrape-configs/dockerswarm-services.yml
+    template_driver: golang
   prometheus-federated-node_exporter:
     name: prometheus-federated-node_exporter-v1
     file: ./prometheus-federated/prometheus/scrape-configs/node_exporter.yml
@@ -1157,7 +1155,8 @@ configs:
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/prometheus/scrape-configs/prometheus.yml
-    template_driver: golang
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./pushgateway/prometheus/pushgateway.yml
