@@ -9,22 +9,22 @@ services:
     - --web.console.templates=/usr/share/prometheus/consoles
     - --log.level=info
     configs:
-    - source: prometheus-agent.yml.tmpl
+    - source: prometheus-federated.yml.tmpl
       target: /etc/prometheus/prometheus.yml
-    - source: prometheus-agent-cadvisor
+    - source: prometheus-federated-cadvisor
       target: /etc/prometheus/scrape-configs/cadvisor.yml
-    - source: prometheus-agent-docker
+    - source: prometheus-federated-docker
       target: /etc/prometheus/scrape-configs/docker.yml
-    - source: prometheus-agent-node_exporter
+    - source: prometheus-federated-node_exporter
       target: /etc/prometheus/scrape-configs/node_exporter.yml
-    - source: prometheus-agent-prometheus
+    - source: prometheus-federated-prometheus
       target: /etc/prometheus/scrape-configs/prometheus.yml
     deploy:
       mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.role: prometheus-agent
+        io.prometheus.role: prometheus-federated
       update_config:
         parallelism: 1
         delay: 30s
@@ -79,31 +79,31 @@ services:
       target: /var/run/docker.sock
       read_only: true
     - type: volume
-      source: prometheus-agent-data
+      source: prometheus-federated-data
       target: /prometheus
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
 volumes:
-  prometheus-agent-data: {}
+  prometheus-federated-data: {}
 configs:
-  prometheus-agent-cadvisor:
-    name: prometheus-agent-cadvisor-v1
+  prometheus-federated-cadvisor:
+    name: prometheus-federated-cadvisor-v1
     file: ./prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
-  prometheus-agent-docker:
-    name: prometheus-agent-docker-v1
+  prometheus-federated-docker:
+    name: prometheus-federated-docker-v1
     file: ./prometheus/scrape-configs/docker.yml
-  prometheus-agent-node_exporter:
-    name: prometheus-agent-node_exporter-v1
+  prometheus-federated-node_exporter:
+    name: prometheus-federated-node_exporter-v1
     file: ./prometheus/scrape-configs/node_exporter.yml
     template_driver: golang
-  prometheus-agent-prometheus:
-    name: prometheus-agent-prometheus-v1
+  prometheus-federated-prometheus:
+    name: prometheus-federated-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
-  prometheus-agent.yml.tmpl:
-    name: prometheus-agent.yml.tmpl-v1
+  prometheus-federated.yml.tmpl:
+    name: prometheus-federated.yml.tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
     template_driver: golang
 x-default-logging:
