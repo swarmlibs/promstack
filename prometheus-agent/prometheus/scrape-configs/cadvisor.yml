@@ -7,9 +7,36 @@ scrape_configs:
 
   - job_name: promstack/cadvisor
 
-    static_configs:
-      - targets:
-          - 'replica-{{.Task.Slot}}.cadvisor.internal:8080'
+    dockerswarm_sd_configs:
+      - host: http://prometheus-service-discovery.internal:9093
+        role: nodes
+        filters:
+          - name: id
+            values: [ '{{.Node.ID}}' ]
+
+    relabel_configs:
+      # ================================================================================
+      # Override prometheus internal labels
+      # ================================================================================
+      - source_labels:
+        - __meta_dockerswarm_node_id
+        target_label: __address__
+        replacement: replica-$1.cadvisor.internal:8080
+
+      - source_labels:
+        - __meta_dockerswarm_node_address
+        target_label: instance
+        replacement: $1:8080
+
+      # ================================================================================
+      # Label mapping
+      # ================================================================================
+      - action: labelmap
+        regex: __meta_(dockerswarm_node_.+)
+      - action: labeldrop
+        regex: dockerswarm_node_(label_.+)
+      - action: labelmap
+        regex: __meta_dockerswarm_(node_(?:id|hostname))
 
     metric_relabel_configs:
       # ================================================================================

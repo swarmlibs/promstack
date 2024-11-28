@@ -1,47 +1,34 @@
 # yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
 #
 # Scrape config for Docker Swarm Nodes
+# https://docs.docker.com/config/daemon/prometheus/
 # 
 # The Docker Engine metrics are required to be configured in the daemon.json file for Prometheus to scrape them.
 # This configuration also includes a job to scrape the Node Exporter metrics that run on each node.
 scrape_configs:
-
-  - job_name: promstack/prometheus-federated
-
-    honor_labels: true
-    metrics_path: /federate
-
-    params:
-      'match[]':
-        - '{job=~".*"}'
+  - job_name: promstack/node-exporter
 
     dockerswarm_sd_configs:
-      - host: unix:///var/run/docker.sock
+      - host: http://prometheus-service-discovery.internal:9093
         role: nodes
+        filters:
+          - name: id
+            values: [ '{{.Node.ID}}' ]
 
     relabel_configs:
-
       # ================================================================================
       # Override prometheus internal labels
       # ================================================================================
       - source_labels:
         - __meta_dockerswarm_node_id
         target_label: __address__
-        replacement: replica-$1.federated.prometheus.internal:9090
+        replacement: replica-$1.node-exporter.internal:9100
 
+      # Set hostname as instance label
       - source_labels:
         - __meta_dockerswarm_node_address
         target_label: instance
-        replacement: $1:19090
-
-
-      # Add the federated_job and federated_instance labels to the metrics
-      - source_labels:
-        - job
-        target_label: federated_job
-      - source_labels:
-        - instance
-        target_label: federated_instance
+        replacement: $1:9100
 
       # ================================================================================
       # Label mapping
@@ -53,11 +40,8 @@ scrape_configs:
       - action: labelmap
         regex: __meta_dockerswarm_(node_(?:id|hostname))
 
-    metric_relabel_configs:
-
+      # Set node_name label to node hostname
+      # This is useful for providing compatibility with the swarmprom dashboards
       - source_labels:
-          - instance
-        target_label: exported_instance
-      - source_labels:
-          - federated_instance
-        target_label: instance
+          - __meta_dockerswarm_node_hostname
+        target_label: node_name

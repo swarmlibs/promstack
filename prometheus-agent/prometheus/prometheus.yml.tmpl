@@ -11,6 +11,11 @@ global:
   evaluation_interval: '1m'
   # keep_dropped_targets: 50
 
+# Remote write configuration
+remote_write:
+  # Push metrics to the Promstack Prometheus server.
+  - url: http://prometheus.svc.cluster.local:9090/api/v1/write
+
 # ====================================================
 # Scrape configuration
 # ====================================================

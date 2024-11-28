@@ -25,13 +25,13 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
-  prometheus-federated:
+  prometheus-agent:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
+      - --agent
       - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --storage.tsdb.retention.time=15d
-      - --web.page-title=Prometheus Server Federated - Promstack
+      - --storage.agent.path=/prometheus
+      - --web.page-title=Prometheus Agent - Promstack
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
       - --log.level=info
@@ -51,17 +51,17 @@ services:
       - "host.docker.internal:host-gateway"
     hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
     configs:
-      - source: prometheus-federated-config-tmpl
+      - source: prometheus-agent-config-tmpl
         target: /etc/prometheus/prometheus.yml
-      - source: prometheus-federated-cadvisor
+      - source: prometheus-agent-cadvisor
         target: /etc/prometheus/scrape-configs/cadvisor.yml
-      - source: prometheus-federated-docker
+      - source: prometheus-agent-docker
         target: /etc/prometheus/scrape-configs/docker.yml
-      - source: prometheus-federated-dockerswarm-services
+      - source: prometheus-agent-dockerswarm-services
         target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
-      - source: prometheus-federated-node-exporter
+      - source: prometheus-agent-node-exporter
         target: /etc/prometheus/scrape-configs/node_exporter.yml
-      - source: prometheus-federated-prometheus
+      - source: prometheus-agent-prometheus
         target: /etc/prometheus/scrape-configs/prometheus.yml
     volumes:
       - type: bind
@@ -69,7 +69,7 @@ services:
         target: /var/run/docker.sock
         read_only: true
       - type: volume
-        source: prometheus-federated-data
+        source: prometheus-agent-data
         target: /prometheus
     healthcheck:
       <<: *x-healthcheck
@@ -78,7 +78,7 @@ services:
     deploy:
       <<: *x-deploy
       labels:
-        io.prometheus.role: "prometheus-federated"
+        io.prometheus.role: "prometheus-agent"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
       restart_policy:
@@ -108,30 +108,32 @@ networks:
     external: true
 
 volumes:
-  prometheus-federated-data:
+  prometheus-agent-data:
 
 configs:
-  prometheus-federated-config-tmpl:
-    name: prometheus-federated-config-tmpl-v1
+  prometheus-agent-config-tmpl:
+    name: prometheus-agent-config-tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
     template_driver: golang
 
   # Prometheus's scrape config files
-  prometheus-federated-docker:
-    name: prometheus-federated-docker-v1
+  prometheus-agent-docker:
+    name: prometheus-agent-docker-v1
     file: ./prometheus/scrape-configs/docker.yml
-  prometheus-federated-dockerswarm-services:
-    name: prometheus-federated-dockerswarm-services-v1
+    template_driver: golang
+  prometheus-agent-dockerswarm-services:
+    name: prometheus-agent-dockerswarm-services-v1
     file: ./prometheus/scrape-configs/dockerswarm-services.yml
     template_driver: golang
-  prometheus-federated-cadvisor:
-    name: prometheus-federated-cadvisor-v1
+  prometheus-agent-cadvisor:
+    name: prometheus-agent-cadvisor-v1
     file: ./prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
-  prometheus-federated-node-exporter:
-    name: prometheus-federated-node-exporter-v1
+  prometheus-agent-node-exporter:
+    name: prometheus-agent-node-exporter-v1
     file: ./prometheus/scrape-configs/node-exporter.yml
     template_driver: golang
-  prometheus-federated-prometheus:
-    name: prometheus-federated-prometheus-v1
+  prometheus-agent-prometheus:
+    name: prometheus-agent-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
+    template_driver: golang

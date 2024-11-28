@@ -164,7 +164,6 @@ services:
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
     configs:
-      - source: prometheus-federated
       - source: prometheus-prometheus
     volumes:
       - type: volume
@@ -300,11 +299,6 @@ configs:
       io.prometheus.rule: "true"
 
   # Prometheus's scrape config files
-  prometheus-federated:
-    name: prometheus-federated-v1
-    file: ./prometheus/scrape-configs/prometheus-federated.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-prometheus:
     name: prometheus-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
