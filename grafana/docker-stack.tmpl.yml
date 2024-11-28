@@ -32,9 +32,8 @@ x-grafana-server-deploy: &x-grafana-server-deploy
       - node.labels.services.promstack_grafana_provisioning_datasource_provider == true
 
 x-grafana-reloader-deploy: &x-grafana-reloader-deploy
-  replicas: 1
+  mode: global
   placement:
-    max_replicas_per_node: 1
     constraints:
       - node.labels.services.promstack_grafana_server == true
 

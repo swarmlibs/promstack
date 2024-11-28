@@ -231,7 +231,7 @@ services:
     - grafana-provisioning-dashboard-provider
     - grafana-provisioning-datasource-provider
     deploy:
-      replicas: 1
+      mode: global
       update_config:
         parallelism: 1
         delay: 15s
@@ -256,7 +256,6 @@ services:
       placement:
         constraints:
         - node.labels.services.promstack_grafana_server == true
-        max_replicas_per_node: 1
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
