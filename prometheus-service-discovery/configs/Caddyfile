@@ -1,9 +1,0 @@
-{
-	debug
-}
-
-http://prometheus-service-discovery.internal:2379 {
-	reverse_proxy unix///var/run/docker.sock {
-		flush_interval -1
-	}
-}

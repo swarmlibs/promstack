@@ -922,14 +922,6 @@ services:
       source: prometheus
       target: /prometheus
   prometheus-service-discovery:
-    command:
-    - caddy
-    - run
-    - --config
-    - /etc/caddy/Caddyfile
-    configs:
-    - source: prometheus-service-discovery-config
-      target: /etc/caddy/Caddyfile
     deploy:
       mode: global
       labels:
@@ -960,7 +952,7 @@ services:
         constraints:
         - node.role == manager
     hostname: prometheus-service-discovery.internal
-    image: caddy:2.8-alpine
+    image: swarmlibs/prometheus-service-discovery:0.1.0-rc.1
     logging:
       driver: json-file
       options:
@@ -1156,9 +1148,6 @@ configs:
     file: ./pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-service-discovery-config:
-    name: prometheus-service-discovery-config-v1
-    file: ./prometheus-service-discovery/configs/Caddyfile
 x-default-logging:
   driver: json-file
   options:

@@ -10,14 +10,10 @@ x-default-logging: &x-default-logging
 services:
 
   prometheus-service-discovery:
-    image: caddy:2.8-alpine
-    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
+    image: swarmlibs/prometheus-service-discovery:0.1.0-rc.1
     hostname: prometheus-service-discovery.internal
     networks:
       prometheus_gwnetwork:
-    configs:
-      - source: prometheus-service-discovery-config
-        target: /etc/caddy/Caddyfile
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -53,11 +49,6 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.2
-
-configs:
-  prometheus-service-discovery-config:
-    name: prometheus-service-discovery-config-v1
-    file: ./configs/Caddyfile
 
 networks:
   prometheus_gwnetwork:
