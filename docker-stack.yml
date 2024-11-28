@@ -485,6 +485,59 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+  manager-api-proxy:
+    command:
+    - caddy
+    - run
+    - --config
+    - /etc/caddy/Caddyfile
+    configs:
+    - source: manager-api-proxy-config
+      target: /etc/caddy/Caddyfile
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: manager-api-proxy
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      resources:
+        limits:
+          memory: "134217728"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+      placement:
+        constraints:
+        - node.role == manager
+    hostname: manager-api-proxy.docker.internal
+    image: caddy:2.8-alpine
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_gwnetwork: null
+    user: "0:0"
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
   node-exporter:
     command:
     - --path.rootfs=/rootfs
@@ -1046,6 +1099,9 @@ configs:
   gf-server-entrypoint:
     name: gf-server-entrypoint-v1
     file: ./grafana/grafana/docker-entrypoint-shim.sh
+  manager-api-proxy-config:
+    name: manager-api-proxy-config-v1
+    file: ./manager-api-proxy/configs/Caddyfile
   node-exporter-node-meta:
     name: node-exporter-node-meta-v1
     file: ./node-exporter/node_meta.prom

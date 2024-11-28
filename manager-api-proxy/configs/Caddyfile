@@ -1,0 +1,9 @@
+{
+	debug
+}
+
+http://manager-api-proxy.docker.internal:2379 {
+	reverse_proxy unix///var/run/docker.sock {
+		flush_interval -1
+	}
+}

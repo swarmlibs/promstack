@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+services:
+
+  manager-api-proxy:
+    image: caddy:2.8-alpine
+    user: 0:0
+    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
+    hostname: manager-api-proxy.docker.internal
+    networks:
+      prometheus_gwnetwork:
+    configs:
+      - source: manager-api-proxy-config
+        target: /etc/caddy/Caddyfile
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    logging: *x-default-logging
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+      labels:
+        io.prometheus.role: "manager-api-proxy"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+      restart_policy:
+        condition: any
+        max_attempts: 15
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+
+configs:
+  manager-api-proxy-config:
+    name: manager-api-proxy-config-v1
+    file: ./configs/Caddyfile
+
+networks:
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
