@@ -6,7 +6,7 @@ x-healthcheck: &x-healthcheck
   retries: 3
   start_period: 30s
 
-x-grafana-init-deploy: &x-grafana-init-deploy
+x-grafana-deploy: &x-grafana-deploy
   replicas: 1
   restart_policy:
     condition: none
@@ -19,9 +19,9 @@ x-grafana-provider-deploy: &x-grafana-provider-deploy
   mode: global
   placement:
     constraints:
-      - node.labels.services.promstack_grafana_init == true
+      - node.labels.services.promstack_grafana == true
 
-x-grafana-deploy: &x-grafana-deploy
+x-grafana-server-deploy: &x-grafana-server-deploy
   mode: global
   placement:
     constraints:
@@ -36,7 +36,7 @@ x-grafana-reloader-deploy: &x-grafana-reloader-deploy
   placement:
     max_replicas_per_node: 1
     constraints:
-      - node.labels.services.promstack_grafana == true
+      - node.labels.services.promstack_grafana_server == true
 
 x-grafana-provider-resources-constraints: &x-grafana-provider-resources-constraints
   limits:
@@ -55,12 +55,12 @@ services:
   # https://github.com/grafana/grafana
   # ====================================================
 
-  grafana-init:
+  grafana:
     image: alpine:latest
     command: echo "Initializing Grafana"
-    deploy: *x-grafana-init-deploy
+    deploy: *x-grafana-deploy
 
-  grafana:
+  grafana-server:
     image: ${PROMSTACK_GRAFANA_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
@@ -134,7 +134,7 @@ services:
     logging: *x-default-logging
     deploy:
       # <<: *x-deploy
-      <<: *x-grafana-deploy
+      <<: *x-grafana-server-deploy
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "grafana"
