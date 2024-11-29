@@ -10,7 +10,7 @@ x-default-logging: &x-default-logging
 services:
 
   prometheus-service-discovery:
-    image: swarmlibs/prometheus-service-discovery:0.1.0-rc.1
+    image: ${PROMSTACK_PROMETHEUS_SERVICE_DISCOVERY_VERSION}
     hostname: prometheus-service-discovery.internal
     networks:
       prometheus_gwnetwork:

@@ -30,7 +30,7 @@ services:
         constraints:
         - node.role == manager
     hostname: prometheus-service-discovery.internal
-    image: swarmlibs/prometheus-service-discovery:0.1.0-rc.1
+    image: docker.io/swarmlibs/prometheus-service-discovery:0.1.0-rc.1
     logging:
       driver: json-file
       options:
