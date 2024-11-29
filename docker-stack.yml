@@ -656,7 +656,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.0
+    image: docker.io/prom/prometheus:v3.0.1
     logging:
       driver: json-file
       options:
@@ -881,7 +881,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.0
+    image: docker.io/prom/prometheus:v3.0.1
     logging:
       driver: json-file
       options:
