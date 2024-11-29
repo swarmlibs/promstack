@@ -142,14 +142,17 @@ scrape_configs:
       # ================================================================================
 
       - action: labelmap
-        regex: __meta_(dockerswarm_service_.+)
-      - action: labelmap
         regex: __meta_(dockerswarm_task_(?:id|name|slot))
 
+      - action: labelmap
+        regex: __meta_(dockerswarm_service_.+)
       - action: labelmap
         regex: __meta_dockerswarm_service_label_com_(docker_stack_.+)
       - action: labeldrop
         regex: dockerswarm_service_label_com_(docker_stack_.+)
+
+      - action: labelmap
+        regex: __meta_(dockerswarm_node_(?:id|hostname))
 
       # ================================================================================
       # Docker Swarm compatible relabeling
