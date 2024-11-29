@@ -53,7 +53,7 @@ The Prometheus server is the core component of the monitoring stack. It is respo
 
 ### Prometheus Agent
 
-By design, the Prometheus agent is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks.
+By design, the Prometheus agent is deploy globally to all noded and configured to automatically discover services, tasks and scrape the metrics from those deployed within the node.
 
 You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
 
