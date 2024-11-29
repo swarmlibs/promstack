@@ -354,14 +354,20 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 
 The following services and ports are exposed by the stack:
 
-| Service           | Port    | Mode   | Cluster DNS                           |
-| ----------------- | ------- | ------ | ------------------------------------- |
-| Grafana           | `3000`  |        | `grafana.svc.cluster.local`           |
-| Prometheus        | `9090`  |        | `prometheus.svc.cluster.local`        |
-| Pushgateway       |         |        | `pushgateway.svc.cluster.local`       |
-| Blackbox exporter |         |        | `blackbox-exporter.svc.cluster.local` |
-| cAdvisor          | `18080` | `host` |                                       |
-| Node exporter     | `19100` | `host` |                                       |
+| Service           | Port   | Cluster DNS                           |
+| ----------------- | ------ | ------------------------------------- |
+| Grafana           | `3000` | `grafana.svc.cluster.local`           |
+| Prometheus        | `9090` | `prometheus.svc.cluster.local`        |
+| Pushgateway       | `9091` | `pushgateway.svc.cluster.local`       |
+| Blackbox exporter | `9115` | `blackbox-exporter.svc.cluster.local` |
+
+The following services and ports are exposed per node:
+
+| Service          | Port    | Mode   |
+| ---------------- | ------- | ------ |
+| Prometheus Agent | `19090` | `host` |
+| cAdvisor         | `18080` | `host` |
+| Node exporter    | `19100` | `host` |
 
 ## Troubleshooting
 
