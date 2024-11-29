@@ -352,22 +352,23 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 
 ## Services and Ports
 
-The following services and ports are exposed by the stack:
+The following services and ports are exposed by the stack. You can access them via `prometheus` network using the cluster DNS name.
 
-| Service           | Port   | Cluster DNS                           |
-| ----------------- | ------ | ------------------------------------- |
-| Grafana           | `3000` | `grafana.svc.cluster.local`           |
-| Prometheus        | `9090` | `prometheus.svc.cluster.local`        |
-| Pushgateway       | `9091` | `pushgateway.svc.cluster.local`       |
-| Blackbox exporter | `9115` | `blackbox-exporter.svc.cluster.local` |
+| Service           | Cluster DNS                           | Port   |
+| ----------------- | ------------------------------------- | ------ |
+| Grafana           | `grafana.svc.cluster.local`           | `3000` |
+| Prometheus        | `prometheus.svc.cluster.local`        | `9090` |
+| Pushgateway       | `pushgateway.svc.cluster.local`       | `9091` |
+| Blackbox exporter | `blackbox-exporter.svc.cluster.local` | `9115` |
 
-The following services and ports are exposed per node:
+The following services and ports are exposed per node, you can access them via the node IP address.  
+e.g: `http://<node_ip>:<port>`
 
-| Service          | Port    | Mode   |
-| ---------------- | ------- | ------ |
-| Prometheus Agent | `19090` | `host` |
-| cAdvisor         | `18080` | `host` |
-| Node exporter    | `19100` | `host` |
+| Service          | Port    |
+| ---------------- | ------- |
+| Prometheus Agent | `19090` |
+| cAdvisor         | `18080` |
+| Node exporter    | `19100` |
 
 ## Troubleshooting
 
