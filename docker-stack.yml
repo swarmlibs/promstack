@@ -599,8 +599,6 @@ services:
     - --storage.agent.path=/prometheus
     - --storage.agent.retention.max-time=2h
     - --web.page-title=Prometheus Agent - Promstack
-    - --web.console.libraries=/usr/share/prometheus/console_libraries
-    - --web.console.templates=/usr/share/prometheus/consoles
     - --log.level=info
     configs:
     - source: prometheus-agent-config-tmpl
@@ -644,7 +642,6 @@ services:
     environment:
       DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
       DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
-      PROMETHEUS_AGENT_CLUSTER_REPLICA: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
     extra_hosts:
     - host.docker.internal:host-gateway
     hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
@@ -836,8 +833,6 @@ services:
     - --storage.tsdb.path=/prometheus
     - --storage.tsdb.retention.time=182d
     - --web.page-title=Prometheus Server - Promstack
-    - --web.console.libraries=/usr/share/prometheus/console_libraries
-    - --web.console.templates=/usr/share/prometheus/consoles
     - --web.enable-lifecycle
     - --web.enable-remote-write-receiver
     - --log.level=info

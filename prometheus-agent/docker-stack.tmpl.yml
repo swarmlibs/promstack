@@ -33,13 +33,10 @@ services:
       - --storage.agent.path=/prometheus
       - --storage.agent.retention.max-time=2h
       - --web.page-title=Prometheus Agent - Promstack
-      - --web.console.libraries=/usr/share/prometheus/console_libraries
-      - --web.console.templates=/usr/share/prometheus/consoles
       - --log.level=info
     environment:
       - DOCKERSWARM_NODE_ID={{.Node.ID}}
       - DOCKERSWARM_NODE_HOSTNAME={{.Node.Hostname}}
-      - PROMETHEUS_AGENT_CLUSTER_REPLICA={{ index .Service.Labels "com.docker.stack.namespace"}}
     user: "0:0"
     ports:
       - published: 19090
