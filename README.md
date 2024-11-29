@@ -47,6 +47,13 @@ This section covers some concepts that are important to understand for day to da
   <img src="https://github.com/user-attachments/assets/4e17f0d7-22d1-44d7-9318-d5e58baf9580">
 </picture>
 
+When using Prometheus in server mode, scraped samples are stored in memory and on disk. These samples need to be preserved during disruptions, such as pod replacements or cluster maintenance operations which cause evictions. Because of this, the Prometheus Operator currently deploys Prometheus instances as Kubernetes StatefulSets.
+
+On the other hand, when running Prometheus in agent mode, samples are sent to a remote write target immediately, and are not kept locally for a long time. The only use-case for storing samples locally is to allow retries when remote write targets are not available. This is achieved by keeping scraped samples in a WAL for 2h at most. Samples which have been successfully sent to remote write targets are immediately removed from local storage.
+
+> [!NOTE]
+> Read more about Prometheus Agent support proposal from [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator) repository [here](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/proposals/202201-prometheus-agent.md).
+
 ### Prometheus Server
 
 The Prometheus server is the core component of the monitoring stack. It is responsible for collecting, storing and querying the metrics data. The Prometheus server is configured to receive remote write requests from the Prometheus agent.
