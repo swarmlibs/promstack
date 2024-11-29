@@ -28,10 +28,12 @@ services:
   prometheus-agent:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
-      - --agent
+      # - --agent
       - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.agent.path=/prometheus
-      - --storage.agent.retention.max-time=2h
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=1d
+      # - --storage.agent.path=/prometheus
+      # - --storage.agent.retention.max-time=2h
       - --web.page-title=Prometheus Agent - Promstack
       - --log.level=info
     environment:
