@@ -3,7 +3,9 @@ services:
     cap_add:
     - SYSLOG
     command:
-    - -docker_only
+    - --v=0
+    - --docker_only
+    - --housekeeping_interval=5s
     deploy:
       mode: global
       labels:
