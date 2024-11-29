@@ -11,7 +11,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 **Table of Contents**:
 - [About](#about)
 - [Concepts](#concepts)
-  - [Prometheus](#prometheus)
+  - [Prometheus Server](#prometheus-server)
+  - [Prometheus Agent](#prometheus-agent)
   - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
@@ -24,7 +25,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
-- [Prometheus](#prometheus-1)
+- [Prometheus](#prometheus)
     - [Register services as Prometheus targets](#register-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configure Prometheus](#configure-prometheus)
@@ -40,15 +41,23 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 
 This section covers some concepts that are important to understand for day to day Promstack usage and operation.
 
-### Prometheus
-
-By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/59d6c0ec-d24a-443d-8cfe-4e85f296578b">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/4e17f0d7-22d1-44d7-9318-d5e58baf9580">
   <img src="https://github.com/user-attachments/assets/4e17f0d7-22d1-44d7-9318-d5e58baf9580">
 </picture>
+
+### Prometheus Server
+
+The Prometheus server is the core component of the monitoring stack. It is responsible for collecting, storing and querying the metrics data. The Prometheus server is configured to receive remote write requests from the Prometheus agent.
+
+### Prometheus Agent
+
+By design, the Prometheus agent is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks.
+
+You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
+
+See [Register services as Prometheus targets](#register-services-as-prometheus-targets) for more information.
 
 **Prometheus Kubernetes compatible labels**
 
