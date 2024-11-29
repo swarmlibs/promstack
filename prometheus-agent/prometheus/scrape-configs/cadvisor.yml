@@ -33,10 +33,10 @@ scrape_configs:
       # ================================================================================
       - action: labelmap
         regex: __meta_(dockerswarm_node_.+)
-      - action: labeldrop
-        regex: dockerswarm_node_(label_.+)
       - action: labelmap
         regex: __meta_dockerswarm_(node_(?:id|hostname))
+      - action: labeldrop
+        regex: dockerswarm_node_(label_.+)
 
     metric_relabel_configs:
       # ================================================================================

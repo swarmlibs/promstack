@@ -153,6 +153,8 @@ scrape_configs:
 
       - action: labelmap
         regex: __meta_(dockerswarm_node_(?:id|hostname))
+      - action: labelmap
+        regex: __meta_dockerswarm_(node_(?:id|hostname))
 
       # ================================================================================
       # Docker Swarm compatible relabeling
