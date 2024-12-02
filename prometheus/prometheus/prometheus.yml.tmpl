@@ -13,15 +13,14 @@ global:
   external_labels:
     __replica__: '{{ getenv "PROMETHEUS_CLUSTER_REPLICA" "replica-1" }}'
 
-{{- if getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}
+{{- if getenv "PROMETHEUS_ALERTMANAGER_ENABLED" eq "true" }}
 # ====================================================
 # Alertmanager configuration
 # ====================================================
 alerting:
   alertmanagers:
     - dns_sd_configs:
-      - names:
-        - '{{ getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}'
+      - names: [ '{{ getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}' ]
         type: 'A'
         port: {{ getenv "PROMETHEUS_ALERTMANAGER_PORT" "9093" }}
         refresh_interval: 30s
@@ -35,7 +34,7 @@ alerting:
       regex: __replica__
 {{- end }}
 
-{{- if getenv "PROMETHEUS_REMOTE_WRITE_URL" }}
+{{- if getenv "PROMETHEUS_REMOTE_WRITE_ENABLED" eq "true" }}
 # ====================================================
 # Remote write configuration
 # ====================================================

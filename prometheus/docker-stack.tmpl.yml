@@ -121,8 +121,12 @@ services:
       - --file=/run/configs/prometheus.yml.tmpl
       - --out=/prometheus-configs.d/prometheus.yml
     environment:
-      # Grafana unified alerting
-      - PROMETHEUS_ALERTMANAGER_ADDR=$${PROMETHEUS_ALERTMANAGER_ADDR:-tasks.grafana.internal}
+      # Remote write
+      - PROMETHEUS_REMOTE_WRITE_ENABLED=$${PROMETHEUS_REMOTE_WRITE_ENABLED:-false}
+      - PROMETHEUS_REMOTE_WRITE_URL=$${PROMETHEUS_REMOTE_WRITE_URL:-false}
+      # Alertmanager
+      - PROMETHEUS_ALERTMANAGER_ENABLED=$${PROMETHEUS_ALERTMANAGER_ENABLED:-false}
+      - PROMETHEUS_ALERTMANAGER_ADDR=$${PROMETHEUS_ALERTMANAGER_ADDR}
       - PROMETHEUS_ALERTMANAGER_PORT=$${PROMETHEUS_ALERTMANAGER_PORT:-9094}
       # Prometheus cluster settings
       - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
