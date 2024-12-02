@@ -17,6 +17,10 @@ global:
     dockerswarm_node_id: '{{ env "DOCKERSWARM_NODE_ID" }}'
     dockerswarm_node_hostname: '{{ env "DOCKERSWARM_NODE_HOSTNAME" }}'
 
+storage:
+  tsdb:
+    out_of_order_time_window: "15s"
+
 # Remote write configuration
 remote_write:
   # Push metrics to the Promstack Prometheus server.
