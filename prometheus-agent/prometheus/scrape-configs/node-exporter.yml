@@ -24,11 +24,10 @@ scrape_configs:
         target_label: __address__
         replacement: replica-$1.node-exporter.internal:9100
 
-      # Set hostname as instance label
       - source_labels:
         - __meta_dockerswarm_node_address
         target_label: instance
-        replacement: $1:9100
+        replacement: $1:9090
 
       # ================================================================================
       # Label mapping
