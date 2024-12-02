@@ -28,8 +28,10 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Prometheus](#prometheus)
     - [Register services as Prometheus targets](#register-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
-  - [Configure Prometheus](#configure-prometheus)
+  - [Configure Prometheus Server](#configure-prometheus-server)
     - [Environment variables](#environment-variables)
+  - [Configure Remote Write](#configure-remote-write)
+  - [Configure Alertmanager](#configure-alertmanager)
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
@@ -336,7 +338,7 @@ configs:
       io.prometheus.scrape_config: "true"
 ```
 
-### Configure Prometheus
+### Configure Prometheus Server
 
 You can apply custom configurations to Prometheus via Environment variables by running `docker service update` command on `promstack_prometheus` service:
 
@@ -354,6 +356,22 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 - `PROMETHEUS_EVALUATION_INTERVAL`: The evaluation interval for Prometheus, default is `1m`
 - `PROMETHEUS_CLUSTER_NAME`: The cluster name for Prometheus, default is `promstack`
 - `PROMETHEUS_CLUSTER_REPLICA`: The cluster replica for Prometheus, default is `1`
+
+> [!NOTE]
+> Configuration changes will be applied to the Prometheus server immediately with no downtime to the service.
+
+### Configure Remote Write
+Remote write is a feature that allows Prometheus servers to send samples to a remote storage system e.g. Thanos, Cortex, Grafana Mimir, etc.
+
+By default, the remote write is disabled. To enable the remote write, you need to specify the following environment variables:
+- `PROMETHEUS_REMOTE_WRITE_ENABLED`: Enable remote write for Prometheus server, default is `false`
+- `PROMETHEUS_REMOTE_WRITE_URL`: The remote write URL for Prometheus server to send the metrics to.
+
+### Configure Alertmanager
+Alertmanager is a Prometheus component that handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integrations such as email, PagerDuty, Slack, etc.
+
+By default, the Alertmanager is disabled. To enable the Alertmanager, you need to specify the following environment variables:
+- `PROMETHEUS_ALERTMANAGER_ENABLED`: Enable Alertmanager for Prometheus server, default is `false`
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
 
