@@ -51,7 +51,8 @@ services:
     command:
     - --v=0
     - --docker_only
-    - --housekeeping_interval=5s
+    - --housekeeping_interval=10s
+    - --update_machine_info_interval=10s
     deploy:
       mode: global
       labels:
