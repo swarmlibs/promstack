@@ -82,7 +82,7 @@ Here an example visual representation of the services:
   <img src="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
 </picture>
 
-We leverage the below services:
+These are the services that are responsible for providing the configuration files for the `grafana` and `prometheus` services.
 - [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
 - [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
 - [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
