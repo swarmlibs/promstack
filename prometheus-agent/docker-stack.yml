@@ -1,9 +1,10 @@
 services:
   prometheus-agent:
     command:
+    - --agent
     - --config.file=/etc/prometheus/prometheus.yml
-    - --storage.tsdb.path=/prometheus
-    - --storage.tsdb.retention.time=1d
+    - --storage.agent.path=/prometheus
+    - --storage.agent.retention.max-time=2h
     - --web.page-title=Prometheus Agent - Promstack
     - --log.level=info
     configs:
