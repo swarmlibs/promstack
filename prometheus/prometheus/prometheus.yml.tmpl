@@ -13,7 +13,7 @@ global:
   external_labels:
     __replica__: '{{ getenv "PROMETHEUS_CLUSTER_REPLICA" "replica-1" }}'
 
-{{- if getenv "PROMETHEUS_ALERTMANAGER_ENABLED" eq "true" }}
+{{- if eq (getenv "PROMETHEUS_ALERTMANAGER_ENABLED") "true" }}
 # ====================================================
 # Alertmanager configuration
 # ====================================================
@@ -34,7 +34,7 @@ alerting:
       regex: __replica__
 {{- end }}
 
-{{- if getenv "PROMETHEUS_REMOTE_WRITE_ENABLED" eq "true" }}
+{{- if eq (getenv "PROMETHEUS_REMOTE_WRITE_ENABLED") "true" }}
 # ====================================================
 # Remote write configuration
 # ====================================================
