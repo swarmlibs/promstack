@@ -36,6 +36,53 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
+  prometheus:
+    image: ${PROMSTACK_PROMETHEUS_GENCONFIG_VERSION}
+    command:
+      - --verbose
+      - --file=/run/configs/prometheus.yml.tmpl
+      - --out=/prometheus-configs.d/prometheus.yml
+    environment:
+      # Remote write
+      - PROMETHEUS_REMOTE_WRITE_ENABLED=$${PROMETHEUS_REMOTE_WRITE_ENABLED:-false}
+      - PROMETHEUS_REMOTE_WRITE_URL=$${PROMETHEUS_REMOTE_WRITE_URL:-false}
+      # Alertmanager
+      - PROMETHEUS_ALERTMANAGER_ENABLED=$${PROMETHEUS_ALERTMANAGER_ENABLED:-false}
+      - PROMETHEUS_ALERTMANAGER_ADDR=$${PROMETHEUS_ALERTMANAGER_ADDR}
+      - PROMETHEUS_ALERTMANAGER_PORT=$${PROMETHEUS_ALERTMANAGER_PORT:-9094}
+      # Prometheus cluster settings
+      - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
+      - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
+    configs:
+      - source: prometheus-config-tmpl
+        target: /run/configs/prometheus.yml.tmpl
+    volumes:
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+    logging: *x-default-logging
+    stop_grace_period: 5s
+    deploy:
+      <<: *x-prometheus-helpers-deploy
+      resources: *x-prometheus-helpers-resources-constraints
+      restart_policy:
+        condition: any
+        # max_attempts: 15
+        delay: 15s
+        window: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+
   prometheus-server:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
@@ -113,53 +160,6 @@ services:
         max_failure_ratio: 0.2
     depends_on:
       - prometheus
-
-  prometheus:
-    image: ${PROMSTACK_PROMETHEUS_GENCONFIG_VERSION}
-    command:
-      - --verbose
-      - --file=/run/configs/prometheus.yml.tmpl
-      - --out=/prometheus-configs.d/prometheus.yml
-    environment:
-      # Remote write
-      - PROMETHEUS_REMOTE_WRITE_ENABLED=$${PROMETHEUS_REMOTE_WRITE_ENABLED:-false}
-      - PROMETHEUS_REMOTE_WRITE_URL=$${PROMETHEUS_REMOTE_WRITE_URL:-false}
-      # Alertmanager
-      - PROMETHEUS_ALERTMANAGER_ENABLED=$${PROMETHEUS_ALERTMANAGER_ENABLED:-false}
-      - PROMETHEUS_ALERTMANAGER_ADDR=$${PROMETHEUS_ALERTMANAGER_ADDR}
-      - PROMETHEUS_ALERTMANAGER_PORT=$${PROMETHEUS_ALERTMANAGER_PORT:-9094}
-      # Prometheus cluster settings
-      - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels "com.docker.stack.namespace"}}}
-      - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
-    configs:
-      - source: prometheus-config-tmpl
-        target: /run/configs/prometheus.yml.tmpl
-    volumes:
-      - type: volume
-        source: prometheus-configs
-        target: /prometheus-configs.d
-    logging: *x-default-logging
-    stop_grace_period: 5s
-    deploy:
-      <<: *x-prometheus-helpers-deploy
-      resources: *x-prometheus-helpers-resources-constraints
-      restart_policy:
-        condition: any
-        # max_attempts: 15
-        delay: 15s
-        window: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      update_config:
-        parallelism: 1
-        delay: 15s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
 
   prometheus-scrape-config-provider: &prometheus-config-provider-service
     image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
