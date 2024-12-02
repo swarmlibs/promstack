@@ -31,8 +31,8 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
   - [Configure Prometheus Server](#configure-prometheus-server)
     - [Environment variables](#environment-variables)
   - [Configure Prometheus Agent](#configure-prometheus-agent)
-  - [Configure Remote Write](#configure-remote-write)
   - [Configure Alertmanager](#configure-alertmanager)
+  - [Send metrics to a remote storage system](#send-metrics-to-a-remote-storage-system)
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
@@ -371,13 +371,6 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 > [!IMPORTANT]
 > The Prometheus Agent is currently not configurable. It is designed to be deployed globally to all nodes and automatically discover services, tasks and scrape the metrics from those deployed within the node and send the metrics to the Prometheus server.
 
-### Configure Remote Write
-Remote write is a feature that allows Prometheus servers to send samples to a remote storage system e.g. Thanos, Cortex, Grafana Mimir, etc.
-
-By default, the remote write is disabled. To enable the remote write, you need to specify the following environment variables:
-- `PROMETHEUS_REMOTE_WRITE_ENABLED`: Enable remote write for Prometheus server, default is `false`
-- `PROMETHEUS_REMOTE_WRITE_URL`: The remote write URL for Prometheus server to send the metrics to.
-
 ### Configure Alertmanager
 Alertmanager is a Prometheus component that handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integrations such as email, PagerDuty, Slack, etc.
 
@@ -385,6 +378,13 @@ By default, the Alertmanager is disabled. To enable the Alertmanager, you need t
 - `PROMETHEUS_ALERTMANAGER_ENABLED`: Enable Alertmanager for Prometheus server, default is `false`
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
+
+### Send metrics to a remote storage system
+Remote write is a feature that allows Prometheus servers to send samples to a remote storage system e.g. Thanos, Cortex, Grafana Mimir, etc.
+
+By default, the remote write is disabled. To enable the remote write, you need to specify the following environment variables:
+- `PROMETHEUS_REMOTE_WRITE_ENABLED`: Enable remote write for Prometheus server, default is `false`
+- `PROMETHEUS_REMOTE_WRITE_URL`: The remote write URL for Prometheus server to send the metrics to.
 
 ## Services and Ports
 
