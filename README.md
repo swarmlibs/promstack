@@ -14,6 +14,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
   - [Prometheus Server](#prometheus-server)
   - [Prometheus Agent](#prometheus-agent)
   - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
+  - [Kubernetes compatible labels](#kubernetes-compatible-labels)
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
@@ -69,20 +70,6 @@ You can use Docker object labels in the deploy block to automagically register s
 
 See [Register services as Prometheus targets](#register-services-as-prometheus-targets) for more information.
 
-**Prometheus Kubernetes compatible labels**
-
-Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
-
-| Kubernetes   | Docker                                                        | Scrape config                    |
-| ------------ | ------------------------------------------------------------- | -------------------------------- |
-| `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
-| `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
-| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/services`           |
-| `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
-
-* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
-* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
-
 ### Configuration providers and config reloader services
 
 The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
@@ -99,6 +86,20 @@ We leverage the below services:
 - [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
 - [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
 - [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
+
+### Kubernetes compatible labels
+
+Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
+
+| Kubernetes   | Docker                                                        | Scrape config                    |
+| ------------ | ------------------------------------------------------------- | -------------------------------- |
+| `namespace`  | `__meta_dockerswarm_service_label_com_docker_stack_namespace` |                                  |
+| `deployment` | `__meta_dockerswarm_service_name`                             |                                  |
+| `pod`        | `dockerswarm_task_name`                                       | `dockerswarm/services`           |
+| `service`    | `__meta_dockerswarm_service_name`                             | `dockerswarm/services-endpoints` |
+
+* The **dockerswarm_task_name** is a combination of the service name, slot and task id.
+* The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
 
 ---
 
