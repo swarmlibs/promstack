@@ -32,6 +32,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Environment variables](#environment-variables)
   - [Configure Remote Write](#configure-remote-write)
   - [Configure Alertmanager](#configure-alertmanager)
+  - [Configure Prometheus Agent](#configure-prometheus-agent)
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
@@ -379,6 +380,11 @@ By default, the Alertmanager is disabled. To enable the Alertmanager, you need t
 - `PROMETHEUS_ALERTMANAGER_ENABLED`: Enable Alertmanager for Prometheus server, default is `false`
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
+
+### Configure Prometheus Agent
+
+> [!IMPORTANT]
+> The Prometheus Agent is currently not configurable. It is designed to be deployed globally to all nodes and automatically discover services, tasks and scrape the metrics from those deployed within the node and send the metrics to the Prometheus server.
 
 ## Services and Ports
 
