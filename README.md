@@ -30,9 +30,9 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
     - [Register a custom scrape config](#register-a-custom-scrape-config)
   - [Configure Prometheus Server](#configure-prometheus-server)
     - [Environment variables](#environment-variables)
+  - [Configure Prometheus Agent](#configure-prometheus-agent)
   - [Configure Remote Write](#configure-remote-write)
   - [Configure Alertmanager](#configure-alertmanager)
-  - [Configure Prometheus Agent](#configure-prometheus-agent)
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
@@ -366,6 +366,11 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 >
 > It is recommended to deploy a separate Prometheus storage servers in a high-availability configuration such as Thanos, Cortex, Grafana Mimir, et cetera for long-term storage and querying. Due to complexity and limitations of the Docker Swarm, this deployment is not offered as part of this stack.
 
+### Configure Prometheus Agent
+
+> [!IMPORTANT]
+> The Prometheus Agent is currently not configurable. It is designed to be deployed globally to all nodes and automatically discover services, tasks and scrape the metrics from those deployed within the node and send the metrics to the Prometheus server.
+
 ### Configure Remote Write
 Remote write is a feature that allows Prometheus servers to send samples to a remote storage system e.g. Thanos, Cortex, Grafana Mimir, etc.
 
@@ -380,11 +385,6 @@ By default, the Alertmanager is disabled. To enable the Alertmanager, you need t
 - `PROMETHEUS_ALERTMANAGER_ENABLED`: Enable Alertmanager for Prometheus server, default is `false`
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
-
-### Configure Prometheus Agent
-
-> [!IMPORTANT]
-> The Prometheus Agent is currently not configurable. It is designed to be deployed globally to all nodes and automatically discover services, tasks and scrape the metrics from those deployed within the node and send the metrics to the Prometheus server.
 
 ## Services and Ports
 
