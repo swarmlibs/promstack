@@ -13,7 +13,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Concepts](#concepts)
   - [Prometheus Server](#prometheus-server)
   - [Prometheus Agent](#prometheus-agent)
-  - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
+  - [Configurations provider and config reloader services](#configurations-provider-and-config-reloader-services)
   - [Kubernetes compatible labels](#kubernetes-compatible-labels)
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
@@ -70,7 +70,7 @@ You can use Docker object labels in the deploy block to automagically register s
 
 See [Register services as Prometheus targets](#register-services-as-prometheus-targets) for more information.
 
-### Configuration providers and config reloader services
+### Configurations provider and config reloader services
 
 The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
 
