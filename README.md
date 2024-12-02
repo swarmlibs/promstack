@@ -31,7 +31,7 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
   - [Configure Prometheus Server](#configure-prometheus-server)
     - [Environment variables](#environment-variables)
   - [Configure Prometheus Agent](#configure-prometheus-agent)
-  - [Configure Alertmanager](#configure-alertmanager)
+  - [Configure in-cluster Alertmanager](#configure-in-cluster-alertmanager)
   - [Send metrics to a remote storage system](#send-metrics-to-a-remote-storage-system)
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
@@ -371,7 +371,7 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 > [!IMPORTANT]
 > The Prometheus Agent is currently not configurable. It is designed to be deployed globally to all nodes and automatically discover services, tasks and scrape the metrics from those deployed within the node and send the metrics to the Prometheus server.
 
-### Configure Alertmanager
+### Configure in-cluster Alertmanager
 Alertmanager is a Prometheus component that handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integrations such as email, PagerDuty, Slack, etc.
 
 By default, the Alertmanager is disabled. To enable the Alertmanager, you need to specify the following environment variables:
