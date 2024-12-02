@@ -15,14 +15,12 @@ storage:
     out_of_order_time_window: "5m"
 
 # Remote write configuration
+# Push metrics to the Promstack Prometheus server.
 remote_write:
-  # Push metrics to the Promstack Prometheus server.
   - url: http://prometheus.svc.cluster.local:9090/api/v1/write
 
 # ====================================================
 # Scrape configuration
 # ====================================================
-
-# Load scrape configs from this directory.
 scrape_config_files:
   - "/etc/prometheus/scrape-configs/*"
