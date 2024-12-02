@@ -13,10 +13,10 @@ global:
   external_labels:
     __replica__: '{{ getenv "PROMETHEUS_CLUSTER_REPLICA" "replica-1" }}'
 
+{{- if getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}
 # ====================================================
 # Alertmanager configuration
 # ====================================================
-{{- if getenv "PROMETHEUS_ALERTMANAGER_ADDR" }}
 alerting:
   alertmanagers:
     - dns_sd_configs:
@@ -33,6 +33,14 @@ alerting:
   alert_relabel_configs:
     - action: labeldrop
       regex: __replica__
+{{- end }}
+
+{{- if getenv "PROMETHEUS_REMOTE_WRITE_URL" }}
+# ====================================================
+# Remote write configuration
+# ====================================================
+remote_write:
+  - url: '{{ getenv "PROMETHEUS_REMOTE_WRITE_URL" }}'
 {{- end }}
 
 # ====================================================
