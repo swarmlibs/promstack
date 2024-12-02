@@ -360,6 +360,11 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 > [!NOTE]
 > Configuration changes will be applied to the Prometheus server immediately with no downtime to the service.
 
+> [!IMPORTANT]
+> The Prometheus server is designed to be deployed as a single instance and should be used with the built-in Grafana dashboards for in-cluster monitoring and alerting.
+>
+> It is recommended to deploy a separate Prometheus storage servers in a high-availability configuration such as Thanos, Cortex, Grafana Mimir, et cetera for long-term storage and querying. Due to complexity and limitations of the Docker Swarm, this deployment is not offered as part of this stack.
+
 ### Configure Remote Write
 Remote write is a feature that allows Prometheus servers to send samples to a remote storage system e.g. Thanos, Cortex, Grafana Mimir, etc.
 
