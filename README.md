@@ -205,7 +205,7 @@ make remove
 To verify the deployment, you can use the following commands:
 
 ```sh
-docker service ls --filter label=com.docker.stack.namespace=promstack
+docker stack services promstack
 
 # NAME                                                 MODE         REPLICAS               IMAGE                                                           
 # promstack_blackbox-exporter                          replicated   1/1 (max 1 per node)   prom/blackbox-exporter:v0.25.0                                  
@@ -232,7 +232,7 @@ You can continously monitor the deployment by running the following command:
 
 ```sh
 # The `watch` command will continously monitor the services in the stack and update the output every 2 seconds.
-watch -n1 docker stack ps promstack
+watch -n1 docker stack services promstack
 ```
 
 ---
