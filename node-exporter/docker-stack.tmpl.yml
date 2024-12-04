@@ -79,7 +79,7 @@ services:
 configs:
   # Node exporter textfile collector
   node-exporter-node-meta:
-    name: node-exporter-node-meta-v1
+    name: prometheus-node-exporter-node-meta-v1
     file: ./node_meta.prom
 
 networks:

@@ -1092,7 +1092,7 @@ configs:
     name: gf-server-entrypoint-v1
     file: ./grafana/grafana/docker-entrypoint-shim.sh
   node-exporter-node-meta:
-    name: node-exporter-node-meta-v1
+    name: prometheus-node-exporter-node-meta-v1
     file: ./node-exporter/node_meta.prom
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
