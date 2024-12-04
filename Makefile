@@ -89,8 +89,9 @@ clean:
 	@rm -rf **/docker-stack-config.yml || true
 
 deploy: compile stack-networks stack-deploy
-redeploy: compile stack-networks stack-redeploy configs-prune networks-prune
-upgrade: compile stack-upgrade configs-prune networks-prune
+redeploy: compile stack-networks stack-redeploy prune
+upgrade: compile stack-upgrade prune
+prune: configs-prune networks-prune
 remove: stack-remove
 
 stack-networks:
