@@ -20,6 +20,10 @@ services:
 
   blackbox-exporter:
     image: ${PROMSTACK_BLACKBOX_EXPORTER_VERSION}
+    ports:
+      # This port is not exposed to the public
+      # It is only used to connect blackbox to ingress network
+      - 9115
     networks:
       public:
         aliases:

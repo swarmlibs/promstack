@@ -45,6 +45,10 @@ services:
       public:
         aliases:
         - blackbox-exporter.svc.cluster.local
+    ports:
+    - mode: ingress
+      target: 9115
+      protocol: tcp
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
