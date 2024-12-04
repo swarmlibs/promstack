@@ -11,6 +11,7 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
+    __cluster__: '{{ getenv "PROMETHEUS_CLUSTER_NAME" "primary" }}'
     __replica__: '{{ getenv "PROMETHEUS_CLUSTER_REPLICA" "replica-1" }}'
 
 {{- if eq (getenv "PROMETHEUS_ALERTMANAGER_ENABLED") "true" }}
