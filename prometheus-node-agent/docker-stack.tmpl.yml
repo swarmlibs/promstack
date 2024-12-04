@@ -55,7 +55,7 @@ services:
         target: /etc/prometheus/scrape-configs/cadvisor.yml
       - source: prometheus-node-agent-docker
         target: /etc/prometheus/scrape-configs/docker.yml
-      - source: prometheus-node-agent-dockerswarm-services
+      - source: prometheus-node-agent-dockerswarm-tasks
         target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
       - source: prometheus-node-agent-node-exporter
         target: /etc/prometheus/scrape-configs/node_exporter.yml
@@ -121,9 +121,9 @@ configs:
     name: prometheus-node-agent-docker-v1
     file: ./prometheus/scrape-configs/docker.yml
     template_driver: golang
-  prometheus-node-agent-dockerswarm-services:
-    name: prometheus-node-agent-dockerswarm-services-v1
-    file: ./prometheus/scrape-configs/dockerswarm-services.yml
+  prometheus-node-agent-dockerswarm-tasks:
+    name: prometheus-node-agent-dockerswarm-tasks-v1
+    file: ./prometheus/scrape-configs/dockerswarm-tasks.yml
     template_driver: golang
   prometheus-node-agent-cadvisor:
     name: prometheus-node-agent-cadvisor-v1
