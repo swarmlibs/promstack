@@ -96,6 +96,8 @@ services:
         failure_action: rollback
         monitor: 15s
         max_failure_ratio: 0.2
+    depends_on:
+      - prometheus-server
 
 networks:
   prometheus:

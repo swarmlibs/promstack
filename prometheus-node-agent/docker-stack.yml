@@ -20,6 +20,8 @@ services:
       target: /etc/prometheus/scrape-configs/node_exporter.yml
     - source: prometheus-node-agent-prometheus
       target: /etc/prometheus/scrape-configs/prometheus.yml
+    depends_on:
+    - prometheus-server
     deploy:
       mode: global
       labels:
