@@ -89,8 +89,8 @@ clean:
 	@rm -rf **/docker-stack-config.yml || true
 
 deploy: compile stack-networks stack-deploy
-redeploy: compile stack-networks stack-redeploy
-upgrade: compile stack-upgrade
+redeploy: compile stack-networks stack-redeploy configs-prune networks-prune
+upgrade: compile stack-upgrade configs-prune networks-prune
 remove: stack-remove
 
 stack-networks:
@@ -113,3 +113,8 @@ stack-upgrade:
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image=always $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-remove:
 	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
+
+networks-prune:
+	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs docker network rm
+configs-prune:
+	@docker config ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs docker config rm
