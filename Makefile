@@ -116,6 +116,8 @@ stack-remove:
 	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
 
 networks-prune:
-	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs docker network rm
+	@echo "==> Pruning networks..."
+	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker network rm {} || true"
 configs-prune:
-	@docker config ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs docker config rm
+	@echo "==> Pruning configs..."
+	@docker config ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker config rm {} || true"
