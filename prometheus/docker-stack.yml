@@ -351,6 +351,6 @@ x-prometheus-helpers-deploy:
   placement:
     constraints:
     - node.labels.services.promstack_prometheus_server == true
-x-prometheus-helpers-resources-constraints:
-  limits:
-    memory: 64M
+  resources:
+    limits:
+      memory: 64M

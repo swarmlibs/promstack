@@ -15,13 +15,12 @@ x-deploy: &x-deploy
 
 x-prometheus-helpers-deploy: &x-prometheus-helpers-deploy
   mode: global
+  resources:
+    limits:
+      memory: 64M
   placement:
     constraints:
       - node.labels.services.promstack_prometheus_server == true
-
-x-prometheus-helpers-resources-constraints: &x-prometheus-helpers-resources-constraints
-  limits:
-    memory: 64M
 
 x-default-logging: &x-default-logging
   options:
@@ -64,7 +63,6 @@ services:
     stop_grace_period: 5s
     deploy:
       <<: *x-prometheus-helpers-deploy
-      resources: *x-prometheus-helpers-resources-constraints
       restart_policy:
         condition: any
         # max_attempts: 15
@@ -178,7 +176,6 @@ services:
     logging: *x-default-logging
     deploy:
       <<: *x-prometheus-helpers-deploy
-      resources: *x-prometheus-helpers-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-provider"
       restart_policy:
@@ -230,7 +227,6 @@ services:
     logging: *x-default-logging
     deploy:
       <<: *x-prometheus-helpers-deploy
-      resources: *x-prometheus-helpers-resources-constraints
       labels:
         io.prometheus.role: "prometheus-config-reloader"
         io.prometheus.enabled: "true"
