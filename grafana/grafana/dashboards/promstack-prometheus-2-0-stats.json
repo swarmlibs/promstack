@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 9,
+  "id": 7,
   "links": [
     {
       "icon": "info",
@@ -152,7 +152,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -256,7 +256,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -264,7 +264,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "topk(5, max(scrape_duration_seconds) by (job))",
+          "expr": "topk(5, max(scrape_duration_seconds{instance=\"$instance\"}) by (job))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -361,7 +361,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -465,7 +465,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -566,7 +566,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -715,7 +715,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -817,7 +817,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -933,7 +933,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -1063,7 +1063,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -1208,7 +1208,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -1324,7 +1324,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -1425,7 +1425,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -1527,7 +1527,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.3.1",
       "targets": [
         {
           "datasource": {
@@ -1584,8 +1584,8 @@
       },
       {
         "current": {
-          "text": "192.168.65.3:9090",
-          "value": "192.168.65.3:9090"
+          "text": "10.10.200.32:19090",
+          "value": "10.10.200.32:19090"
         },
         "datasource": {
           "type": "prometheus",
