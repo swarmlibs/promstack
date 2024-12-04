@@ -48,7 +48,7 @@ $(eval $(call docker-stack-config,cadvisor))
 $(eval $(call docker-stack-config,grafana))
 $(eval $(call docker-stack-config,node-exporter))
 $(eval $(call docker-stack-config,prometheus))
-$(eval $(call docker-stack-config,prometheus-agent))
+$(eval $(call docker-stack-config,prometheus-node-agent))
 $(eval $(call docker-stack-config,prometheus-service-discovery))
 $(eval $(call docker-stack-config,pushgateway))
 
@@ -59,7 +59,7 @@ docker-stack.yml:
 		-c grafana/docker-stack-config.yml \
 		-c node-exporter/docker-stack-config.yml \
 		-c prometheus/docker-stack-config.yml \
-		-c prometheus-agent/docker-stack-config.yml \
+		-c prometheus-node-agent/docker-stack-config.yml \
 		-c prometheus-service-discovery/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
 	> docker-stack-config.yml
@@ -74,7 +74,7 @@ compile: \
 	grafana/docker-stack.yml \
 	node-exporter/docker-stack.yml \
 	prometheus/docker-stack.yml \
-	prometheus-agent/docker-stack.yml \
+	prometheus-node-agent/docker-stack.yml \
 	prometheus-service-discovery/docker-stack.yml \
 	pushgateway/docker-stack.yml \
 	docker-stack.yml

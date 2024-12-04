@@ -25,14 +25,14 @@ services:
   # https://github.com/prometheus/prometheus
   # ====================================================
 
-  prometheus-agent:
+  prometheus-node-agent:
     image: ${PROMSTACK_PROMETHEUS_VERSION}
     command:
       - --agent
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.agent.path=/prometheus
       - --storage.agent.retention.max-time=2h
-      - --web.page-title=Prometheus Agent - Promstack
+      - --web.page-title=Prometheus Node Agent - Promstack
       - --log.level=info
     environment:
       - DOCKERSWARM_NODE_ID={{.Node.ID}}
@@ -49,17 +49,17 @@ services:
       - "host.docker.internal:host-gateway"
     hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
     configs:
-      - source: prometheus-agent-config-tmpl
+      - source: prometheus-node-agent-config-tmpl
         target: /etc/prometheus/prometheus.yml
-      - source: prometheus-agent-cadvisor
+      - source: prometheus-node-agent-cadvisor
         target: /etc/prometheus/scrape-configs/cadvisor.yml
-      - source: prometheus-agent-docker
+      - source: prometheus-node-agent-docker
         target: /etc/prometheus/scrape-configs/docker.yml
-      - source: prometheus-agent-dockerswarm-services
+      - source: prometheus-node-agent-dockerswarm-services
         target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
-      - source: prometheus-agent-node-exporter
+      - source: prometheus-node-agent-node-exporter
         target: /etc/prometheus/scrape-configs/node_exporter.yml
-      - source: prometheus-agent-prometheus
+      - source: prometheus-node-agent-prometheus
         target: /etc/prometheus/scrape-configs/prometheus.yml
     volumes:
       - type: bind
@@ -67,7 +67,7 @@ services:
         target: /var/run/docker.sock
         read_only: true
       - type: volume
-        source: prometheus-agent-data
+        source: prometheus-node-agent-data
         target: /prometheus
     healthcheck:
       <<: *x-healthcheck
@@ -76,7 +76,7 @@ services:
     deploy:
       <<: *x-deploy
       labels:
-        io.prometheus.role: "prometheus-agent"
+        io.prometheus.role: "prometheus-node-agent"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
         io.prometheus.dockerswarm-services.should_be_probed: "false"
       restart_policy:
@@ -106,32 +106,32 @@ networks:
     external: true
 
 volumes:
-  prometheus-agent-data:
+  prometheus-node-agent-data:
 
 configs:
-  prometheus-agent-config-tmpl:
-    name: prometheus-agent-config-tmpl-v1
+  prometheus-node-agent-config-tmpl:
+    name: prometheus-node-agent-config-tmpl-v1
     file: ./prometheus/prometheus.yml.tmpl
     template_driver: golang
 
   # Prometheus's scrape config files
-  prometheus-agent-docker:
-    name: prometheus-agent-docker-v1
+  prometheus-node-agent-docker:
+    name: prometheus-node-agent-docker-v1
     file: ./prometheus/scrape-configs/docker.yml
     template_driver: golang
-  prometheus-agent-dockerswarm-services:
-    name: prometheus-agent-dockerswarm-services-v1
+  prometheus-node-agent-dockerswarm-services:
+    name: prometheus-node-agent-dockerswarm-services-v1
     file: ./prometheus/scrape-configs/dockerswarm-services.yml
     template_driver: golang
-  prometheus-agent-cadvisor:
-    name: prometheus-agent-cadvisor-v1
+  prometheus-node-agent-cadvisor:
+    name: prometheus-node-agent-cadvisor-v1
     file: ./prometheus/scrape-configs/cadvisor.yml
     template_driver: golang
-  prometheus-agent-node-exporter:
-    name: prometheus-agent-node-exporter-v1
+  prometheus-node-agent-node-exporter:
+    name: prometheus-node-agent-node-exporter-v1
     file: ./prometheus/scrape-configs/node-exporter.yml
     template_driver: golang
-  prometheus-agent-prometheus:
-    name: prometheus-agent-prometheus-v1
+  prometheus-node-agent-prometheus:
+    name: prometheus-node-agent-prometheus-v1
     file: ./prometheus/scrape-configs/prometheus.yml
     template_driver: golang
