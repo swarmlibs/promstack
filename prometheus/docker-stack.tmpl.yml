@@ -53,8 +53,14 @@ services:
       - PROMETHEUS_CLUSTER_NAME=$${PROMETHEUS_CLUSTER_NAME:-primary}
       - PROMETHEUS_CLUSTER_REPLICA=$${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
     configs:
+      # Prometheus config template
       - source: prometheus-config-tmpl
         target: /run/configs/prometheus.yml.tmpl
+      # Prometheus's rule files
+      - source: prometheus-dockerswarm-nodes-rule
+      - source: prometheus-dockerswarm-services-rule
+      # Prometheus's scrape config files
+      - source: prometheus-prometheus
     volumes:
       - type: volume
         source: prometheus-configs
@@ -163,8 +169,6 @@ services:
     image: ${PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION}
     command:
       - --output-dir=/prometheus-configs.d/scrape-configs
-    configs:
-      - source: prometheus-prometheus
     volumes:
       - type: volume
         source: prometheus-configs
@@ -201,9 +205,6 @@ services:
     command:
       - --output-dir=/prometheus-configs.d/rules
       - --prometheus-scrape-config-label=io.prometheus.rule
-    configs:
-      - source: prometheus-dockerswarm-nodes-rule
-      - source: prometheus-dockerswarm-services-rule
 
   prometheus-config-reloader:
     image: ${PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION}

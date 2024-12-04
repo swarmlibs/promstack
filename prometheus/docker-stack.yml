@@ -7,6 +7,9 @@ services:
     configs:
     - source: prometheus-config-tmpl
       target: /run/configs/prometheus.yml.tmpl
+    - source: prometheus-dockerswarm-nodes-rule
+    - source: prometheus-dockerswarm-services-rule
+    - source: prometheus-prometheus
     deploy:
       mode: global
       update_config:
@@ -113,9 +116,6 @@ services:
     command:
     - --output-dir=/prometheus-configs.d/rules
     - --prometheus-scrape-config-label=io.prometheus.rule
-    configs:
-    - source: prometheus-dockerswarm-nodes-rule
-    - source: prometheus-dockerswarm-services-rule
     deploy:
       mode: global
       labels:
@@ -159,8 +159,6 @@ services:
   prometheus-scrape-config-provider:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
-    configs:
-    - source: prometheus-prometheus
     deploy:
       mode: global
       labels:
