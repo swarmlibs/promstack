@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 7,
+  "id": 16,
   "links": [
     {
       "icon": "info",
@@ -1584,8 +1584,8 @@
       },
       {
         "current": {
-          "text": "10.10.200.32:19090",
-          "value": "10.10.200.32:19090"
+          "text": "127.0.0.1:9090",
+          "value": "127.0.0.1:9090"
         },
         "datasource": {
           "type": "prometheus",
@@ -1614,6 +1614,6 @@
   "timezone": "browser",
   "title": "Promstack - Prometheus 2.0 Stats",
   "uid": "promstack-prometheus-stats-v2",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
