@@ -91,7 +91,7 @@ clean:
 deploy: compile stack-networks stack-deploy
 redeploy: compile stack-networks stack-redeploy
 upgrade: compile stack-upgrade
-prune: configs-prune networks-prune
+prune: networks-prune configs-prune volumes-prune
 remove: stack-remove
 
 stack-networks:
@@ -115,6 +115,9 @@ stack-upgrade:
 stack-remove:
 	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
 
+volumes-prune:
+	@echo "==> Pruning volumes..."
+	@docker volume ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker volume rm {} || true"
 networks-prune:
 	@echo "==> Pruning networks..."
 	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker network rm {} || true"
