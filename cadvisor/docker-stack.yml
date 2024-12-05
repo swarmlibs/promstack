@@ -3,9 +3,10 @@ services:
     cap_add:
     - SYSLOG
     command:
-    - -docker_only
-    configs:
-    - source: prometheus-cadvisor
+    - --v=0
+    - --docker_only
+    - --housekeeping_interval=10s
+    - --update_machine_info_interval=10s
     deploy:
       mode: global
       labels:
@@ -70,12 +71,6 @@ networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
-configs:
-  prometheus-cadvisor:
-    name: prometheus-cadvisor-v1
-    file: ./prometheus/cadvisor.yml
-    labels:
-      io.prometheus.scrape_config: "true"
 x-default-logging:
   driver: json-file
   options:

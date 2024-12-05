@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://json.schemastore.org/prometheus.json
+
+# A scrape configuration for running Prometheus on a Docker Swarm cluster.
+# This uses separate scrape configs for cluster components (i.e. nodes, services, tasks).
+# 
+# Keep at most 50 sets of details of targets dropped by relabeling.
+# This information is used to display in the UI for troubleshooting.
+global:
+  scrape_interval: '10s'
+  scrape_timeout: '5s'
+
+storage:
+  tsdb:
+    out_of_order_time_window: "5m"
+
+# Remote write configuration
+# Push metrics to the Promstack Prometheus server.
+remote_write:
+  - url: http://prometheus.svc.cluster.local:9090/api/v1/write
+
+# ====================================================
+# Scrape configuration
+# ====================================================
+scrape_config_files:
+  - "/etc/prometheus/scrape-configs/*"

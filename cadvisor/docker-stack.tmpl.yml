@@ -19,7 +19,11 @@ services:
 
   cadvisor:
     image: ${PROMSTACK_CADVISOR_VERSION}
-    command: -docker_only
+    command:
+      - --v=0
+      - --docker_only
+      - --housekeeping_interval=10s
+      - --update_machine_info_interval=10s
     ports:
       - published: 18080
         target: 8080
@@ -27,8 +31,6 @@ services:
     networks:
       prometheus_gwnetwork:
     hostname: replica-{{.Task.Slot}}.cadvisor.internal
-    configs:
-      - source: prometheus-cadvisor
     volumes:
       - type: bind
         source: /
@@ -84,10 +86,3 @@ networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
-
-configs:
-  prometheus-cadvisor:
-    name: prometheus-cadvisor-v1
-    file: ./prometheus/cadvisor.yml
-    labels:
-      io.prometheus.scrape_config: "true"

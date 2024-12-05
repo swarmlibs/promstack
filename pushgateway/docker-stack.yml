@@ -46,6 +46,9 @@ services:
         - pushgateway.internal
         - pushgateway.svc.cluster.local
 networks:
+  prometheus:
+    name: prometheus
+    external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true

@@ -11,8 +11,10 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 **Table of Contents**:
 - [About](#about)
 - [Concepts](#concepts)
-  - [Prometheus](#prometheus)
-  - [Configuration providers and config reloader services](#configuration-providers-and-config-reloader-services)
+  - [Prometheus Server](#prometheus-server)
+  - [Prometheus Agent](#prometheus-agent)
+  - [Configurations provider and config reloader services](#configurations-provider-and-config-reloader-services)
+  - [Kubernetes compatible labels](#kubernetes-compatible-labels)
 - [Stacks](#stacks)
 - [Pre-requisites](#pre-requisites)
 - [Getting Started](#getting-started)
@@ -24,11 +26,14 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 - [Grafana](#grafana)
     - [Injecting Grafana Dashboards](#injecting-grafana-dashboards)
     - [Injecting Grafana Provisioning configurations](#injecting-grafana-provisioning-configurations)
-- [Prometheus](#prometheus-1)
+- [Prometheus](#prometheus)
     - [Register services as Prometheus targets](#register-services-as-prometheus-targets)
     - [Register a custom scrape config](#register-a-custom-scrape-config)
-  - [Configure Prometheus](#configure-prometheus)
+  - [Configure Prometheus Server](#configure-prometheus-server)
     - [Environment variables](#environment-variables)
+  - [Configure Prometheus Agent](#configure-prometheus-agent)
+  - [Configure Alertmanager](#configure-alertmanager)
+  - [Configure Remote Write](#configure-remote-write)
 - [Services and Ports](#services-and-ports)
 - [Troubleshooting](#troubleshooting)
   - [Grafana dashboards are not present](#grafana-dashboards-are-not-present)
@@ -40,17 +45,49 @@ A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Gr
 
 This section covers some concepts that are important to understand for day to day Promstack usage and operation.
 
-### Prometheus
-
-By design, the Prometheus server is configured to automatically discover and scrape the metrics from the Docker Swarm nodes, services and tasks. You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/59d6c0ec-d24a-443d-8cfe-4e85f296578b">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/4e17f0d7-22d1-44d7-9318-d5e58baf9580">
   <img src="https://github.com/user-attachments/assets/4e17f0d7-22d1-44d7-9318-d5e58baf9580">
 </picture>
 
-**Prometheus Kubernetes compatible labels**
+When using Prometheus in server mode, scraped samples are stored in memory and on disk. These samples need to be preserved during disruptions, such as service replacements or cluster maintenance operations which cause evictions.
+
+On the other hand, when running Prometheus in agent mode, samples are sent to a remote write target immediately, and are not kept locally for a long time. The only use-case for storing samples locally is to allow retries when remote write targets are not available. This is achieved by keeping scraped samples in a WAL for 2h at most. Samples which have been successfully sent to remote write targets are immediately removed from local storage.
+
+> [!NOTE]
+> Read more about Prometheus Agent support proposal from [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator) repository [here](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/proposals/202201-prometheus-agent.md).
+
+### Prometheus Server
+
+The Prometheus server is the core component of the monitoring stack. It is responsible for collecting, storing and querying the metrics data. The Prometheus server is configured to receive remote write requests from the Prometheus agent.
+
+### Prometheus Agent
+
+By design, the Prometheus agent is deploy globally to all noded and configured to automatically discover services, tasks and scrape the metrics from those deployed within the node.
+
+You can use Docker object labels in the deploy block to automagically register services as targets for Prometheus. It also configured with config provider and config reloader services.
+
+See [Register services as Prometheus targets](#register-services-as-prometheus-targets) for more information.
+
+### Configurations provider and config reloader services
+
+The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
+
+Here an example visual representation of the services:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/5e790dd2-0d06-434a-98f7-a1e412388c96">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
+  <img src="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
+</picture>
+
+These are the services that are responsible for providing the configuration files for the `grafana` and `prometheus` services.
+- [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
+- [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
+- [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
+
+### Kubernetes compatible labels
 
 Here is a list of Docker Service/Task labels that are mapped to Kubernetes labels.
 
@@ -63,23 +100,6 @@ Here is a list of Docker Service/Task labels that are mapped to Kubernetes label
 
 * The **dockerswarm_task_name** is a combination of the service name, slot and task id.
 * The task id is a unique identifier for the task. It depends on the mode of the deployement (replicated or global). If the service is replicated, the task id is the slot number. If the service is global, the task id is the node id.
-
-### Configuration providers and config reloader services
-
-The `grafana` and `prometheus` service requires extra services to operate, mainly for providing configuration files. There are two type of child services, a config provider and config reloader service.
-
-Here an example visual representation of the services:
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/5e790dd2-0d06-434a-98f7-a1e412388c96">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
-  <img src="https://github.com/swarmlibs/prometheus-configs-provider/assets/4363857/d439c204-fec4-492a-99f7-20df95ae1217">
-</picture>
-
-We leverage the below services:
-- [swarmlibs/prometheus-config-provider](https://github.com/swarmlibs/prometheus-config-provider)
-- [swarmlibs/grafana-provisioning-config-reloader](https://github.com/swarmlibs/grafana-provisioning-config-reloader)
-- [prometheus-operator/prometheus-config-reloader](https://github.com/prometheus-operator/prometheus-operator/tree/main/cmd/prometheus-config-reloader)
 
 ---
 
@@ -185,29 +205,34 @@ make remove
 To verify the deployment, you can use the following commands:
 
 ```sh
-docker service ls --filter label=com.docker.stack.namespace=promstack
+docker stack services promstack
 
-# ID  NAME                                                 MODE         REPLICAS               IMAGE
-# **  promstack_blackbox-exporter                          replicated   1/1 (max 1 per node)   prom/blackbox-exporter:v0.25.0
-# **  promstack_cadvisor                                   global       1/1                    gcr.io/cadvisor/cadvisor:v0.47.0
-# **  promstack_grafana                                    replicated   1/1 (max 1 per node)   swarmlibs/grafana:main
-# **  promstack_grafana-dashboard-provider                 replicated   1/1 (max 1 per node)   swarmlibs/prometheus-config-provider:0.1.0-rc.1
-# **  promstack_grafana-provisioning-config-reloader       replicated   1/1 (max 1 per node)   swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.1
-# **  promstack_grafana-provisioning-dashboard-provider    replicated   1/1 (max 1 per node)   swarmlibs/prometheus-config-provider:0.1.0-rc.1
-# **  promstack_grafana-provisioning-datasource-provider   replicated   1/1 (max 1 per node)   swarmlibs/prometheus-config-provider:0.1.0-rc.1
-# **  promstack_node-exporter                              global       1/1                    prom/node-exporter:v1.8.1
-# **  promstack_prometheus                                 global       1/1                    swarmlibs/genconfig:0.1.0-rc.1
-# **  promstack_prometheus-config-provider                 global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1
-# **  promstack_prometheus-config-reloader                 global       1/1                    quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
-# **  promstack_prometheus-server                          replicated   1/1 (max 1 per node)   prom/prometheus:v2.45.6
-# **  promstack_pushgateway                                replicated   1/1 (max 1 per node)   prom/pushgateway:v1.9.0
+# NAME                                                 MODE         REPLICAS               IMAGE                                                           
+# promstack_blackbox-exporter                          replicated   1/1 (max 1 per node)   prom/blackbox-exporter:v0.25.0                                  
+# promstack_cadvisor                                   global       1/1                    gcr.io/cadvisor/cadvisor:v0.49.1                                
+# promstack_grafana                                    replicated   1/1 (max 1 per node)   busybox:latest                                                  
+# promstack_grafana-dashboard-provider                 global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1                 
+# promstack_grafana-provisioning-alerting-provider     global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1                 
+# promstack_grafana-provisioning-config-reloader       global       1/1                    swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3       
+# promstack_grafana-provisioning-dashboard-provider    global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1                 
+# promstack_grafana-provisioning-datasource-provider   global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1                 
+# promstack_grafana-server                             global       1/1                    grafana/grafana:11.3.0                                          
+# promstack_node-exporter                              global       1/1                    prom/node-exporter:v1.8.1                                       
+# promstack_prometheus                                 global       1/1                    swarmlibs/genconfig:0.1.0-rc.1                                  
+# promstack_prometheus-agent                           global       1/1                    prom/prometheus:v3.0.0                                          
+# promstack_prometheus-config-reloader                 global       1/1                    quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0  
+# promstack_prometheus-rule-provider                   global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1                 
+# promstack_prometheus-scrape-config-provider          global       1/1                    swarmlibs/prometheus-config-provider:0.1.0-rc.1                 
+# promstack_prometheus-server                          replicated   1/1 (max 1 per node)   prom/prometheus:v3.0.0                                           
+# promstack_prometheus-service-discovery               global       1/1                    swarmlibs/prometheus-service-discovery:0.1.0-rc.1               
+# promstack_pushgateway                                replicated   1/1 (max 1 per node)   prom/pushgateway:v1.10.0                                        
 ```
 
 You can continously monitor the deployment by running the following command:
 
 ```sh
 # The `watch` command will continously monitor the services in the stack and update the output every 2 seconds.
-watch docker service ls --filter label=com.docker.stack.namespace=promstack
+watch -n1 docker stack services promstack
 ```
 
 ---
@@ -315,7 +340,7 @@ configs:
       io.prometheus.scrape_config: "true"
 ```
 
-### Configure Prometheus
+### Configure Prometheus Server
 
 You can apply custom configurations to Prometheus via Environment variables by running `docker service update` command on `promstack_prometheus` service:
 
@@ -333,21 +358,54 @@ docker service update --env-rm PROMETHEUS_SCRAPE_INTERVAL promstack_prometheus
 - `PROMETHEUS_EVALUATION_INTERVAL`: The evaluation interval for Prometheus, default is `1m`
 - `PROMETHEUS_CLUSTER_NAME`: The cluster name for Prometheus, default is `promstack`
 - `PROMETHEUS_CLUSTER_REPLICA`: The cluster replica for Prometheus, default is `1`
+
+> [!NOTE]
+> Configuration changes will be applied to the Prometheus server immediately with no downtime to the service.
+
+> [!IMPORTANT]
+> The Prometheus server is designed to be deployed as a single instance and should be used with the built-in Grafana dashboards for in-cluster monitoring and alerting.
+>
+> It is recommended to deploy a separate Prometheus storage servers in a high-availability configuration such as Thanos, Cortex, Grafana Mimir, et cetera for long-term storage and querying. Due to complexity and limitations of the Docker Swarm, this deployment is not offered as part of this stack.
+
+### Configure Prometheus Agent
+
+> [!IMPORTANT]
+> The Prometheus Agent is currently not configurable. It is designed to be deployed globally to all nodes and automatically discover services, tasks and scrape the metrics from those deployed within the node and send the metrics to the Prometheus server.
+
+### Configure Alertmanager
+Alertmanager is a Prometheus component that handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integrations such as email, PagerDuty, Slack, etc.
+
+By default, the Alertmanager is disabled. To enable the Alertmanager, you need to specify the following environment variables:
+- `PROMETHEUS_ALERTMANAGER_ENABLED`: Enable Alertmanager for Prometheus server, default is `false`
 - `PROMETHEUS_ALERTMANAGER_ADDR`: The Alertmanager service address
 - `PROMETHEUS_ALERTMANAGER_PORT`: The Alertmanager service port, default is `9093`
 
+### Configure Remote Write
+Remote write is a feature that allows Prometheus servers to send samples to a remote storage system e.g. Thanos, Cortex, Grafana Mimir, etc.
+
+By default, the remote write is disabled. To enable the remote write, you need to specify the following environment variables:
+- `PROMETHEUS_REMOTE_WRITE_ENABLED`: Enable remote write for Prometheus server, default is `false`
+- `PROMETHEUS_REMOTE_WRITE_URL`: The remote write URL for Prometheus server to send the metrics to.
+
 ## Services and Ports
 
-The following services and ports are exposed by the stack:
+The following services and ports are exposed by the stack. You can access them via `prometheus` network using the cluster DNS name.
 
-| Service           | Port    | Mode   | Cluster DNS                           |
-| ----------------- | ------- | ------ | ------------------------------------- |
-| Grafana           | `3000`  |        | `grafana.svc.cluster.local`           |
-| Prometheus        | `9090`  |        | `prometheus.svc.cluster.local`        |
-| Pushgateway       |         |        | `pushgateway.svc.cluster.local`       |
-| Blackbox exporter |         |        | `blackbox-exporter.svc.cluster.local` |
-| cAdvisor          | `18080` | `host` |                                       |
-| Node exporter     | `19100` | `host` |                                       |
+| Service           | Cluster DNS                           | Port   |
+| ----------------- | ------------------------------------- | ------ |
+| Grafana           | `grafana.svc.cluster.local`           | `3000` |
+| Prometheus        | `prometheus.svc.cluster.local`        | `9090` |
+| Pushgateway       | `pushgateway.svc.cluster.local`       | `9091` |
+| Blackbox exporter | `blackbox-exporter.svc.cluster.local` | `9115` |
+
+The following services and ports are exposed per node, you can access them via the node IP address.  
+e.g: `http://<node_ip>:<port>`
+
+| Service          | Port    |
+| ---------------- | ------- |
+| Prometheus Agent | `19090` |
+| cAdvisor         | `18080` |
+| Node exporter    | `19100` |
 
 ## Troubleshooting
 

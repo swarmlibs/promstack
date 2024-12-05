@@ -48,6 +48,8 @@ $(eval $(call docker-stack-config,cadvisor))
 $(eval $(call docker-stack-config,grafana))
 $(eval $(call docker-stack-config,node-exporter))
 $(eval $(call docker-stack-config,prometheus))
+$(eval $(call docker-stack-config,prometheus-node-agent))
+$(eval $(call docker-stack-config,prometheus-service-discovery))
 $(eval $(call docker-stack-config,pushgateway))
 
 docker-stack.yml:
@@ -57,6 +59,8 @@ docker-stack.yml:
 		-c grafana/docker-stack-config.yml \
 		-c node-exporter/docker-stack-config.yml \
 		-c prometheus/docker-stack-config.yml \
+		-c prometheus-node-agent/docker-stack-config.yml \
+		-c prometheus-service-discovery/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
 	> docker-stack-config.yml
 	@sed 's|$(PWD)/|./|g' docker-stack-config.yml > docker-stack.yml
@@ -70,6 +74,8 @@ compile: \
 	grafana/docker-stack.yml \
 	node-exporter/docker-stack.yml \
 	prometheus/docker-stack.yml \
+	prometheus-node-agent/docker-stack.yml \
+	prometheus-service-discovery/docker-stack.yml \
 	pushgateway/docker-stack.yml \
 	docker-stack.yml
 
@@ -83,13 +89,15 @@ clean:
 	@rm -rf **/docker-stack-config.yml || true
 
 deploy: compile stack-networks stack-deploy
+redeploy: compile stack-networks stack-redeploy
 upgrade: compile stack-upgrade
+prune: configs-prune networks-prune
 remove: stack-remove
 
 stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable public || true
-	docker network create --scope=swarm --driver=overlay --attachable prometheus || true
-	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
+	docker network create --scope=swarm --driver=overlay --attachable --label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) prometheus || true
+	docker network create --scope=swarm --driver=overlay --attachable --label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) prometheus_gwnetwork || true
 stack-deploy:
 	@echo '    ____                            __             __  '
 	@echo '   / __ \_________  ____ ___  _____/ /_____ ______/ /__'
@@ -99,7 +107,17 @@ stack-deploy:
 	@echo '                                                       '
 	@echo "==> Deploying promstack stack:"
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
+stack-redeploy:
+	@echo "==> Re-eploying promstack stack:"
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image=changed $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
-	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
+	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image=always $(DOCKER_STACK_FILES) $(DOCKER_STACK_NAMESPACE)
 stack-remove:
 	@$(DOCKER_STACK) rm $(DOCKER_STACK_NAMESPACE)
+
+networks-prune:
+	@echo "==> Pruning networks..."
+	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker network rm {} || true"
+configs-prune:
+	@echo "==> Pruning configs..."
+	@docker config ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker config rm {} || true"

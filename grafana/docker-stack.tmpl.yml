@@ -6,20 +6,36 @@ x-healthcheck: &x-healthcheck
   retries: 3
   start_period: 30s
 
-x-deploy: &x-deploy
+x-grafana-deploy: &x-grafana-deploy
   replicas: 1
   placement:
     max_replicas_per_node: 1
     constraints:
       - node.role == manager
 
-x-grafana-helpers-deploy: &x-grafana-helpers-deploy
+x-grafana-provider-deploy: &x-grafana-provider-deploy
   mode: global
   placement:
     constraints:
       - node.labels.services.promstack_grafana == true
 
-x-grafana-helpers-resources-constraints: &x-grafana-helpers-resources-constraints
+x-grafana-server-deploy: &x-grafana-server-deploy
+  mode: global
+  placement:
+    constraints:
+      # - node.labels.services.grafana_provisioning_config_reloader == true
+      # - node.labels.services.promstack_grafana_dashboard_provider == true
+      - node.labels.services.promstack_grafana_provisioning_alerting_provider == true
+      - node.labels.services.promstack_grafana_provisioning_dashboard_provider == true
+      - node.labels.services.promstack_grafana_provisioning_datasource_provider == true
+
+x-grafana-reloader-deploy: &x-grafana-reloader-deploy
+  mode: global
+  placement:
+    constraints:
+      - node.labels.services.promstack_grafana_server == true
+
+x-grafana-provider-resources-constraints: &x-grafana-provider-resources-constraints
   limits:
     memory: 64M
 
@@ -37,6 +53,11 @@ services:
   # ====================================================
 
   grafana:
+    image: busybox:latest
+    command: sleep infinity
+    deploy: *x-grafana-deploy
+
+  grafana-server:
     image: ${PROMSTACK_GRAFANA_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     environment:
@@ -109,7 +130,8 @@ services:
       test: wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
     logging: *x-default-logging
     deploy:
-      <<: *x-deploy
+      # <<: *x-deploy
+      <<: *x-grafana-server-deploy
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "grafana"
@@ -163,8 +185,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-helpers-deploy
-      resources: *x-grafana-helpers-resources-constraints
+      <<: *x-grafana-reloader-deploy
+      resources: *x-grafana-provider-resources-constraints
       restart_policy:
         condition: any
         # max_attempts: 15
@@ -202,7 +224,7 @@ services:
       - source: gf-dashboard-promstack-prometheus-stats
       - source: gf-dashboard-promstack-prometheus-stats-v2
       - source: gf-dashboard-promstack-dockerswarm-nodes
-      - source: gf-dashboard-promstack-dockerswarm-services-endpoints
+      # - source: gf-dashboard-promstack-dockerswarm-services-endpoints
       - source: gf-dashboard-promstack-dockerswarm-services
       - source: gf-dashboard-promstack-cadvisor
       - source: gf-dashboard-promstack-node-exporter
@@ -216,8 +238,8 @@ services:
         read_only: true
     logging: *x-default-logging
     deploy:
-      <<: *x-grafana-helpers-deploy
-      resources: *x-grafana-helpers-resources-constraints
+      <<: *x-grafana-provider-deploy
+      resources: *x-grafana-provider-resources-constraints
       restart_policy:
         condition: any
         # max_attempts: 15
@@ -320,7 +342,7 @@ configs:
   # Grafana datasources provisioning config
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: ./grafana/provisioning/datasources/prometheus.yaml
+    file: ./grafana/provisioning/datasources/prometheus.yml
     labels:
       io.grafana.provisioning.datasource: "true"
 
@@ -352,11 +374,11 @@ configs:
     file: ./grafana/dashboards/promstack-dockerswarm-nodes.json
     labels:
       io.grafana.dashboard: "true"
-  gf-dashboard-promstack-dockerswarm-services-endpoints:
-    name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
-    file: ./grafana/dashboards/promstack-dockerswarm-services-endpoints.json
-    labels:
-      io.grafana.dashboard: "true"
+  # gf-dashboard-promstack-dockerswarm-services-endpoints:
+  #   name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
+  #   file: ./grafana/dashboards/promstack-dockerswarm-services-endpoints.json
+  #   labels:
+  #     io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-services:
     name: gf-dashboard-promstack-dockerswarm-services-v1
     file: ./grafana/dashboards/promstack-dockerswarm-services.json

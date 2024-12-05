@@ -45,13 +45,18 @@ services:
       public:
         aliases:
         - blackbox-exporter.svc.cluster.local
+    ports:
+    - mode: ingress
+      target: 9115
+      protocol: tcp
   cadvisor:
     cap_add:
     - SYSLOG
     command:
-    - -docker_only
-    configs:
-    - source: prometheus-cadvisor
+    - --v=0
+    - --docker_only
+    - --housekeeping_interval=10s
+    - --update_machine_info_interval=10s
     deploy:
       mode: global
       labels:
@@ -113,108 +118,16 @@ services:
       target: /dev/kmsg
       read_only: true
   grafana:
-    configs:
-    - source: gf-server-entrypoint
-      target: /docker-entrypoint-shim.sh
-      mode: 365
-    - source: gf-provisioning-dashboards
-      target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
+    command:
+    - sleep
+    - infinity
     deploy:
       replicas: 1
-      labels:
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: grafana
-        io.prometheus.scrape_port: "3000"
-      update_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      rollback_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      restart_policy:
-        condition: any
-        delay: 30s
-        max_attempts: 15
-        window: 15s
       placement:
         constraints:
         - node.role == manager
         max_replicas_per_node: 1
-    entrypoint:
-    - /docker-entrypoint-shim.sh
-    environment:
-      GF_DATABASE_CACHE_MODE: shared
-      GF_DATABASE_WAL: "true"
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-      GF_SERVER_DOMAIN: ${GF_SERVER_DOMAIN}
-      GF_SERVER_PROTOCOL: ${GF_SERVER_PROTOCOL}
-      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
-      GF_SMTP_ENABLED: null
-      GF_SMTP_FROM_ADDRESS: null
-      GF_SMTP_FROM_NAME: null
-      GF_SMTP_HOST: null
-      GF_SMTP_PASSWORD: null
-      GF_SMTP_SKIP_VERIFY: null
-      GF_SMTP_USER: null
-      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME}
-      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL}
-      GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
-    extra_hosts:
-    - host.docker.internal:host-gateway
-    hostname: replica-{{.Node.ID}}.grafana.internal
-    healthcheck:
-      test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 30s
-    image: docker.io/grafana/grafana:11.3.0
-    logging:
-      driver: json-file
-      options:
-        max-file: "5"
-        max-size: 12m
-    networks:
-      grafana:
-        aliases:
-        - grafana.internal
-      prometheus: null
-      prometheus_gwnetwork: null
-      public:
-        aliases:
-        - grafana.svc.cluster.local
-    ports:
-    - target: 3000
-      published: 3000
-      protocol: tcp
-    volumes:
-    - type: volume
-      source: grafana-data
-      target: /var/lib/grafana
-    - type: volume
-      source: grafana-logs
-      target: /var/log/grafana
-    - type: volume
-      source: grafana-dashboards
-      target: /etc/grafana/dashboards
-    - type: volume
-      source: grafana-provisioning-alerting
-      target: /etc/grafana/provisioning/alerting
-    - type: volume
-      source: grafana-provisioning-dashboards
-      target: /etc/grafana/provisioning/dashboards
-    - type: volume
-      source: grafana-provisioning-datasources
-      target: /etc/grafana/provisioning/datasources
+    image: busybox:latest
   grafana-dashboard-provider:
     command:
     - --output-ext=json
@@ -225,7 +138,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -276,7 +188,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -349,7 +260,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_server == true
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
@@ -386,7 +297,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -472,6 +382,113 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+  grafana-server:
+    configs:
+    - source: gf-server-entrypoint
+      target: /docker-entrypoint-shim.sh
+      mode: 365
+    - source: gf-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: grafana
+        io.prometheus.scrape_port: "3000"
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+      placement:
+        constraints:
+        - node.labels.services.promstack_grafana_provisioning_alerting_provider ==
+          true
+        - node.labels.services.promstack_grafana_provisioning_dashboard_provider ==
+          true
+        - node.labels.services.promstack_grafana_provisioning_datasource_provider
+          == true
+    entrypoint:
+    - /docker-entrypoint-shim.sh
+    environment:
+      GF_DATABASE_CACHE_MODE: shared
+      GF_DATABASE_WAL: "true"
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SERVER_DOMAIN: ${GF_SERVER_DOMAIN}
+      GF_SERVER_PROTOCOL: ${GF_SERVER_PROTOCOL}
+      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
+      GF_SMTP_ENABLED: null
+      GF_SMTP_FROM_ADDRESS: null
+      GF_SMTP_FROM_NAME: null
+      GF_SMTP_HOST: null
+      GF_SMTP_PASSWORD: null
+      GF_SMTP_SKIP_VERIFY: null
+      GF_SMTP_USER: null
+      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME}
+      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL}
+      GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    hostname: replica-{{.Node.ID}}.grafana.internal
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
+    image: docker.io/grafana/grafana:11.3.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      grafana:
+        aliases:
+        - grafana.internal
+      prometheus: null
+      prometheus_gwnetwork: null
+      public:
+        aliases:
+        - grafana.svc.cluster.local
+    ports:
+    - target: 3000
+      published: 3000
+      protocol: tcp
+    volumes:
+    - type: volume
+      source: grafana-data
+      target: /var/lib/grafana
+    - type: volume
+      source: grafana-logs
+      target: /var/log/grafana
+    - type: volume
+      source: grafana-dashboards
+      target: /etc/grafana/dashboards
+    - type: volume
+      source: grafana-provisioning-alerting
+      target: /etc/grafana/provisioning/alerting
+    - type: volume
+      source: grafana-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards
+    - type: volume
+      source: grafana-provisioning-datasources
+      target: /etc/grafana/provisioning/datasources
   node-exporter:
     command:
     - --path.rootfs=/rootfs
@@ -481,7 +498,6 @@ services:
     configs:
     - source: node-exporter-node-meta
       target: /etc/node-exporter/node_meta.prom
-    - source: prometheus-node-exporter
     deploy:
       mode: global
       labels:
@@ -517,7 +533,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/node-exporter:v1.8.1
+    image: docker.io/prom/node-exporter:v1.8.2
     logging:
       driver: json-file
       options:
@@ -537,11 +553,14 @@ services:
   prometheus:
     command:
     - --verbose
-    - --file=/run/configs/prometheus.yaml.tmpl
-    - --out=/prometheus-configs.d/prometheus.yaml
+    - --file=/run/configs/prometheus.yml.tmpl
+    - --out=/prometheus-configs.d/prometheus.yml
     configs:
-    - source: prometheus.yaml.tmpl
-      target: /run/configs/prometheus.yaml.tmpl
+    - source: prometheus-config-tmpl
+      target: /run/configs/prometheus.yml.tmpl
+    - source: prometheus-dockerswarm-nodes-rule
+    - source: prometheus-dockerswarm-services-rule
+    - source: prometheus-prometheus
     deploy:
       mode: global
       update_config:
@@ -567,17 +586,20 @@ services:
         constraints:
         - node.labels.services.promstack_prometheus_server == true
     environment:
-      PROMETHEUS_ALERTMANAGER_ADDR: ${PROMETHEUS_ALERTMANAGER_ADDR:-tasks.grafana.internal}
+      PROMETHEUS_ALERTMANAGER_ADDR: ${PROMETHEUS_ALERTMANAGER_ADDR}
+      PROMETHEUS_ALERTMANAGER_ENABLED: ${PROMETHEUS_ALERTMANAGER_ENABLED:-false}
       PROMETHEUS_ALERTMANAGER_PORT: ${PROMETHEUS_ALERTMANAGER_PORT:-9094}
-      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-{{ index .Service.Labels
-        "com.docker.stack.namespace"}}}
+      PROMETHEUS_CLUSTER_NAME: ${PROMETHEUS_CLUSTER_NAME:-primary}
       PROMETHEUS_CLUSTER_REPLICA: ${PROMETHEUS_CLUSTER_REPLICA:-replica-{{.Task.Slot}}}
+      PROMETHEUS_REMOTE_WRITE_ENABLED: ${PROMETHEUS_REMOTE_WRITE_ENABLED:-false}
+      PROMETHEUS_REMOTE_WRITE_URL: ${PROMETHEUS_REMOTE_WRITE_URL:-false}
     image: docker.io/swarmlibs/genconfig:0.1.0-rc.1
     logging:
       driver: json-file
       options:
         max-file: "5"
         max-size: 12m
+    stop_grace_period: 5s
     volumes:
     - type: volume
       source: prometheus-configs
@@ -625,7 +647,7 @@ services:
     - /docker-entrypoint-shim.sh
     environment:
       PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.internal
-      RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yaml
+      RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yml
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d
       RELOADER_WATCH_INTERVAL: 15s
@@ -641,13 +663,95 @@ services:
     - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
+  prometheus-node-agent:
+    command:
+    - --agent
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --storage.agent.path=/prometheus
+    - --storage.agent.retention.max-time=2h
+    - --web.page-title=Prometheus Node Agent - Promstack
+    - --log.level=info
+    configs:
+    - source: prometheus-node-agent-config-tmpl
+      target: /etc/prometheus/prometheus.yml
+    - source: prometheus-node-agent-cadvisor
+      target: /etc/prometheus/scrape-configs/cadvisor.yml
+    - source: prometheus-node-agent-docker
+      target: /etc/prometheus/scrape-configs/docker.yml
+    - source: prometheus-node-agent-dockerswarm-tasks
+      target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
+    - source: prometheus-node-agent-node-exporter
+      target: /etc/prometheus/scrape-configs/node_exporter.yml
+    - source: prometheus-node-agent-prometheus
+      target: /etc/prometheus/scrape-configs/prometheus.yml
+    depends_on:
+    - prometheus-server
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: prometheus-node-agent
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      resources:
+        limits:
+          memory: "1073741824"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+    environment:
+      DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
+      DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
+    image: docker.io/prom/prometheus:v3.0.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus: null
+      prometheus_gwnetwork: null
+    ports:
+    - mode: host
+      target: 9090
+      published: 19090
+    user: "0:0"
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    - type: volume
+      source: prometheus-node-agent-data
+      target: /prometheus
   prometheus-rule-provider:
     command:
     - --output-dir=/prometheus-configs.d/rules
     - --prometheus-scrape-config-label=io.prometheus.rule
-    configs:
-    - source: prometheus-dockerswarm-nodes-rule
-    - source: prometheus-dockerswarm-services-rule
     deploy:
       mode: global
       labels:
@@ -691,11 +795,6 @@ services:
   prometheus-scrape-config-provider:
     command:
     - --output-dir=/prometheus-configs.d/scrape-configs
-    configs:
-    - source: prometheus-dockerswarm-nodes
-    - source: prometheus-dockerswarm-services-endpoints-host
-    - source: prometheus-dockerswarm-services-endpoints-ingress
-    - source: prometheus-dockerswarm-services
     deploy:
       mode: global
       labels:
@@ -738,18 +837,14 @@ services:
       read_only: true
   prometheus-server:
     command:
-    - --config.file=/prometheus-configs.d/prometheus.yaml
+    - --enable-feature=native-histograms
+    - --config.file=/prometheus-configs.d/prometheus.yml
     - --storage.tsdb.path=/prometheus
     - --storage.tsdb.retention.time=182d
-    - --web.page-title=Promstack Prometheus - Server
-    - --web.console.libraries=/usr/share/prometheus/console_libraries
-    - --web.console.templates=/usr/share/prometheus/consoles
+    - --web.page-title=Prometheus Server - Promstack
     - --web.enable-lifecycle
     - --web.enable-remote-write-receiver
     - --log.level=info
-    configs:
-    - source: prometheus-prometheus
-      target: /etc/prometheus/scrape-configs/prometheus.yaml
     depends_on:
     - prometheus
     deploy:
@@ -790,7 +885,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.0
+    image: docker.io/prom/prometheus:v3.0.1
     logging:
       driver: json-file
       options:
@@ -825,11 +920,55 @@ services:
       target: /var/run/docker.sock
       read_only: true
     - type: volume
-      source: prometheus
-      target: /prometheus
-    - type: volume
       source: prometheus-configs
       target: /prometheus-configs.d
+    - type: volume
+      source: prometheus
+      target: /prometheus
+  prometheus-service-discovery:
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: prometheus-service-discovery
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      resources:
+        limits:
+          memory: "134217728"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+      placement:
+        constraints:
+        - node.role == manager
+    hostname: prometheus-service-discovery.internal
+    image: docker.io/swarmlibs/prometheus-service-discovery:0.1.0-rc.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      prometheus_gwnetwork: null
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
   pushgateway:
     configs:
     - source: prometheus-pushgateway
@@ -899,6 +1038,7 @@ volumes:
   grafana-provisioning-datasources: {}
   prometheus: {}
   prometheus-configs: {}
+  prometheus-node-agent-data: {}
 configs:
   gf-dashboard-promstack-cadvisor:
     name: gf-dashboard-promstack-cadvisor-v1
@@ -918,11 +1058,6 @@ configs:
   gf-dashboard-promstack-dockerswarm-services:
     name: gf-dashboard-promstack-dockerswarm-services-v1
     file: ./grafana/grafana/dashboards/promstack-dockerswarm-services.json
-    labels:
-      io.grafana.dashboard: "true"
-  gf-dashboard-promstack-dockerswarm-services-endpoints:
-    name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
-    file: ./grafana/grafana/dashboards/promstack-dockerswarm-services-endpoints.json
     labels:
       io.grafana.dashboard: "true"
   gf-dashboard-promstack-grafana-metrics:
@@ -950,75 +1085,70 @@ configs:
     file: ./grafana/grafana/provisioning/dashboards/grafana-dashboards.yml
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: ./grafana/grafana/provisioning/datasources/prometheus.yaml
+    file: ./grafana/grafana/provisioning/datasources/prometheus.yml
     labels:
       io.grafana.provisioning.datasource: "true"
   gf-server-entrypoint:
     name: gf-server-entrypoint-v1
     file: ./grafana/grafana/docker-entrypoint-shim.sh
   node-exporter-node-meta:
-    name: node-exporter-node-meta-v1
+    name: prometheus-node-exporter-node-meta-v1
     file: ./node-exporter/node_meta.prom
   prometheus-blackbox-exporter:
     name: prometheus-blackbox-exporter-v1
     file: ./blackbox-exporter/prometheus/blackbox-exporter.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus-cadvisor:
-    name: prometheus-cadvisor-v1
-    file: ./cadvisor/prometheus/cadvisor.yml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-config-reloader-entrypoint:
     name: prometheus-config-reloader-entrypoint-v1
     file: ./prometheus/prometheus-config-reloader/docker-entrypoint-shim.sh
-  prometheus-dockerswarm-nodes:
-    name: prometheus-dockerswarm-nodes-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-nodes.yaml
-    labels:
-      io.prometheus.scrape_config: "true"
+  prometheus-config-tmpl:
+    name: prometheus-config-tmpl-v1
+    file: ./prometheus/prometheus/prometheus.yml.tmpl
   prometheus-dockerswarm-nodes-rule:
     name: prometheus-dockerswarm-nodes-rule-v1
-    file: ./prometheus/prometheus/rules/dockerswarm-nodes.yaml
+    file: ./prometheus/prometheus/rules/dockerswarm-nodes.yml
     labels:
       io.prometheus.rule: "true"
-  prometheus-dockerswarm-services:
-    name: prometheus-dockerswarm-services-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services.yaml
-    labels:
-      io.prometheus.scrape_config: "true"
-  prometheus-dockerswarm-services-endpoints-host:
-    name: prometheus-dockerswarm-services-endpoints-host-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-host.yaml
-    labels:
-      io.prometheus.scrape_config: "true"
-  prometheus-dockerswarm-services-endpoints-ingress:
-    name: prometheus-dockerswarm-services-endpoints-ingress-v1
-    file: ./prometheus/prometheus/scrape-configs/dockerswarm-services-endpoints-ingress.yaml
-    labels:
-      io.prometheus.scrape_config: "true"
   prometheus-dockerswarm-services-rule:
     name: prometheus-dockerswarm-services-rule-v1
-    file: ./prometheus/prometheus/rules/dockerswarm-tasks.yaml
+    file: ./prometheus/prometheus/rules/dockerswarm-tasks.yml
     labels:
       io.prometheus.rule: "true"
-  prometheus-node-exporter:
-    name: prometheus-node-exporter-v1
-    file: ./node-exporter/prometheus/node_exporter.yml
-    labels:
-      io.prometheus.scrape_config: "true"
+  prometheus-node-agent-cadvisor:
+    name: prometheus-node-agent-cadvisor-v1
+    file: ./prometheus-node-agent/prometheus/scrape-configs/cadvisor.yml
+    template_driver: golang
+  prometheus-node-agent-config-tmpl:
+    name: prometheus-node-agent-config-tmpl-v1
+    file: ./prometheus-node-agent/prometheus/prometheus.yml.tmpl
+    template_driver: golang
+  prometheus-node-agent-docker:
+    name: prometheus-node-agent-docker-v1
+    file: ./prometheus-node-agent/prometheus/scrape-configs/docker.yml
+    template_driver: golang
+  prometheus-node-agent-dockerswarm-tasks:
+    name: prometheus-node-agent-dockerswarm-tasks-v1
+    file: ./prometheus-node-agent/prometheus/scrape-configs/dockerswarm-tasks.yml
+    template_driver: golang
+  prometheus-node-agent-node-exporter:
+    name: prometheus-node-agent-node-exporter-v1
+    file: ./prometheus-node-agent/prometheus/scrape-configs/node-exporter.yml
+    template_driver: golang
+  prometheus-node-agent-prometheus:
+    name: prometheus-node-agent-prometheus-v1
+    file: ./prometheus-node-agent/prometheus/scrape-configs/prometheus.yml
+    template_driver: golang
   prometheus-prometheus:
     name: prometheus-prometheus-v1
-    file: ./prometheus/prometheus/scrape-configs/prometheus.yaml
-    template_driver: golang
+    file: ./prometheus/prometheus/scrape-configs/prometheus.yml
+    labels:
+      io.prometheus.scrape_config: "true"
   prometheus-pushgateway:
     name: prometheus-pushgateway-v1
     file: ./pushgateway/prometheus/pushgateway.yml
     labels:
       io.prometheus.scrape_config: "true"
-  prometheus.yaml.tmpl:
-    name: prometheus.yaml.tmpl-v1
-    file: ./prometheus/prometheus/prometheus.yaml.tmpl
 x-default-logging:
   driver: json-file
   options:

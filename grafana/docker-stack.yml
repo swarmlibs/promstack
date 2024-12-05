@@ -1,107 +1,15 @@
 services:
   grafana:
-    configs:
-    - source: gf-server-entrypoint
-      target: /docker-entrypoint-shim.sh
-      mode: 365
-    - source: gf-provisioning-dashboards
-      target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
+    command:
+    - sleep
+    - infinity
     deploy:
       replicas: 1
-      labels:
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: grafana
-        io.prometheus.scrape_port: "3000"
-      update_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      rollback_config:
-        parallelism: 1
-        delay: 30s
-        failure_action: rollback
-        monitor: 15s
-        max_failure_ratio: 0.2
-      restart_policy:
-        condition: any
-        delay: 30s
-        max_attempts: 15
-        window: 15s
       placement:
         constraints:
         - node.role == manager
         max_replicas_per_node: 1
-    entrypoint:
-    - /docker-entrypoint-shim.sh
-    environment:
-      GF_DATABASE_CACHE_MODE: shared
-      GF_DATABASE_WAL: "true"
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-      GF_SERVER_DOMAIN: ${GF_SERVER_DOMAIN}
-      GF_SERVER_PROTOCOL: ${GF_SERVER_PROTOCOL}
-      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
-      GF_SMTP_ENABLED: null
-      GF_SMTP_FROM_ADDRESS: null
-      GF_SMTP_FROM_NAME: null
-      GF_SMTP_HOST: null
-      GF_SMTP_PASSWORD: null
-      GF_SMTP_SKIP_VERIFY: null
-      GF_SMTP_USER: null
-      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME}
-      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL}
-      GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
-    extra_hosts:
-    - host.docker.internal:host-gateway
-    hostname: replica-{{.Node.ID}}.grafana.internal
-    healthcheck:
-      test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 30s
-    image: docker.io/grafana/grafana:11.3.0
-    logging:
-      driver: json-file
-      options:
-        max-file: "5"
-        max-size: 12m
-    networks:
-      grafana:
-        aliases:
-        - grafana.internal
-      prometheus: null
-      prometheus_gwnetwork: null
-      public:
-        aliases:
-        - grafana.svc.cluster.local
-    ports:
-    - target: 3000
-      published: 3000
-      protocol: tcp
-    volumes:
-    - type: volume
-      source: grafana-data
-      target: /var/lib/grafana
-    - type: volume
-      source: grafana-logs
-      target: /var/log/grafana
-    - type: volume
-      source: grafana-dashboards
-      target: /etc/grafana/dashboards
-    - type: volume
-      source: grafana-provisioning-alerting
-      target: /etc/grafana/provisioning/alerting
-    - type: volume
-      source: grafana-provisioning-dashboards
-      target: /etc/grafana/provisioning/dashboards
-    - type: volume
-      source: grafana-provisioning-datasources
-      target: /etc/grafana/provisioning/datasources
+    image: busybox:latest
   grafana-dashboard-provider:
     command:
     - --output-ext=json
@@ -112,7 +20,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -163,7 +70,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -236,7 +142,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_grafana == true
+        - node.labels.services.promstack_grafana_server == true
     environment:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
@@ -273,7 +179,6 @@ services:
     - source: gf-dashboard-promstack-prometheus-stats
     - source: gf-dashboard-promstack-prometheus-stats-v2
     - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services-endpoints
     - source: gf-dashboard-promstack-dockerswarm-services
     - source: gf-dashboard-promstack-cadvisor
     - source: gf-dashboard-promstack-node-exporter
@@ -359,6 +264,113 @@ services:
       source: /var/run/docker.sock
       target: /var/run/docker.sock
       read_only: true
+  grafana-server:
+    configs:
+    - source: gf-server-entrypoint
+      target: /docker-entrypoint-shim.sh
+      mode: 365
+    - source: gf-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: grafana
+        io.prometheus.scrape_port: "3000"
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+      placement:
+        constraints:
+        - node.labels.services.promstack_grafana_provisioning_alerting_provider ==
+          true
+        - node.labels.services.promstack_grafana_provisioning_dashboard_provider ==
+          true
+        - node.labels.services.promstack_grafana_provisioning_datasource_provider
+          == true
+    entrypoint:
+    - /docker-entrypoint-shim.sh
+    environment:
+      GF_DATABASE_CACHE_MODE: shared
+      GF_DATABASE_WAL: "true"
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SERVER_DOMAIN: ${GF_SERVER_DOMAIN}
+      GF_SERVER_PROTOCOL: ${GF_SERVER_PROTOCOL}
+      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
+      GF_SMTP_ENABLED: null
+      GF_SMTP_FROM_ADDRESS: null
+      GF_SMTP_FROM_NAME: null
+      GF_SMTP_HOST: null
+      GF_SMTP_PASSWORD: null
+      GF_SMTP_SKIP_VERIFY: null
+      GF_SMTP_USER: null
+      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_NAME}
+      GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL: ${GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL}
+      GRAFANA_UNIFIED_ALERTING_INTERFACE: eth2
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    hostname: replica-{{.Node.ID}}.grafana.internal
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
+    image: docker.io/grafana/grafana:11.3.1
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      grafana:
+        aliases:
+        - grafana.internal
+      prometheus: null
+      prometheus_gwnetwork: null
+      public:
+        aliases:
+        - grafana.svc.cluster.local
+    ports:
+    - target: 3000
+      published: 3000
+      protocol: tcp
+    volumes:
+    - type: volume
+      source: grafana-data
+      target: /var/lib/grafana
+    - type: volume
+      source: grafana-logs
+      target: /var/log/grafana
+    - type: volume
+      source: grafana-dashboards
+      target: /etc/grafana/dashboards
+    - type: volume
+      source: grafana-provisioning-alerting
+      target: /etc/grafana/provisioning/alerting
+    - type: volume
+      source: grafana-provisioning-dashboards
+      target: /etc/grafana/provisioning/dashboards
+    - type: volume
+      source: grafana-provisioning-datasources
+      target: /etc/grafana/provisioning/datasources
 networks:
   grafana:
     attachable: true
@@ -400,11 +412,6 @@ configs:
     file: ./grafana/dashboards/promstack-dockerswarm-services.json
     labels:
       io.grafana.dashboard: "true"
-  gf-dashboard-promstack-dockerswarm-services-endpoints:
-    name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
-    file: ./grafana/dashboards/promstack-dockerswarm-services-endpoints.json
-    labels:
-      io.grafana.dashboard: "true"
   gf-dashboard-promstack-grafana-metrics:
     name: gf-dashboard-promstack-grafana-metrics-v1
     file: ./grafana/dashboards/promstack-grafana-metrics.json
@@ -430,7 +437,7 @@ configs:
     file: ./grafana/provisioning/dashboards/grafana-dashboards.yml
   gf-provisioning-datasource-prometheus:
     name: gf-provisioning-datasource-prometheus-v1
-    file: ./grafana/provisioning/datasources/prometheus.yaml
+    file: ./grafana/provisioning/datasources/prometheus.yml
     labels:
       io.grafana.provisioning.datasource: "true"
   gf-server-entrypoint:
@@ -441,20 +448,32 @@ x-default-logging:
   options:
     max-file: "5"
     max-size: 12m
-x-deploy:
+x-grafana-deploy:
   placement:
     constraints:
     - node.role == manager
     max_replicas_per_node: 1
   replicas: 1
-x-grafana-helpers-deploy:
+x-grafana-provider-deploy:
   mode: global
   placement:
     constraints:
     - node.labels.services.promstack_grafana == true
-x-grafana-helpers-resources-constraints:
+x-grafana-provider-resources-constraints:
   limits:
     memory: 64M
+x-grafana-reloader-deploy:
+  mode: global
+  placement:
+    constraints:
+    - node.labels.services.promstack_grafana_server == true
+x-grafana-server-deploy:
+  mode: global
+  placement:
+    constraints:
+    - node.labels.services.promstack_grafana_provisioning_alerting_provider == true
+    - node.labels.services.promstack_grafana_provisioning_dashboard_provider == true
+    - node.labels.services.promstack_grafana_provisioning_datasource_provider == true
 x-healthcheck:
   interval: 30s
   retries: 3
