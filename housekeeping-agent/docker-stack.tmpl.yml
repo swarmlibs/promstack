@@ -21,9 +21,8 @@ services:
         target: /var/run/docker.sock
     logging: *x-default-logging
     deploy:
-      replicas: 1
+      mode: global
       placement:
-        max_replicas_per_node: 1
         constraints:
           - node.role == manager
       resources:
