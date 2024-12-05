@@ -30,7 +30,7 @@ services:
         constraints:
         - node.role == manager
         max_replicas_per_node: 1
-    image: docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.1
+    image: docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.2
     logging:
       driver: json-file
       options:
