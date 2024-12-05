@@ -50,6 +50,7 @@ $(eval $(call docker-stack-config,node-exporter))
 $(eval $(call docker-stack-config,prometheus))
 $(eval $(call docker-stack-config,prometheus-node-agent))
 $(eval $(call docker-stack-config,prometheus-service-discovery))
+$(eval $(call docker-stack-config,promstack-housekeeping-agent))
 $(eval $(call docker-stack-config,pushgateway))
 
 docker-stack.yml:
@@ -61,6 +62,7 @@ docker-stack.yml:
 		-c prometheus/docker-stack-config.yml \
 		-c prometheus-node-agent/docker-stack-config.yml \
 		-c prometheus-service-discovery/docker-stack-config.yml \
+		-c promstack-housekeeping-agent/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
 	> docker-stack-config.yml
 	@sed 's|$(PWD)/|./|g' docker-stack-config.yml > docker-stack.yml
@@ -76,6 +78,7 @@ compile: \
 	prometheus/docker-stack.yml \
 	prometheus-node-agent/docker-stack.yml \
 	prometheus-service-discovery/docker-stack.yml \
+	promstack-housekeeping-agent/docker-stack.yml \
 	pushgateway/docker-stack.yml \
 	docker-stack.yml
 
