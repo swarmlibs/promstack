@@ -8,7 +8,12 @@ x-default-logging: &x-default-logging
 
 services:
 
-  promstack-housekeeping-agent:
+  # ====================================================
+  # Promstack housekeeping agent
+  # https://github.com/swarmlibs/promstack-housekeeping-agent
+  # ====================================================
+
+  housekeeping-agent:
     image: ${PROMSTACK_HOUSEKEEPING_AGENT_VERSION}
     volumes:
       - type: bind

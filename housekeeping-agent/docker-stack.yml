@@ -1,5 +1,5 @@
 services:
-  promstack-housekeeping-agent:
+  housekeeping-agent:
     deploy:
       replicas: 1
       labels:

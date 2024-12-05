@@ -46,11 +46,11 @@ endef
 $(eval $(call docker-stack-config,blackbox-exporter))
 $(eval $(call docker-stack-config,cadvisor))
 $(eval $(call docker-stack-config,grafana))
+$(eval $(call docker-stack-config,housekeeping-agent))
 $(eval $(call docker-stack-config,node-exporter))
 $(eval $(call docker-stack-config,prometheus))
 $(eval $(call docker-stack-config,prometheus-node-agent))
 $(eval $(call docker-stack-config,prometheus-service-discovery))
-$(eval $(call docker-stack-config,promstack-housekeeping-agent))
 $(eval $(call docker-stack-config,pushgateway))
 
 docker-stack.yml:
@@ -58,11 +58,11 @@ docker-stack.yml:
 		-c blackbox-exporter/docker-stack-config.yml \
 		-c cadvisor/docker-stack-config.yml \
 		-c grafana/docker-stack-config.yml \
+		-c housekeeping-agent/docker-stack-config.yml \
 		-c node-exporter/docker-stack-config.yml \
 		-c prometheus/docker-stack-config.yml \
 		-c prometheus-node-agent/docker-stack-config.yml \
 		-c prometheus-service-discovery/docker-stack-config.yml \
-		-c promstack-housekeeping-agent/docker-stack-config.yml \
 		-c pushgateway/docker-stack-config.yml \
 	> docker-stack-config.yml
 	@sed 's|$(PWD)/|./|g' docker-stack-config.yml > docker-stack.yml
@@ -74,11 +74,11 @@ compile: \
 	blackbox-exporter/docker-stack.yml \
 	cadvisor/docker-stack.yml \
 	grafana/docker-stack.yml \
+	housekeeping-agent/docker-stack.yml \
 	node-exporter/docker-stack.yml \
 	prometheus/docker-stack.yml \
 	prometheus-node-agent/docker-stack.yml \
 	prometheus-service-discovery/docker-stack.yml \
-	promstack-housekeeping-agent/docker-stack.yml \
 	pushgateway/docker-stack.yml \
 	docker-stack.yml
 

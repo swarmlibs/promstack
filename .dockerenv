@@ -23,8 +23,10 @@ PROMSTACK_PROMETHEUS_GENCONFIG_VERSION=docker.io/swarmlibs/genconfig:0.1.0-rc.1
 PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
 PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION=quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
 PROMSTACK_PROMETHEUS_SERVICE_DISCOVERY_VERSION=docker.io/swarmlibs/prometheus-service-discovery:0.1.0-rc.1
-PROMSTACK_HOUSEKEEPING_AGENT_VERSION=docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.4
 
 # pushgateway
 # https://github.com/prometheus/pushgateway
 PROMSTACK_PUSHGATEWAY_VERSION=docker.io/prom/pushgateway:v1.10.0
+
+# Promstack internal components
+PROMSTACK_HOUSEKEEPING_AGENT_VERSION=docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.4
