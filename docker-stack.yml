@@ -3,7 +3,7 @@ services:
     configs:
     - source: prometheus-blackbox-exporter
     deploy:
-      replicas: 1
+      mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -28,8 +28,6 @@ services:
         delay: 30s
         max_attempts: 15
         window: 15s
-      placement:
-        max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
     image: docker.io/prom/blackbox-exporter:v0.25.0
     logging:
@@ -973,7 +971,7 @@ services:
     configs:
     - source: prometheus-pushgateway
     deploy:
-      replicas: 1
+      mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
@@ -998,8 +996,6 @@ services:
         delay: 30s
         max_attempts: 15
         window: 15s
-      placement:
-        max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
     image: docker.io/prom/pushgateway:v1.10.0
     logging:

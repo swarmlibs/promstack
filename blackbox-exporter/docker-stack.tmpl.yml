@@ -37,9 +37,7 @@ services:
       - source: prometheus-blackbox-exporter
     logging: *x-default-logging
     deploy:
-      replicas: 1
-      placement:
-        max_replicas_per_node: 1
+      mode: global
       resources: *x-exporter-resources-constraints
       labels:
         io.prometheus.role: "blackbox-exporter"
