@@ -117,10 +117,11 @@ stack-remove:
 
 volumes-prune:
 	@echo "==> Pruning volumes..."
-	@docker volume ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker volume rm {} || true"
+	@docker volume ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker volume rm {} 2>/dev/null || true"
 networks-prune:
 	@echo "==> Pruning networks..."
-	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker network rm {} || true"
+	@docker network ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker network rm {} 2>/dev/null || true"
 configs-prune:
 	@echo "==> Pruning configs..."
-	@docker config ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker config rm {} || true"
+	@docker config ls -q --filter=label=com.docker.stack.namespace=$(DOCKER_STACK_NAMESPACE) | xargs -I {} sh -c "docker config rm {} 2>/dev/null || true"
+	@docker config ls -q --filter=label=io.prometheus.scrape_config=true | xargs -I {} sh -c "docker config rm {} 2>/dev/null || true"
