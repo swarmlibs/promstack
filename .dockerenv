@@ -29,4 +29,4 @@ PROMSTACK_PROMETHEUS_SERVICE_DISCOVERY_VERSION=docker.io/swarmlibs/prometheus-se
 PROMSTACK_PUSHGATEWAY_VERSION=docker.io/prom/pushgateway:v1.10.0
 
 # Promstack internal components
-PROMSTACK_HOUSEKEEPING_AGENT_VERSION=docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.5
+PROMSTACK_HOUSEKEEPING_AGENT_VERSION=docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.6

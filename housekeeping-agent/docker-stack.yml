@@ -29,7 +29,7 @@ services:
       placement:
         constraints:
         - node.role == manager
-    image: docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.5
+    image: docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.6
     logging:
       driver: json-file
       options:
