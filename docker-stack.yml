@@ -474,6 +474,46 @@ services:
     - type: volume
       source: grafana-provisioning-datasources
       target: /etc/grafana/provisioning/datasources
+  housekeeping-agent:
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.role: promstack-housekeeping-agent
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.2
+      resources:
+        limits:
+          memory: "67108864"
+      restart_policy:
+        condition: any
+        delay: 30s
+        max_attempts: 15
+        window: 15s
+      placement:
+        constraints:
+        - node.role == manager
+    image: docker.io/swarmlibs/promstack-housekeeping-agent:0.1.0-rc.7
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
   node-exporter:
     command:
     - --path.rootfs=/rootfs
