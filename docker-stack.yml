@@ -121,6 +121,15 @@ services:
     command:
     - sleep
     - infinity
+    configs:
+    - source: gf-dashboard-promstack-grafana-metrics
+    - source: gf-dashboard-promstack-prometheus-stats
+    - source: gf-dashboard-promstack-prometheus-stats-v2
+    - source: gf-dashboard-promstack-dockerstack
+    - source: gf-dashboard-promstack-dockerswarm-nodes
+    - source: gf-dashboard-promstack-dockerswarm-services
+    - source: gf-dashboard-promstack-cadvisor
+    - source: gf-dashboard-promstack-node-exporter
     deploy:
       replicas: 1
       placement:
@@ -133,14 +142,6 @@ services:
     - --output-ext=json
     - --output-dir=/grafana-dashboards.d
     - --prometheus-scrape-config-label=io.grafana.dashboard
-    configs:
-    - source: gf-dashboard-promstack-grafana-metrics
-    - source: gf-dashboard-promstack-prometheus-stats
-    - source: gf-dashboard-promstack-prometheus-stats-v2
-    - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services
-    - source: gf-dashboard-promstack-cadvisor
-    - source: gf-dashboard-promstack-node-exporter
     deploy:
       mode: global
       update_config:
@@ -183,14 +184,6 @@ services:
     command:
     - --output-dir=/grafana-provisioning-alerting.d
     - --prometheus-scrape-config-label=io.grafana.provisioning.alerting
-    configs:
-    - source: gf-dashboard-promstack-grafana-metrics
-    - source: gf-dashboard-promstack-prometheus-stats
-    - source: gf-dashboard-promstack-prometheus-stats-v2
-    - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services
-    - source: gf-dashboard-promstack-cadvisor
-    - source: gf-dashboard-promstack-node-exporter
     deploy:
       mode: global
       update_config:
@@ -292,14 +285,6 @@ services:
     command:
     - --output-dir=/grafana-provisioning-dashboards.d
     - --prometheus-scrape-config-label=io.grafana.provisioning.dashboard
-    configs:
-    - source: gf-dashboard-promstack-grafana-metrics
-    - source: gf-dashboard-promstack-prometheus-stats
-    - source: gf-dashboard-promstack-prometheus-stats-v2
-    - source: gf-dashboard-promstack-dockerswarm-nodes
-    - source: gf-dashboard-promstack-dockerswarm-services
-    - source: gf-dashboard-promstack-cadvisor
-    - source: gf-dashboard-promstack-node-exporter
     deploy:
       mode: global
       update_config:

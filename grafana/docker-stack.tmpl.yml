@@ -55,6 +55,15 @@ services:
   grafana:
     image: busybox:latest
     command: sleep infinity
+    configs:
+      - source: gf-dashboard-promstack-grafana-metrics
+      - source: gf-dashboard-promstack-prometheus-stats
+      - source: gf-dashboard-promstack-prometheus-stats-v2
+      - source: gf-dashboard-promstack-dockerstack
+      - source: gf-dashboard-promstack-dockerswarm-nodes
+      - source: gf-dashboard-promstack-dockerswarm-services
+      - source: gf-dashboard-promstack-cadvisor
+      - source: gf-dashboard-promstack-node-exporter
     deploy: *x-grafana-deploy
 
   grafana-server:
@@ -219,15 +228,6 @@ services:
       - --output-ext=json
       - --output-dir=/grafana-dashboards.d
       - --prometheus-scrape-config-label=io.grafana.dashboard
-    configs:
-      - source: gf-dashboard-promstack-grafana-metrics
-      - source: gf-dashboard-promstack-prometheus-stats
-      - source: gf-dashboard-promstack-prometheus-stats-v2
-      - source: gf-dashboard-promstack-dockerswarm-nodes
-      # - source: gf-dashboard-promstack-dockerswarm-services-endpoints
-      - source: gf-dashboard-promstack-dockerswarm-services
-      - source: gf-dashboard-promstack-cadvisor
-      - source: gf-dashboard-promstack-node-exporter
     volumes:
       - type: volume
         source: grafana-dashboards
@@ -374,11 +374,6 @@ configs:
     file: ./grafana/dashboards/promstack-dockerswarm-nodes.json
     labels:
       io.grafana.dashboard: "true"
-  # gf-dashboard-promstack-dockerswarm-services-endpoints:
-  #   name: gf-dashboard-promstack-dockerswarm-services-endpoints-v1
-  #   file: ./grafana/dashboards/promstack-dockerswarm-services-endpoints.json
-  #   labels:
-  #     io.grafana.dashboard: "true"
   gf-dashboard-promstack-dockerswarm-services:
     name: gf-dashboard-promstack-dockerswarm-services-v1
     file: ./grafana/dashboards/promstack-dockerswarm-services.json
