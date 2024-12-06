@@ -9,7 +9,7 @@ PROMSTACK_CADVISOR_VERSION=gcr.io/cadvisor/cadvisor:v0.49.1
 # grafana
 # https://github.com/grafana/grafana
 PROMSTACK_GRAFANA_VERSION=docker.io/grafana/grafana:11.3.1
-PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
+PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.6
 PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION=docker.io/swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
 
 # node-exporter
@@ -20,7 +20,7 @@ PROMSTACK_NODE_EXPORTER_VERSION=docker.io/prom/node-exporter:v1.8.2
 # https://github.com/prometheus/prometheus
 PROMSTACK_PROMETHEUS_VERSION=docker.io/prom/prometheus:v3.0.1
 PROMSTACK_PROMETHEUS_GENCONFIG_VERSION=docker.io/swarmlibs/genconfig:0.1.0-rc.1
-PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.1
+PROMSTACK_PROMETHEUS_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.6
 PROMSTACK_PROMETHEUS_CONFIG_RELOADER_VERSION=quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
 PROMSTACK_PROMETHEUS_SERVICE_DISCOVERY_VERSION=docker.io/swarmlibs/prometheus-service-discovery:0.1.0-rc.1
 
