@@ -4,8 +4,9 @@ services:
       - SYS_TIME
     command:
       - --path.rootfs=/rootfs
-      - --path.sysfs=/rootfs/sys
-      - --path.procfs=/rootfs/proc
+      - --path.sysfs=/sysfs
+      - --path.procfs=/procfs
+      - --path.udev.data=/rootfs/run/udev/data
       - --collector.textfile.directory=/etc/node-exporter
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
       - --no-collector.ipvs
@@ -63,6 +64,14 @@ services:
       - type: bind
         source: /
         target: /rootfs
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /sysfs
+        read_only: true
+      - type: bind
+        source: /proc
+        target: /procfs
         read_only: true
 networks:
   prometheus_gwnetwork:

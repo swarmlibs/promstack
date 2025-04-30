@@ -27,8 +27,9 @@ services:
     image: ${PROMSTACK_NODE_EXPORTER_VERSION}
     command:
       - --path.rootfs=/rootfs
-      - --path.sysfs=/rootfs/sys
-      - --path.procfs=/rootfs/proc
+      - --path.sysfs=/sysfs
+      - --path.procfs=/procfs
+      - --path.udev.data=/rootfs/run/udev/data
       - --collector.textfile.directory=/etc/node-exporter
       # Due to interpolation the dolar sign must be escaped,
       # since it double dollar sign we need to escape it twice
@@ -48,6 +49,14 @@ services:
       - type: bind
         source: /
         target: /rootfs
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /sysfs
+        read_only: true
+      - type: bind
+        source: /proc
+        target: /procfs
         read_only: true
     cap_add:
       - SYS_TIME
