@@ -31,7 +31,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.blackbox-exporter.internal
-    image: docker.io/prom/blackbox-exporter:v0.25.0
+    image: docker.io/prom/blackbox-exporter:v0.26.0
     logging:
       driver: json-file
       options:
@@ -84,7 +84,7 @@ services:
         max_attempts: 15
         window: 15s
     hostname: replica-{{.Task.Slot}}.cadvisor.internal
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
     logging:
       driver: json-file
       options:
@@ -436,7 +436,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/grafana/grafana:11.3.1
+    image: docker.io/grafana/grafana:11.6.1
     logging:
       driver: json-file
       options:
@@ -518,7 +518,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/node-exporter:v1.8.2
+    image: docker.io/prom/node-exporter:v1.9.1
     logging:
       driver: json-file
       options:
@@ -636,7 +636,7 @@ services:
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d
       RELOADER_WATCH_INTERVAL: 15s
-    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.82.0
     logging:
       driver: json-file
       options:
@@ -711,7 +711,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.1
+    image: docker.io/prom/prometheus:v3.3.0
     logging:
       driver: json-file
       options:
@@ -870,7 +870,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.1
+    image: docker.io/prom/prometheus:v3.3.0
     logging:
       driver: json-file
       options:
@@ -986,7 +986,7 @@ services:
       placement:
         max_replicas_per_node: 1
     hostname: replica-{{.Task.Slot}}.pushgateway.internal
-    image: docker.io/prom/pushgateway:v1.10.0
+    image: docker.io/prom/pushgateway:v1.11.1
     logging:
       driver: json-file
       options:

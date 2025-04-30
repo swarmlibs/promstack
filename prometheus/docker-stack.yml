@@ -100,7 +100,7 @@ services:
       RELOADER_RELOAD_TIMEOUT: 10s
       RELOADER_WATCH_DIR: /prometheus-configs.d
       RELOADER_WATCH_INTERVAL: 15s
-    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.74.0
+    image: quay.io/prometheus-operator/prometheus-config-reloader:v0.82.0
     logging:
       driver: json-file
       options:
@@ -249,7 +249,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/prom/prometheus:v3.0.1
+    image: docker.io/prom/prometheus:v3.3.0
     logging:
       driver: json-file
       options:
