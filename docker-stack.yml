@@ -472,8 +472,12 @@ services:
         source: grafana-provisioning-datasources
         target: /etc/grafana/provisioning/datasources
   node-exporter:
+    cap_add:
+      - SYS_TIME
     command:
       - --path.rootfs=/rootfs
+      - --path.sysfs=/rootfs/sys
+      - --path.procfs=/rootfs/proc
       - --collector.textfile.directory=/etc/node-exporter
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
       - --no-collector.ipvs

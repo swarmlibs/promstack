@@ -27,6 +27,8 @@ services:
     image: ${PROMSTACK_NODE_EXPORTER_VERSION}
     command:
       - --path.rootfs=/rootfs
+      - --path.sysfs=/rootfs/sys
+      - --path.procfs=/rootfs/proc
       - --collector.textfile.directory=/etc/node-exporter
       # Due to interpolation the dolar sign must be escaped,
       # since it double dollar sign we need to escape it twice
@@ -47,6 +49,8 @@ services:
         source: /
         target: /rootfs
         read_only: true
+    cap_add:
+      - SYS_TIME
     healthcheck:
       <<: *x-healthcheck
       test: wget -qO - --tries=1 --spider http://127.0.0.1:9100 || exit 1
