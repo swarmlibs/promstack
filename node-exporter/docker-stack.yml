@@ -1,13 +1,13 @@
 services:
   node-exporter:
     command:
-    - --path.rootfs=/rootfs
-    - --collector.textfile.directory=/etc/node-exporter
-    - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
-    - --no-collector.ipvs
+      - --path.rootfs=/rootfs
+      - --collector.textfile.directory=/etc/node-exporter
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+      - --no-collector.ipvs
     configs:
-    - source: node-exporter-node-meta
-      target: /etc/node-exporter/node_meta.prom
+      - source: node-exporter-node-meta
+        target: /etc/node-exporter/node_meta.prom
     deploy:
       mode: global
       labels:
@@ -37,8 +37,8 @@ services:
     hostname: replica-{{.Task.Slot}}.node-exporter.internal
     healthcheck:
       test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:9100 || exit 1
+        - CMD-SHELL
+        - wget -qO - --tries=1 --spider http://127.0.0.1:9100 || exit 1
       timeout: 10s
       interval: 30s
       retries: 3
@@ -52,14 +52,14 @@ services:
     networks:
       prometheus_gwnetwork: null
     ports:
-    - mode: host
-      target: 9100
-      published: 19100
+      - mode: host
+        target: 9100
+        published: 19100
     volumes:
-    - type: bind
-      source: /
-      target: /rootfs
-      read_only: true
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork

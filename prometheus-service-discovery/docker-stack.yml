@@ -28,7 +28,7 @@ services:
         window: 15s
       placement:
         constraints:
-        - node.role == manager
+          - node.role == manager
     hostname: prometheus-service-discovery.internal
     image: docker.io/swarmlibs/prometheus-service-discovery:0.1.0-rc.1
     logging:
@@ -39,10 +39,10 @@ services:
     networks:
       prometheus_gwnetwork: null
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
 networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork

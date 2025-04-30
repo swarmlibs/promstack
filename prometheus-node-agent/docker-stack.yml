@@ -1,27 +1,27 @@
 services:
   prometheus-node-agent:
     command:
-    - --agent
-    - --config.file=/etc/prometheus/prometheus.yml
-    - --storage.agent.path=/prometheus
-    - --storage.agent.retention.max-time=2h
-    - --web.page-title=Prometheus Node Agent - Promstack
-    - --log.level=info
+      - --agent
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.agent.path=/prometheus
+      - --storage.agent.retention.max-time=2h
+      - --web.page-title=Prometheus Node Agent - Promstack
+      - --log.level=info
     configs:
-    - source: prometheus-node-agent-config-tmpl
-      target: /etc/prometheus/prometheus.yml
-    - source: prometheus-node-agent-cadvisor
-      target: /etc/prometheus/scrape-configs/cadvisor.yml
-    - source: prometheus-node-agent-docker
-      target: /etc/prometheus/scrape-configs/docker.yml
-    - source: prometheus-node-agent-dockerswarm-tasks
-      target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
-    - source: prometheus-node-agent-node-exporter
-      target: /etc/prometheus/scrape-configs/node_exporter.yml
-    - source: prometheus-node-agent-prometheus
-      target: /etc/prometheus/scrape-configs/prometheus.yml
+      - source: prometheus-node-agent-config-tmpl
+        target: /etc/prometheus/prometheus.yml
+      - source: prometheus-node-agent-cadvisor
+        target: /etc/prometheus/scrape-configs/cadvisor.yml
+      - source: prometheus-node-agent-docker
+        target: /etc/prometheus/scrape-configs/docker.yml
+      - source: prometheus-node-agent-dockerswarm-tasks
+        target: /etc/prometheus/scrape-configs/dockerswarm-services.yml
+      - source: prometheus-node-agent-node-exporter
+        target: /etc/prometheus/scrape-configs/node_exporter.yml
+      - source: prometheus-node-agent-prometheus
+        target: /etc/prometheus/scrape-configs/prometheus.yml
     depends_on:
-    - prometheus-server
+      - prometheus-server
     deploy:
       mode: global
       labels:
@@ -52,12 +52,12 @@ services:
       DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
       DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
     extra_hosts:
-    - host.docker.internal:host-gateway
+      - host.docker.internal:host-gateway
     hostname: replica-{{.Task.Slot}}.federated.prometheus.internal
     healthcheck:
       test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
+        - CMD-SHELL
+        - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
       timeout: 10s
       interval: 30s
       retries: 3
@@ -72,18 +72,18 @@ services:
       prometheus: null
       prometheus_gwnetwork: null
     ports:
-    - mode: host
-      target: 9090
-      published: 19090
+      - mode: host
+        target: 9090
+        published: 19090
     user: "0:0"
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
-    - type: volume
-      source: prometheus-node-agent-data
-      target: /prometheus
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: volume
+        source: prometheus-node-agent-data
+        target: /prometheus
 networks:
   prometheus:
     name: prometheus

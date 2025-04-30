@@ -1,15 +1,15 @@
 services:
   prometheus:
     command:
-    - --verbose
-    - --file=/run/configs/prometheus.yml.tmpl
-    - --out=/prometheus-configs.d/prometheus.yml
+      - --verbose
+      - --file=/run/configs/prometheus.yml.tmpl
+      - --out=/prometheus-configs.d/prometheus.yml
     configs:
-    - source: prometheus-config-tmpl
-      target: /run/configs/prometheus.yml.tmpl
-    - source: prometheus-dockerswarm-nodes-rule
-    - source: prometheus-dockerswarm-services-rule
-    - source: prometheus-prometheus
+      - source: prometheus-config-tmpl
+        target: /run/configs/prometheus.yml.tmpl
+      - source: prometheus-dockerswarm-nodes-rule
+      - source: prometheus-dockerswarm-services-rule
+      - source: prometheus-prometheus
     deploy:
       mode: global
       update_config:
@@ -33,7 +33,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus_server == true
+          - node.labels.services.promstack_prometheus_server == true
     environment:
       PROMETHEUS_ALERTMANAGER_ADDR: ${PROMETHEUS_ALERTMANAGER_ADDR}
       PROMETHEUS_ALERTMANAGER_ENABLED: ${PROMETHEUS_ALERTMANAGER_ENABLED:-false}
@@ -50,18 +50,18 @@ services:
         max-size: 12m
     stop_grace_period: 5s
     volumes:
-    - type: volume
-      source: prometheus-configs
-      target: /prometheus-configs.d
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
   prometheus-config-reloader:
     configs:
-    - source: prometheus-config-reloader-entrypoint
-      target: /docker-entrypoint-shim.sh
-      mode: 365
+      - source: prometheus-config-reloader-entrypoint
+        target: /docker-entrypoint-shim.sh
+        mode: 365
     depends_on:
-    - prometheus
-    - prometheus-server
-    - prometheus-scrape-config-provider
+      - prometheus
+      - prometheus-server
+      - prometheus-scrape-config-provider
     deploy:
       mode: global
       labels:
@@ -91,9 +91,9 @@ services:
         window: 15s
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus_server == true
+          - node.labels.services.promstack_prometheus_server == true
     entrypoint:
-    - /docker-entrypoint-shim.sh
+      - /docker-entrypoint-shim.sh
     environment:
       PROMETHEUS_HOST: replica-{{.Node.ID}}.prometheus.internal
       RELOADER_CONFIG_FILE: /prometheus-configs.d/prometheus.yml
@@ -109,13 +109,13 @@ services:
     networks:
       prometheus_internal: null
     volumes:
-    - type: volume
-      source: prometheus-configs
-      target: /prometheus-configs.d
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
   prometheus-rule-provider:
     command:
-    - --output-dir=/prometheus-configs.d/rules
-    - --prometheus-scrape-config-label=io.prometheus.rule
+      - --output-dir=/prometheus-configs.d/rules
+      - --prometheus-scrape-config-label=io.prometheus.rule
     deploy:
       mode: global
       labels:
@@ -141,7 +141,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus_server == true
+          - node.labels.services.promstack_prometheus_server == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.11
     logging:
       driver: json-file
@@ -149,16 +149,16 @@ services:
         max-file: "5"
         max-size: 12m
     volumes:
-    - type: volume
-      source: prometheus-configs
-      target: /prometheus-configs.d
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
   prometheus-scrape-config-provider:
     command:
-    - --output-dir=/prometheus-configs.d/scrape-configs
+      - --output-dir=/prometheus-configs.d/scrape-configs
     deploy:
       mode: global
       labels:
@@ -184,7 +184,7 @@ services:
         window: 10s
       placement:
         constraints:
-        - node.labels.services.promstack_prometheus_server == true
+          - node.labels.services.promstack_prometheus_server == true
     image: docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.11
     logging:
       driver: json-file
@@ -192,25 +192,25 @@ services:
         max-file: "5"
         max-size: 12m
     volumes:
-    - type: volume
-      source: prometheus-configs
-      target: /prometheus-configs.d
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
   prometheus-server:
     command:
-    - --enable-feature=native-histograms
-    - --config.file=/prometheus-configs.d/prometheus.yml
-    - --storage.tsdb.path=/prometheus
-    - --storage.tsdb.retention.time=182d
-    - --web.page-title=Prometheus Server - Promstack
-    - --web.enable-lifecycle
-    - --web.enable-remote-write-receiver
-    - --log.level=info
+      - --enable-feature=native-histograms
+      - --config.file=/prometheus-configs.d/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=182d
+      - --web.page-title=Prometheus Server - Promstack
+      - --web.enable-lifecycle
+      - --web.enable-remote-write-receiver
+      - --log.level=info
     depends_on:
-    - prometheus
+      - prometheus
     deploy:
       replicas: 1
       labels:
@@ -236,15 +236,15 @@ services:
         window: 15s
       placement:
         constraints:
-        - node.role == manager
+          - node.role == manager
         max_replicas_per_node: 1
     extra_hosts:
-    - host.docker.internal:host-gateway
+      - host.docker.internal:host-gateway
     hostname: replica-{{.Node.ID}}.prometheus.internal
     healthcheck:
       test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
+        - CMD-SHELL
+        - wget -qO - --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1
       timeout: 10s
       interval: 30s
       retries: 3
@@ -258,37 +258,37 @@ services:
     networks:
       grafana:
         aliases:
-        - prometheus.svc.cluster.local
+          - prometheus.svc.cluster.local
       prometheus:
         aliases:
-        - prometheus.internal
-        - prometheus.svc.cluster.local
+          - prometheus.internal
+          - prometheus.svc.cluster.local
       prometheus_gwnetwork:
         aliases:
-        - prometheus.internal
-        - prometheus.svc.cluster.local
+          - prometheus.internal
+          - prometheus.svc.cluster.local
       prometheus_internal:
         aliases:
-        - prometheus.internal
+          - prometheus.internal
       public:
         aliases:
-        - prometheus.svc.cluster.local
+          - prometheus.svc.cluster.local
     ports:
-    - target: 9090
-      published: 9090
-      protocol: tcp
+      - target: 9090
+        published: 9090
+        protocol: tcp
     user: "0:0"
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
-    - type: volume
-      source: prometheus-configs
-      target: /prometheus-configs.d
-    - type: volume
-      source: prometheus
-      target: /prometheus
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: volume
+        source: prometheus-configs
+        target: /prometheus-configs.d
+      - type: volume
+        source: prometheus
+        target: /prometheus
 networks:
   grafana: {}
   prometheus:
@@ -335,7 +335,7 @@ x-default-logging:
 x-deploy:
   placement:
     constraints:
-    - node.role == manager
+      - node.role == manager
     max_replicas_per_node: 1
   replicas: 1
 x-healthcheck:
@@ -347,7 +347,7 @@ x-prometheus-helpers-deploy:
   mode: global
   placement:
     constraints:
-    - node.labels.services.promstack_prometheus_server == true
+      - node.labels.services.promstack_prometheus_server == true
   resources:
     limits:
       memory: 64M
