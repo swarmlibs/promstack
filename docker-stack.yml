@@ -475,10 +475,10 @@ services:
     cap_add:
       - SYS_TIME
     command:
-      - --path.rootfs=/rootfs
-      - --path.sysfs=/sysfs
-      - --path.procfs=/procfs
-      - --path.udev.data=/rootfs/run/udev/data
+      - --path.rootfs=/host/root
+      - --path.sysfs=/host/sys
+      - --path.procfs=/host/proc
+      - --path.udev.data=/host/root/run/udev/data
       - --collector.textfile.directory=/etc/node-exporter
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
       - --no-collector.ipvs
@@ -535,15 +535,15 @@ services:
     volumes:
       - type: bind
         source: /
-        target: /rootfs
+        target: /host/root
         read_only: true
       - type: bind
         source: /sys
-        target: /sysfs
+        target: /host/sys
         read_only: true
       - type: bind
         source: /proc
-        target: /procfs
+        target: /host/proc
         read_only: true
   prometheus:
     command:
