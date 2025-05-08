@@ -8,7 +8,7 @@ PROMSTACK_CADVISOR_VERSION=gcr.io/cadvisor/cadvisor:v0.52.1
 
 # grafana
 # https://github.com/grafana/grafana
-PROMSTACK_GRAFANA_VERSION=docker.io/grafana/grafana:11.6.1
+PROMSTACK_GRAFANA_VERSION=docker.io/grafana/grafana:12.0.0
 PROMSTACK_GRAFANA_CONFIG_PROVIDER_VERSION=docker.io/swarmlibs/prometheus-config-provider:0.1.0-rc.11
 PROMSTACK_GRAFANA_CONFIG_RELOADER_VERSION=docker.io/swarmlibs/grafana-provisioning-config-reloader:0.1.0-rc.3
 

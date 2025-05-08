@@ -254,6 +254,8 @@ services:
       - source: gf-server-entrypoint
         target: /docker-entrypoint-shim.sh
         mode: 365
+      - source: gf-custom-ini
+        target: /etc/grafana/grafana.ini
       - source: gf-provisioning-dashboards
         target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
     deploy:
@@ -315,7 +317,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: docker.io/grafana/grafana:11.6.1
+    image: docker.io/grafana/grafana:12.0.0
     logging:
       driver: json-file
       options:
@@ -374,6 +376,9 @@ volumes:
   grafana-provisioning-dashboards: {}
   grafana-provisioning-datasources: {}
 configs:
+  gf-custom-ini:
+    name: gf-custom-ini-v1
+    file: ./grafana/custom.ini
   gf-dashboard-promstack-cadvisor:
     name: gf-dashboard-promstack-cadvisor-v1
     file: ./grafana/dashboards/promstack-cadvisor.json

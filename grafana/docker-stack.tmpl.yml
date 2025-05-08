@@ -113,6 +113,8 @@ services:
       - source: gf-server-entrypoint
         target: /docker-entrypoint-shim.sh
         mode: 0555
+      - source: gf-custom-ini
+        target: /etc/grafana/grafana.ini
       - source: gf-provisioning-dashboards
         target: /etc/grafana/provisioning/dashboards/gf-provisioning-dashboards.yml
     volumes:
@@ -331,6 +333,9 @@ configs:
   gf-server-entrypoint:
     name: gf-server-entrypoint-v1
     file: ./grafana/docker-entrypoint-shim.sh
+  gf-custom-ini:
+    name: gf-custom-ini-v1
+    file: ./grafana/custom.ini
 
   # Grafana dashboards provisioning config
   gf-provisioning-dashboards:
